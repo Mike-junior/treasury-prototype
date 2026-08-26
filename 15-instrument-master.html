@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instrument Master — E&M Treasury Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;}
+.rating-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+.rating-aaa{background:rgba(22,163,74,.1);color:#15803D;}
+.rating-aa{background:rgba(37,99,235,.1);color:#1D4ED8;}
+.rating-a{background:rgba(13,115,119,.1);color:#0D7377;}
+.rating-bbb{background:rgba(217,119,6,.1);color:#B45309;}
+.rating-sub{background:rgba(220,38,38,.1);color:#B91C1C;}
+.instr-type{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:.3px;}
+.it-tbill{background:rgba(10,22,40,.08);color:#0A1628;}
+.it-tbond{background:rgba(37,99,235,.1);color:#1D4ED8;}
+.it-cp{background:rgba(124,58,237,.1);color:#6D28D9;}
+.it-fd{background:rgba(13,115,119,.1);color:#0D7377;}
+.it-repo{background:rgba(217,119,6,.1);color:#B45309;}
+.it-fx{background:rgba(200,16,46,.1);color:#BE123C;}
+.detail-pane{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);padding:var(--space-4);display:none;}
+.detail-pane.open{display:block;}
+.field-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.field-row:last-child{border-bottom:none;}
+.field-row .fk{color:var(--text-muted);}
+.field-row .fv{font-weight:600;font-family:var(--font-mono);}
+.rating-history-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--surface-divider);font-size:11px;}
+.rating-history-item:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+<nav class="sidebar">
+  <div class="sidebar-logo"><div class="sidebar-logo-mark">E&M</div><div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
+    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
+    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
+    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
+    <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>Deal Register</a>
+    <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Settlement</a>
+    <a href="20-fx-nop-monitor.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>FX / NOP Monitor</a>
+    <a href="21-treasury-sales.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Treasury Sales</a>
+    <a href="22-nostro-correspondent.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Nostro &amp; Correspondent</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Analytics</div>
+    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
+    <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
+    <a href="23-middle-office.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Middle Office</a>
+    <a href="24-market-data.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Market Data</a>
+    <a href="25-ftp.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Funds Transfer Pricing</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Static Data</div>
+    <a href="15-instrument-master.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Instrument Master</a>
+    <a href="16-counterparty-master.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Counterparty Master</a>
+    <a href="17-static-data-misc.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendars &amp; Brokers</a>
+    <a href="19-product-factory.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>Product Factory</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">System</div>
+    <a href="18-user-management.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>User &amp; Roles</a>
+    <a href="26-accounting-gl.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Accounting &amp; GL</a>
+    <a href="27-audit-trail.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Audit Trail</a>
+    <a href="28-integration-monitor.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Integration Monitor</a>
+    <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Day End Close</a>
+    <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
+    <a href="29-tenant-admin.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Tenant Admin</a>
+  </div>
+  <div class="sidebar-footer"><div class="user-mini"><div class="user-avatar">JM</div><div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">Tenant Admin · LE-001</div></div></div></div>
+</nav>
+
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">Business Date</span><span class="rate">25 Aug 2026</span></div>
+    <div class="fx-tick"><span class="pair">Active Instruments</span><span class="rate">247</span><span class="delta" style="color:#94A3B8">in master</span></div>
+    <div class="fx-tick"><span class="pair">Maturing &lt;30 days</span><span class="rate">18</span><span class="delta" style="color:var(--status-warning)">alert</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>Static Data</span><span class="sep"> / </span><span class="current">Instrument Master</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm">Bulk Import (CSV)</button>
+      <button class="btn btn-primary btn-sm" onclick="openAddInstrument()">+ Add Instrument</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JM</div>
+      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">Tenant Admin · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Instrument Master</h1><p class="page-subtitle">Reference data for all tradeable instruments · FR-03.1 · Changes require secondary approval</p></div>
+      <div class="page-actions">
+        <span style="font-size:12px;color:var(--text-muted)">247 active · 18 matured · 3 suspended</span>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+      <div class="kpi-card" style="--kpi-accent:#0A1628"><div class="kpi-label">T-Bills</div><div class="kpi-value">48</div><div class="kpi-meta">91d · 182d · 364d</div></div>
+      <div class="kpi-card" style="--kpi-accent:#2563EB"><div class="kpi-label">T-Bonds</div><div class="kpi-value">67</div><div class="kpi-meta">FXD · IFB · Tap</div></div>
+      <div class="kpi-card" style="--kpi-accent:#7C3AED"><div class="kpi-label">Corp / Commercial Paper</div><div class="kpi-value">42</div><div class="kpi-meta">Rated A− and above</div></div>
+      <div class="kpi-card" style="--kpi-accent:#0D7377"><div class="kpi-label">FX Instruments</div><div class="kpi-value">24</div><div class="kpi-meta">Spot · Fwd · Swap</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-warning)"><div class="kpi-label">Maturing &lt;30 days</div><div class="kpi-value" style="color:var(--status-warning)">18</div><div class="kpi-meta">Requires rollover decision</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:var(--space-4);align-items:start">
+
+      <!-- Main table -->
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Instrument Register</div><div class="card-subtitle">All instruments · LE-001 · Click row for detail</div></div>
+          <div style="display:flex;gap:8px">
+            <select class="form-control" style="padding:5px 10px;font-size:11px;width:140px">
+              <option>All Types</option>
+              <option>T-Bill</option>
+              <option>T-Bond (Fixed)</option>
+              <option>T-Bond (Infla.)</option>
+              <option>Commercial Paper</option>
+              <option>Fixed Deposit</option>
+              <option>FX</option>
+            </select>
+            <select class="form-control" style="padding:5px 10px;font-size:11px;width:120px">
+              <option>All Statuses</option>
+              <option>ACTIVE</option>
+              <option>MATURED</option>
+              <option>SUSPENDED</option>
+            </select>
+            <input type="text" class="form-control" style="padding:5px 10px;font-size:11px;width:160px" placeholder="Search ISIN / name…">
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ISIN / ID</th><th>Name</th><th>Type</th><th>Issuer</th><th>Currency</th><th>Face Value</th><th>Coupon</th><th>Maturity</th><th>Rating</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr onclick="showDetail('tb91')" style="cursor:pointer">
+                <td><span class="mono fw-600">KE00TB0912026</span></td>
+                <td style="font-size:12px;font-weight:600">T-Bill 91-Day Aug 2026</td>
+                <td><span class="instr-type it-tbill">T-BILL</span></td>
+                <td style="font-size:12px">CBK</td>
+                <td class="mono">KES</td>
+                <td class="text-right mono">100.00</td>
+                <td class="mono">14.87%</td>
+                <td class="mono text-xs">24/11/2026</td>
+                <td><span class="rating-badge rating-aaa">AAA</span></td>
+                <td><span class="badge badge-success">ACTIVE</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Edit</button></td>
+              </tr>
+              <tr onclick="showDetail('tb182')" style="cursor:pointer">
+                <td><span class="mono fw-600">KE00TB1822026</span></td>
+                <td style="font-size:12px;font-weight:600">T-Bill 182-Day Aug 2026</td>
+                <td><span class="instr-type it-tbill">T-BILL</span></td>
+                <td style="font-size:12px">CBK</td>
+                <td class="mono">KES</td>
+                <td class="text-right mono">100.00</td>
+                <td class="mono">15.23%</td>
+                <td class="mono text-xs">22/02/2027</td>
+                <td><span class="rating-badge rating-aaa">AAA</span></td>
+                <td><span class="badge badge-success">ACTIVE</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Edit</button></td>
+              </tr>
+              <tr onclick="showDetail('ifb10')" style="cursor:pointer">
+                <td><span class="mono fw-600">KE00IFB1020250</span></td>
+                <td style="font-size:12px;font-weight:600">IFB 10yr 2025 — 16.00%</td>
+                <td><span class="instr-type it-tbond">T-BOND (IFB)</span></td>
+                <td style="font-size:12px">CBK</td>
+                <td class="mono">KES</td>
+                <td class="text-right mono">100.00</td>
+                <td class="mono">16.00%</td>
+                <td class="mono text-xs">15/03/2035</td>
+                <td><span class="rating-badge rating-aaa">AAA</span></td>
+                <td><span class="badge badge-success">ACTIVE</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Edit</button></td>
+              </tr>
+              <tr onclick="showDetail('fxd5')" style="cursor:pointer">
+                <td><span class="mono fw-600">KE00FXD1520240</span></td>
+                <td style="font-size:12px;font-weight:600">FXD 15yr 2024 — 15.75%</td>
+                <td><span class="instr-type it-tbond">T-BOND (FXD)</span></td>
+                <td style="font-size:12px">CBK</td>
+                <td class="mono">KES</td>
+                <td class="text-right mono">100.00</td>
+                <td class="mono">15.75%</td>
+                <td class="mono text-xs">28/02/2039</td>
+                <td><span class="rating-badge rating-aaa">AAA</span></td>
+                <td><span class="badge badge-success">ACTIVE</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Edit</button></td>
+              </tr>
+              <tr onclick="showDetail('saf01')" style="cursor:pointer">
+                <td><span class="mono fw-600">KE00SAF010CP26</span></td>
+                <td style="font-size:12px;font-weight:600">Safaricom CP 2026 — 13.50%</td>
+                <td><span class="instr-type it-cp">COMM. PAPER</span></td>
+                <td style="font-size:12px">Safaricom PLC</td>
+                <td class="mono">KES</td>
+                <td class="text-right mono">1,000.00</td>
+                <td class="mono">13.50%</td>
+                <td class="mono text-xs">15/01/2027</td>
+                <td><span class="rating-badge rating-a">A+</span></td>
+                <td><span class="badge badge-success">ACTIVE</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Edit</button></td>
+              </tr>
+              <tr onclick="showDetail('eqfd1')" style="cursor:pointer">
+                <td><span class="mono fw-600">EQ-FD-91D-AUG26</span></td>
+                <td style="font-size:12px;font-weight:600">Equity Bank FD 91D — 14.50%</td>
+                <td><span class="instr-type it-fd">FIXED DEPOSIT</span></td>
+                <td style="font-size:12px">Equity Bank Kenya</td>
+                <td class="mono">KES</td>
+                <td class="text-right mono">—</td>
+                <td class="mono">14.50%</td>
+                <td class="mono text-xs">24/11/2026</td>
+                <td><span class="rating-badge rating-aa">AA−</span></td>
+                <td><span class="badge badge-success">ACTIVE</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Edit</button></td>
+              </tr>
+              <tr onclick="showDetail('repo1')" style="cursor:pointer">
+                <td><span class="mono fw-600">REPO-IFB-ON-AUG26</span></td>
+                <td style="font-size:12px;font-weight:600">Repo — IFB/2025/10 Collateral</td>
+                <td><span class="instr-type it-repo">REPO</span></td>
+                <td style="font-size:12px">DTBK</td>
+                <td class="mono">KES</td>
+                <td class="text-right mono">—</td>
+                <td class="mono">13.25%</td>
+                <td class="mono text-xs">26/08/2026</td>
+                <td><span class="rating-badge rating-aa">A+</span></td>
+                <td><span class="badge badge-success">ACTIVE</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Edit</button></td>
+              </tr>
+              <tr onclick="showDetail('old1')" style="cursor:pointer;opacity:.6">
+                <td><span class="mono fw-600">KE00TB0912025</span></td>
+                <td style="font-size:12px;font-weight:600">T-Bill 91-Day Aug 2025</td>
+                <td><span class="instr-type it-tbill">T-BILL</span></td>
+                <td style="font-size:12px">CBK</td>
+                <td class="mono">KES</td>
+                <td class="text-right mono">100.00</td>
+                <td class="mono">13.22%</td>
+                <td class="mono text-xs">25/08/2025</td>
+                <td><span class="rating-badge rating-aaa">AAA</span></td>
+                <td><span class="badge badge-neutral">MATURED</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:var(--text-muted)">Showing 8 of 268 instruments</span>
+          <div style="display:flex;gap:4px">
+            <button class="btn btn-outline btn-sm">‹ Prev</button>
+            <button class="btn btn-outline btn-sm" style="background:var(--brand-secondary);color:#fff">1</button>
+            <button class="btn btn-outline btn-sm">2</button>
+            <button class="btn btn-outline btn-sm">Next ›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail pane -->
+      <div>
+        <div class="detail-pane open" id="detailPane">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-3)">
+            <div>
+              <div style="font-size:14px;font-weight:800" id="detailName">IFB 10yr 2025 — 16.00%</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:3px" id="detailIsin">KE00IFB1020250</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-outline btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Suspend</button>
+            </div>
+          </div>
+          <div class="tabs" style="margin-bottom:var(--space-3)" id="instrTabs">
+            <div class="tab-item active" onclick="instrTab('details')">Details</div>
+            <div class="tab-item" onclick="instrTab('ratings')">Rating History</div>
+            <div class="tab-item" onclick="instrTab('cashflows')">Cash Flows</div>
+            <div class="tab-item" onclick="instrTab('positions')">Positions</div>
+          </div>
+          <div id="itab-details">
+            <div class="field-row"><span class="fk">Instrument Type</span><span class="fv">T-Bond (IFB)</span></div>
+            <div class="field-row"><span class="fk">Issuer</span><span class="fv">Central Bank of Kenya</span></div>
+            <div class="field-row"><span class="fk">ISIN</span><span class="fv">KE00IFB1020250</span></div>
+            <div class="field-row"><span class="fk">Bloomberg ID</span><span class="fv">KE IFB 2025/10</span></div>
+            <div class="field-row"><span class="fk">Face Value</span><span class="fv">KES 100.00</span></div>
+            <div class="field-row"><span class="fk">Currency</span><span class="fv">KES</span></div>
+            <div class="field-row"><span class="fk">Coupon Rate</span><span class="fv">16.00% p.a.</span></div>
+            <div class="field-row"><span class="fk">Coupon Frequency</span><span class="fv">Semi-annual (Jun / Dec)</span></div>
+            <div class="field-row"><span class="fk">Day Count</span><span class="fv">Actual / 365 (Fixed)</span></div>
+            <div class="field-row"><span class="fk">Issue Date</span><span class="fv">15/03/2025</span></div>
+            <div class="field-row"><span class="fk">Maturity Date</span><span class="fv">15/03/2035</span></div>
+            <div class="field-row"><span class="fk">Tenor</span><span class="fv">10 years</span></div>
+            <div class="field-row"><span class="fk">Book Classification</span><span class="fv">HTM / AFS eligible</span></div>
+            <div class="field-row"><span class="fk">Statutory Eligible</span><span class="fv" style="color:var(--status-success)">✓ SLR / CRR eligible</span></div>
+            <div class="field-row"><span class="fk">Market</span><span class="fv">NSE Bond Market</span></div>
+            <div class="field-row"><span class="fk">Status</span><span class="fv" style="color:var(--status-success)">ACTIVE</span></div>
+            <div class="field-row"><span class="fk">Last Modified</span><span class="fv">15/03/2025 by System</span></div>
+          </div>
+          <div id="itab-ratings" style="display:none">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px">CREDIT RATING HISTORY</div>
+            <div class="rating-history-item"><span class="rating-badge rating-aaa">AAA</span><span style="flex:1">GCR Ratings</span><span class="mono text-xs">15/03/2025</span><span style="color:var(--status-success);font-size:10px;font-weight:600">Current</span></div>
+            <div class="rating-history-item" style="opacity:.6"><span class="rating-badge rating-aaa">AAA</span><span style="flex:1">Moody's Equivalent</span><span class="mono text-xs">01/01/2025</span></div>
+            <div style="margin-top:var(--space-3);padding:var(--space-3);background:var(--info-bg);border:1px solid var(--info-border);border-radius:var(--radius-md);font-size:11px;color:var(--status-info)">Government-issued instrument — sovereign rating applies. No independent agency rating required.</div>
+          </div>
+          <div id="itab-cashflows" style="display:none">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px">PROJECTED CASH FLOWS</div>
+            <table style="width:100%;font-size:11px;border-collapse:collapse">
+              <thead><tr style="background:var(--surface-bg)"><th style="padding:6px;text-align:left;border-bottom:1px solid var(--surface-divider)">Date</th><th style="padding:6px;text-align:right;border-bottom:1px solid var(--surface-divider)">Type</th><th style="padding:6px;text-align:right;border-bottom:1px solid var(--surface-divider)">Amount (KES)</th></tr></thead>
+              <tbody>
+                <tr><td style="padding:6px" class="mono">15/09/2026</td><td style="padding:6px;text-align:right"><span class="badge badge-info">COUPON</span></td><td style="padding:6px;text-align:right" class="mono">8.00 per 100</td></tr>
+                <tr><td style="padding:6px" class="mono">15/03/2027</td><td style="padding:6px;text-align:right"><span class="badge badge-info">COUPON</span></td><td style="padding:6px;text-align:right" class="mono">8.00 per 100</td></tr>
+                <tr><td style="padding:6px;opacity:.5" class="mono">…8 more…</td><td></td><td></td></tr>
+                <tr><td style="padding:6px" class="mono">15/03/2035</td><td style="padding:6px;text-align:right"><span class="badge badge-success">PRINCIPAL</span></td><td style="padding:6px;text-align:right;font-weight:700" class="mono">100.00 per 100</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="itab-positions" style="display:none">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px">CURRENT POSITIONS</div>
+            <div class="field-row"><span class="fk">Total Face Value Held</span><span class="fv" style="color:var(--brand-teal)">KES 3,200,000,000</span></div>
+            <div class="field-row"><span class="fk">Book Value</span><span class="fv">KES 3,184,000,000</span></div>
+            <div class="field-row"><span class="fk">Market Value</span><span class="fv">KES 3,248,000,000</span></div>
+            <div class="field-row"><span class="fk">Unrealised P&amp;L</span><span class="fv" style="color:var(--status-success)">+KES 64,000,000</span></div>
+            <div class="field-row"><span class="fk">Accrued Interest</span><span class="fv">KES 28,400,000</span></div>
+            <div class="field-row"><span class="fk">Modified Duration</span><span class="fv">6.42 years</span></div>
+            <div class="field-row"><span class="fk">PV01</span><span class="fv">KES 204,928</span></div>
+            <a href="23-middle-office.html" style="display:block;margin-top:var(--space-3);font-size:11px;font-weight:600;color:var(--brand-primary)">View full valuation in Middle Office →</a>
+          </div>
+        </div>
+
+        <!-- Add instrument form (hidden) -->
+        <div class="card" id="addInstrForm" style="display:none">
+          <div class="card-header">
+            <div class="card-title">Add New Instrument</div>
+            <button class="btn btn-ghost btn-sm" onclick="closeAddInstrument()">✕ Cancel</button>
+          </div>
+          <div class="card-body">
+            <div class="form-grid-2" style="gap:var(--space-3)">
+              <div class="form-group"><label class="form-label">Instrument Type *</label><select class="form-control"><option>T-Bill</option><option>T-Bond (Fixed Rate)</option><option>T-Bond (Inflation-linked)</option><option>Commercial Paper</option><option>Fixed Deposit Template</option><option>Repo Collateral</option></select></div>
+              <div class="form-group"><label class="form-label">ISIN / Local ID *</label><input type="text" class="form-control" placeholder="KE00TB…"></div>
+              <div class="form-group"><label class="form-label">Bloomberg ID</label><input type="text" class="form-control" placeholder="KE IFB 2026/10"></div>
+              <div class="form-group"><label class="form-label">Issuer *</label><select class="form-control"><option>CBK (Sovereign)</option><option>Safaricom PLC</option><option>KCB Group</option><option>Equity Bank</option><option>Other (enter name)</option></select></div>
+              <div class="form-group"><label class="form-label">Currency *</label><select class="form-control"><option>KES</option><option>USD</option><option>EUR</option></select></div>
+              <div class="form-group"><label class="form-label">Face Value</label><input type="text" class="form-control" value="100.00"></div>
+              <div class="form-group"><label class="form-label">Coupon Rate (p.a.)</label><input type="text" class="form-control" placeholder="16.00"></div>
+              <div class="form-group"><label class="form-label">Coupon Frequency</label><select class="form-control"><option>Semi-annual</option><option>Annual</option><option>Quarterly</option><option>Zero Coupon</option></select></div>
+              <div class="form-group"><label class="form-label">Day Count Convention</label><select class="form-control"><option>Actual/365 (Fixed)</option><option>Actual/360</option><option>30/360</option></select></div>
+              <div class="form-group"><label class="form-label">Issue Date *</label><input type="date" class="form-control" value="2026-08-25"></div>
+              <div class="form-group"><label class="form-label">Maturity Date *</label><input type="date" class="form-control" value="2027-08-25"></div>
+              <div class="form-group"><label class="form-label">Book Classification</label><select class="form-control"><option>HTM</option><option>AFS</option><option>HFT</option></select></div>
+              <div class="form-group" style="grid-column:1/-1"><label class="form-label">Statutory Eligibility</label>
+                <div style="display:flex;gap:var(--space-4);margin-top:4px;font-size:12px">
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked> SLR Eligible</label>
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox"> CRR Eligible</label>
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked> HQLA Level 1</label>
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox"> Repo Collateral</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer" style="display:flex;justify-content:flex-end;gap:8px">
+            <button class="btn btn-outline btn-sm" onclick="closeAddInstrument()">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="alert('Instrument submitted for secondary approval.\nRef: INSTR-PENDING-001')">Submit for Approval</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function showDetail(id){ document.getElementById('detailPane').classList.add('open'); }
+function instrTab(t){
+  ['details','ratings','cashflows','positions'].forEach(function(id){ document.getElementById('itab-'+id).style.display=id===t?'':'none'; });
+  document.querySelectorAll('#instrTabs .tab-item').forEach(function(el,i){ el.classList.remove('active'); });
+  var idx={details:0,ratings:1,cashflows:2,positions:3}[t];
+  document.querySelectorAll('#instrTabs .tab-item')[idx].classList.add('active');
+}
+function openAddInstrument(){ document.getElementById('detailPane').classList.remove('open'); document.getElementById('addInstrForm').style.display=''; }
+function closeAddInstrument(){ document.getElementById('addInstrForm').style.display='none'; document.getElementById('detailPane').classList.add('open'); }
+</script>
+</body>
+</html>
