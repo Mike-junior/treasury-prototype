@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Definition Factory — E&M Treasury Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.prod-card{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);padding:var(--space-4);cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
+.prod-card:hover{box-shadow:var(--shadow-md);border-color:#94A3B8;transform:translateY(-1px);}
+.prod-card.selected{border-color:var(--brand-primary);box-shadow:0 0 0 2px rgba(200,16,46,.15);}
+.prod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--pc,var(--brand-primary));}
+.prod-card .pname{font-size:13px;font-weight:700;margin-bottom:4px;}
+.prod-card .pdesc{font-size:11px;color:var(--text-muted);line-height:1.5;}
+.prod-card .pmeta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.field-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.field-row:last-child{border-bottom:none;}
+.field-row .fk{color:var(--text-muted);}
+.field-row .fv{font-weight:600;}
+.version-row{display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.version-row:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<nav class="sidebar">
+  <div class="sidebar-logo"><div class="sidebar-logo-mark">E&M</div><div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
+    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
+    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
+    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
+    <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>Deal Register</a>
+    <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>Settlement</a>
+    <a href="20-fx-nop-monitor.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>FX / NOP Monitor</a>
+    <a href="21-treasury-sales.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Treasury Sales</a>
+    <a href="22-nostro-correspondent.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Nostro &amp; Correspondent</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Analytics</div>
+    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
+    <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
+    <a href="23-middle-office.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Middle Office</a>
+    <a href="24-market-data.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Market Data</a>
+    <a href="25-ftp.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Funds Transfer Pricing</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Static Data</div>
+    <a href="15-instrument-master.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Instrument Master</a>
+    <a href="16-counterparty-master.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Counterparty Master</a>
+    <a href="17-static-data-misc.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendars &amp; Brokers</a>
+    <a href="19-product-factory.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>Product Factory</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">System</div>
+    <a href="18-user-management.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>User &amp; Roles</a>
+    <a href="26-accounting-gl.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Accounting &amp; GL</a>
+    <a href="27-audit-trail.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Audit Trail</a>
+    <a href="28-integration-monitor.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Integration Monitor</a>
+    <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Day End Close</a>
+    <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
+    <a href="29-tenant-admin.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Tenant Admin</a>
+  </div>
+  <div class="sidebar-footer"><div class="user-mini"><div class="user-avatar">JM</div><div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">Tenant Admin · LE-001</div></div></div></div>
+</nav>
+
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">Product Definitions</span><span class="rate">14</span><span class="delta" style="color:#94A3B8">shipped</span></div>
+    <div class="fx-tick"><span class="pair">Custom Definitions</span><span class="rate">2</span></div>
+    <div class="fx-tick"><span class="pair">Draft (Unpublished)</span><span class="rate">1</span><span class="delta" style="color:var(--status-warning)">pending approval</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>Static Data</span><span class="sep"> / </span><span class="current">Product Definition Factory</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('newProdPanel').style.display=''">+ Create Product Definition</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JM</div>
+      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">Tenant Admin</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Product Definition Factory</h1><p class="page-subtitle">Configure instrument types through UI — zero code deployment required · FR-04 · Versioned &amp; effective-dated</p></div>
+    </div>
+
+    <div class="alert alert-info" style="margin-bottom:var(--space-4)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+      <div>A product definition cannot be modified once it has active deals. To change a product, create a new version — existing deals remain on the original version (FR-04.3). New deals automatically use the latest active version.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:var(--space-4);align-items:start">
+
+      <!-- Product catalogue grid -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:var(--space-3)">Standard Catalogue — Shipped with Platform</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+          <div class="prod-card selected" style="--pc:#C8102E" onclick="showProd('spot')">
+            <div class="pname">FX Spot</div>
+            <div class="pdesc">T+2 currency exchange at spot rate. Single leg. Auto-derives value date.</div>
+            <div class="pmeta"><span class="badge badge-success">v1.2 Active</span><span class="badge badge-neutral">14 active deals</span></div>
+          </div>
+          <div class="prod-card" style="--pc:#2563EB" onclick="showProd('fwd')">
+            <div class="pname">FX Forward</div>
+            <div class="pdesc">Pre-agreed rate for future settlement. Forward points from yield curve.</div>
+            <div class="pmeta"><span class="badge badge-success">v1.1 Active</span><span class="badge badge-neutral">8 active deals</span></div>
+          </div>
+          <div class="prod-card" style="--pc:#7C3AED" onclick="showProd('swap')">
+            <div class="pname">FX Swap</div>
+            <div class="pdesc">Near leg (spot) + Far leg (forward). Two linked deals, one authorisation.</div>
+            <div class="pmeta"><span class="badge badge-success">v1.0 Active</span><span class="badge badge-neutral">3 active deals</span></div>
+          </div>
+          <div class="prod-card" style="--pc:#0D7377" onclick="showProd('fd')">
+            <div class="pname">Fixed Deposit</div>
+            <div class="pdesc">Placement or deposit for fixed tenor. Actual/365. Auto-calculates settlement.</div>
+            <div class="pmeta"><span class="badge badge-success">v2.0 Active</span><span class="badge badge-neutral">22 active deals</span></div>
+          </div>
+          <div class="prod-card" style="--pc:#D97706" onclick="showProd('repo')">
+            <div class="pname">Repo / Reverse Repo</div>
+            <div class="pdesc">Secured borrowing/lending against government securities with haircut.</div>
+            <div class="pmeta"><span class="badge badge-success">v1.0 Active</span><span class="badge badge-neutral">5 active deals</span></div>
+          </div>
+          <div class="prod-card" style="--pc:#0A1628" onclick="showProd('tbill')">
+            <div class="pname">T-Bill (91 / 182 / 364)</div>
+            <div class="pdesc">Discount instrument. Price from yield. HTM/AFS/HFT book classification.</div>
+            <div class="pmeta"><span class="badge badge-success">v1.3 Active</span><span class="badge badge-neutral">48 active deals</span></div>
+          </div>
+          <div class="prod-card" style="--pc:#1D4ED8" onclick="showProd('tbond')">
+            <div class="pname">T-Bond (Fixed Rate)</div>
+            <div class="pdesc">Semi-annual coupon. Clean/dirty price. Duration &amp; PV01 computed.</div>
+            <div class="pmeta"><span class="badge badge-success">v1.2 Active</span><span class="badge badge-neutral">67 active deals</span></div>
+          </div>
+          <div class="prod-card" style="--pc:#0891B2" onclick="showProd('on')">
+            <div class="pname">Overnight Borrowing</div>
+            <div class="pdesc">Same-day settlement. T+1 maturity. Benchmarked against CBR.</div>
+            <div class="pmeta"><span class="badge badge-success">v1.0 Active</span><span class="badge badge-neutral">11 active deals</span></div>
+          </div>
+          <div class="prod-card" style="--pc:#16A34A" onclick="showProd('cp')">
+            <div class="pname">Commercial Paper</div>
+            <div class="pdesc">Short-term corporate debt. 7–364 days. Discount pricing like T-Bill.</div>
+            <div class="pmeta"><span class="badge badge-success">v1.0 Active</span><span class="badge badge-neutral">9 active deals</span></div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:var(--space-3)">Custom Definitions</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3)">
+          <div class="prod-card" style="--pc:#D97706">
+            <div class="pname">Islamic Murabaha FD</div>
+            <div class="pdesc">Sharia-compliant placement. Profit rate instead of interest. No compounding.</div>
+            <div class="pmeta"><span class="badge badge-success">v1.0 Active</span><span class="badge badge-neutral">3 active deals</span></div>
+          </div>
+          <div class="prod-card" style="--pc:var(--status-warning)">
+            <div class="pname">Structured Note — Draft</div>
+            <div class="pdesc">Custom structured note with embedded option. Pending Treasurer approval.</div>
+            <div class="pmeta"><span class="badge badge-warning">DRAFT</span><span class="badge badge-neutral">0 deals</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product detail panel -->
+      <div class="card" id="prodDetail">
+        <div class="card-header">
+          <div><div class="card-title">FX Spot — Definition v1.2</div><div class="card-subtitle">Standard catalogue · 14 active deals</div></div>
+          <span class="badge badge-success">ACTIVE</span>
+        </div>
+        <div class="tabs" id="pdTabs" style="margin:0 var(--space-4)">
+          <div class="tab-item active" onclick="pdTab('def')">Definition</div>
+          <div class="tab-item" onclick="pdTab('cashflow')">Cash Flow Rules</div>
+          <div class="tab-item" onclick="pdTab('acctg')">Accounting Rules</div>
+          <div class="tab-item" onclick="pdTab('versions')">Versions</div>
+        </div>
+        <div style="padding:var(--space-4)">
+          <div id="pd-def">
+            <div class="field-row"><span class="fk">Product Code</span><span class="fv">PROD-FX-SPOT-001</span></div>
+            <div class="field-row"><span class="fk">Category</span><span class="fv">FX</span></div>
+            <div class="field-row"><span class="fk">Default Book Type</span><span class="fv">FX Trading Book</span></div>
+            <div class="field-row"><span class="fk">Settlement Days</span><span class="fv">T+2 (adjusted for holidays)</span></div>
+            <div class="field-row"><span class="fk">Day Count</span><span class="fv">N/A (spot — no accrual)</span></div>
+            <div class="field-row"><span class="fk">Valuation Method</span><span class="fv">Mid-market spot rate</span></div>
+            <div class="field-row"><span class="fk">Price Source</span><span class="fv">Reuters → Bloomberg → Manual</span></div>
+            <div class="field-row"><span class="fk">Rate Tolerance</span><span class="fv">10 bps (challenge if exceeded)</span></div>
+            <div class="field-row"><span class="fk">Limit Dimensions</span><span class="fv">CTY · NOP overnight · Aggregate NOP · Dealer daily</span></div>
+            <div class="field-row"><span class="fk">Settlement Method</span><span class="fv">SWIFT MT202 auto-generated</span></div>
+            <div class="field-row"><span class="fk">Required Fields</span><span class="fv">Buy CCY · Sell CCY · Notional · Rate · Value Date · Nostro</span></div>
+            <div class="field-row"><span class="fk">Active Deals</span><span class="fv" style="color:var(--status-warning)">14 — cannot modify this version</span></div>
+          </div>
+          <div id="pd-cashflow" style="display:none">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:var(--space-3)">Cash flow rules define how settlement amounts are calculated from trade inputs.</div>
+            <div class="field-row"><span class="fk">Near Leg (Pay)</span><span class="fv">Notional × Rate = KES settlement</span></div>
+            <div class="field-row"><span class="fk">Far Leg (Receive)</span><span class="fv">Notional = FCY amount received</span></div>
+            <div class="field-row"><span class="fk">Settlement Date</span><span class="fv">Trade Date + 2 business days (KES + FCY calendars)</span></div>
+            <div class="field-row"><span class="fk">Charges / Taxes</span><span class="fv">None (FX spot is tax-exempt)</span></div>
+          </div>
+          <div id="pd-acctg" style="display:none">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:var(--space-3)">Accounting rules are resolved at runtime from AccountingRuleKey — no hardcoded entries.</div>
+            <div class="field-row"><span class="fk">On DEAL_SETTLE</span><span class="fv">Dr KES Nostro / Cr FCY Nostro</span></div>
+            <div class="field-row"><span class="fk">On MTM_REVALUATION</span><span class="fv">P&amp;L to FX Trading P&amp;L account</span></div>
+            <div class="field-row"><span class="fk">On DEAL_MATURE</span><span class="fv">Close position — reverse MTM</span></div>
+            <div class="field-row"><span class="fk">Rule Set</span><span class="fv">FX-SPOT-ACCTG-v1 (IFRS 9)</span></div>
+            <a href="26-accounting-gl.html" style="display:block;margin-top:var(--space-3);font-size:11px;font-weight:600;color:var(--brand-primary)">View full accounting rule set →</a>
+          </div>
+          <div id="pd-versions" style="display:none">
+            <div class="version-row"><span class="mono fw-600">v1.2</span><span style="font-size:11px">Current · Active from 01/06/2026</span><span class="badge badge-success">ACTIVE</span></div>
+            <div class="version-row"><span class="mono fw-600" style="opacity:.6">v1.1</span><span style="font-size:11px;opacity:.6">Active 01/01/2026 — 31/05/2026</span><span class="badge badge-neutral">RETIRED</span></div>
+            <div class="version-row"><span class="mono fw-600" style="opacity:.6">v1.0</span><span style="font-size:11px;opacity:.6">Active 01/01/2025 — 31/12/2025</span><span class="badge badge-neutral">RETIRED</span></div>
+            <div style="margin-top:var(--space-3)"><button class="btn btn-outline btn-sm" onclick="alert('New version created: v1.3 (DRAFT).\nActive deals continue on v1.2.')">Create New Version</button></div>
+          </div>
+        </div>
+        <div class="card-footer" style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn btn-warning btn-sm" onclick="alert('Cannot modify — 14 active deals reference this version.\n\nCreate a new version instead.')">Edit (Blocked — Active Deals)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- New product form -->
+    <div class="card" id="newProdPanel" style="display:none;margin-top:var(--space-4)">
+      <div class="card-header"><div class="card-title">Create New Product Definition</div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('newProdPanel').style.display='none'">✕</button></div>
+      <div class="card-body">
+        <div class="form-grid-3">
+          <div class="form-group"><label class="form-label">Product Name *</label><input type="text" class="form-control" placeholder="e.g. Islamic Wakala Placement"></div>
+          <div class="form-group"><label class="form-label">Product Code *</label><input type="text" class="form-control" placeholder="PROD-MM-WAKALA-001"></div>
+          <div class="form-group"><label class="form-label">Category *</label><select class="form-control"><option>FX</option><option>Money Market</option><option>Fixed Income</option><option>Repo</option><option>Derivative</option><option>Islamic</option></select></div>
+          <div class="form-group"><label class="form-label">Default Book Type *</label><select class="form-control"><option>FX Trading Book</option><option>Placement/Deposit Book</option><option>HTM</option><option>AFS</option><option>HFT</option><option>Overnight Borrowing</option></select></div>
+          <div class="form-group"><label class="form-label">Settlement Days</label><select class="form-control"><option>T+0 (Same day)</option><option>T+1</option><option>T+2</option><option>T+3</option><option>Custom (specify)</option></select></div>
+          <div class="form-group"><label class="form-label">Day Count Convention</label><select class="form-control"><option>Actual/365 (Fixed)</option><option>Actual/360</option><option>30/360</option><option>N/A (spot)</option></select></div>
+          <div class="form-group"><label class="form-label">Valuation Method</label><select class="form-control"><option>Spot rate (MTM daily)</option><option>Amortised cost (HTM)</option><option>Fair value through OCI</option><option>Profit rate (Islamic)</option></select></div>
+          <div class="form-group"><label class="form-label">Rate Tolerance (bps)</label><input type="text" class="form-control" value="10"></div>
+          <div class="form-group"><label class="form-label">Settlement Method</label><select class="form-control"><option>SWIFT MT202</option><option>SWIFT MT300</option><option>CBK RTGS</option><option>Internal Transfer</option></select></div>
+          <div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea class="form-control" rows="2" placeholder="Describe the product's economic characteristics…"></textarea></div>
+        </div>
+      </div>
+      <div class="card-footer" style="display:flex;justify-content:flex-end;gap:8px">
+        <button class="btn btn-outline btn-sm">Save as Draft</button>
+        <button class="btn btn-primary btn-sm" onclick="alert('Product definition submitted for Treasurer approval.\nRef: PROD-DRAFT-003\n\nWill be available for deal capture once approved.')">Submit for Approval</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+function pdTab(t){
+  ['def','cashflow','acctg','versions'].forEach(function(id){ document.getElementById('pd-'+id).style.display=id===t?'':'none'; });
+  document.querySelectorAll('#pdTabs .tab-item').forEach(function(el,i){ el.classList.remove('active'); });
+  document.querySelectorAll('#pdTabs .tab-item')[{def:0,cashflow:1,acctg:2,versions:3}[t]].classList.add('active');
+}
+function showProd(id){ document.querySelectorAll('.prod-card').forEach(function(c){ c.classList.remove('selected'); }); event.currentTarget.classList.add('selected'); }
+</script>
+</body>
+</html>
