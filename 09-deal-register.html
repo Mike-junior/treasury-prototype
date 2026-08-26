@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deal Register — E&M Treasury Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.filter-chip{display:inline-flex;align-items:center;padding:4px 12px;border:1px solid var(--surface-border);border-radius:var(--radius-full);font-size:11px;font-weight:600;cursor:pointer;transition:all .12s;color:var(--text-secondary);}
+.filter-chip:hover{border-color:#94A3B8;color:var(--text-primary);}
+.filter-chip.active{background:var(--brand-secondary);color:#fff;border-color:var(--brand-secondary);}
+.deal-exp{display:none;}
+.deal-exp.open{display:table-row;}
+.detail-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--space-3);padding:var(--space-4);background:rgba(10,22,40,.02);}
+.df .dl{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;}
+.df .dv{font-size:12px;font-weight:700;font-family:var(--font-mono);margin-top:2px;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<nav class="sidebar">
+  <div class="sidebar-logo"><div class="sidebar-logo-mark">E&M</div><div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
+    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
+    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
+    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
+    <a href="09-deal-register.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/></svg>Deal Register</a>
+    <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Settlement</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Analytics</div>
+    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
+    <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">System</div>
+    <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Day End Close</a>
+    <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
+  </div>
+  <div class="sidebar-footer"><div class="user-mini"><div class="user-avatar">JM</div><div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">Dealer · LE-001</div></div></div></div>
+</nav>
+
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲+0.23</span></div>
+    <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span class="delta down">▼−0.41</span></div>
+    <div class="fx-tick"><span class="pair">91-TB</span><span class="rate">14.87%</span><span class="delta up">▲+5bp</span></div>
+    <div class="fx-tick"><span class="pair">CBR</span><span class="rate">13.00%</span><span class="delta" style="color:#94A3B8">unch</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>Operations</span><span class="sep"> / </span><span class="current">Deal Register</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <a href="03-deal-capture.html" class="btn btn-primary btn-sm">+ New Deal</a>
+      <button class="btn btn-outline btn-sm">Export CSV</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">JM</div>
+      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">Dealer · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Deal Register</h1><p class="page-subtitle">Full deal blotter · All products · LE-001 Kenya · Click row to expand</p></div>
+      <div class="page-actions">
+        <input type="date" class="form-control" style="width:130px;padding:5px 10px;font-size:11px" value="2026-08-01">
+        <span style="font-size:11px;color:var(--text-muted)">to</span>
+        <input type="date" class="form-control" style="width:130px;padding:5px 10px;font-size:11px" value="2026-08-25">
+        <button class="btn btn-secondary btn-sm">Apply</button>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+      <div class="kpi-card" style="--kpi-accent:var(--brand-secondary);--kpi-icon-bg:rgba(10,22,40,.06)"><div class="kpi-label">Total (Aug)</div><div class="kpi-value">287</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-success);--kpi-icon-bg:rgba(22,163,74,.06)"><div class="kpi-label">Settled / Active</div><div class="kpi-value" style="color:var(--status-success)">252</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-warning);--kpi-icon-bg:rgba(217,119,6,.06)"><div class="kpi-label">Pending Auth</div><div class="kpi-value" style="color:var(--status-warning)">5</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--text-muted);--kpi-icon-bg:rgba(113,128,150,.06)"><div class="kpi-label">Matured</div><div class="kpi-value">30</div></div>
+      <div class="kpi-card" style="--kpi-accent:#0D7377;--kpi-icon-bg:rgba(13,115,119,.06)"><div class="kpi-label">Portfolio AUM</div><div class="kpi-value mono" style="font-size:22px">42.7B</div></div>
+    </div>
+
+    <!-- Filters -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:var(--space-3) var(--space-4);background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);margin-bottom:var(--space-4)">
+      <span style="font-size:11px;font-weight:700;color:var(--text-muted)">Product:</span>
+      <div class="filter-chip active" onclick="setF(this)">All</div>
+      <div class="filter-chip" onclick="setF(this)">FX Spot</div>
+      <div class="filter-chip" onclick="setF(this)">FX Forward</div>
+      <div class="filter-chip" onclick="setF(this)">FX Swap</div>
+      <div class="filter-chip" onclick="setF(this)">Fixed Deposit</div>
+      <div class="filter-chip" onclick="setF(this)">Repo</div>
+      <div class="filter-chip" onclick="setF(this)">T-Bill/Bond</div>
+      <div class="filter-chip" onclick="setF(this)">Overnight</div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <select class="form-control" style="padding:5px 10px;font-size:11px;width:140px"><option>All Statuses</option><option>PENDING AUTH</option><option>AUTHORISED</option><option>SETTLED</option><option>MATURED</option></select>
+        <input type="text" class="form-control" style="padding:5px 10px;font-size:11px;width:200px" placeholder="Search ID / counterparty…">
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>Deal ID</th><th>Type</th><th>Counterparty</th><th>Pair/CCY</th><th style="text-align:right">Notional</th><th>Rate</th><th>Trade Date</th><th>Value/Mat.</th><th>Dealer</th><th>Auth By</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr onclick="tog('a')" style="cursor:pointer"><td style="color:#94A3B8;font-size:10px" id="aa">▶</td><td><span class="mono fw-600">DEAL-00287</span></td><td><span class="badge badge-info">FX SPOT</span></td><td>Citi N.A. Nairobi</td><td>USD/KES</td><td class="text-right mono fw-600">$2,500,000</td><td class="mono">129.42</td><td class="mono text-xs">25/08/2026</td><td class="mono text-xs">27/08/2026</td><td style="font-size:12px">J. Mwangi</td><td style="font-size:12px">M. Njoki</td><td><span class="badge badge-success">AUTHORISED</span></td><td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td></tr>
+            <tr class="deal-exp" id="ea"><td colspan="13"><div class="detail-grid"><div class="df"><div class="dl">Settlement KES</div><div class="dv">323,550,000</div></div><div class="df"><div class="dl">Nostro</div><div class="dv" style="font-size:11px">Citi N.A. USD NY</div></div><div class="df"><div class="dl">SWIFT Ref</div><div class="dv" style="font-size:11px">NYC20260825001</div></div><div class="df"><div class="dl">Captured</div><div class="dv" style="font-size:11px">09:12:44</div></div><div class="df"><div class="dl">Auth At</div><div class="dv" style="font-size:11px">09:31:05</div></div><div class="df"><div class="dl">Book</div><div class="dv" style="font-size:11px">FX Trading</div></div></div></td></tr>
+
+            <tr onclick="tog('b')" style="cursor:pointer;background:rgba(217,119,6,.03)"><td style="color:#94A3B8;font-size:10px" id="ab">▶</td><td><span class="mono fw-600">DEAL-00286</span></td><td><span class="badge badge-primary">FX FWD</span></td><td>Standard Bank Kenya</td><td>EUR/KES</td><td class="text-right mono fw-600">€1,000,000</td><td class="mono">140.85</td><td class="mono text-xs">25/08/2026</td><td class="mono text-xs">25/11/2026</td><td style="font-size:12px">J. Mwangi</td><td style="font-size:12px">—</td><td><span class="badge badge-warning">PENDING AUTH</span></td><td><a href="08-auth-queue.html" class="btn btn-outline btn-sm" onclick="event.stopPropagation()">Auth</a></td></tr>
+            <tr class="deal-exp" id="eb"><td colspan="13"><div class="detail-grid"><div class="df"><div class="dl">Spot Rate</div><div class="dv">140.12</div></div><div class="df"><div class="dl">Fwd Points</div><div class="dv">+73</div></div><div class="df"><div class="dl">All-In Rate</div><div class="dv">140.85</div></div><div class="df"><div class="dl">Tenor</div><div class="dv">92 days</div></div><div class="df"><div class="dl">Settlement KES</div><div class="dv">140,850,000</div></div><div class="df"><div class="dl">EUR NOP Impact</div><div class="dv" style="color:var(--status-warning)">+1.0M (84%)</div></div></div></td></tr>
+
+            <tr onclick="tog('c')" style="cursor:pointer"><td style="color:#94A3B8;font-size:10px" id="ac">▶</td><td><span class="mono fw-600">DEAL-00285</span></td><td><span class="badge badge-neutral">FIXED DEP</span></td><td>StanChart Kenya</td><td>KES</td><td class="text-right mono fw-600">250,000,000</td><td class="mono">14.50%</td><td class="mono text-xs">26/05/2026</td><td class="mono text-xs">25/08/2026</td><td style="font-size:12px">W. Kamau</td><td style="font-size:12px">J. Mwangi</td><td><span class="badge badge-danger">MATURED</span></td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation()">Rollover</button></td></tr>
+            <tr class="deal-exp" id="ec"><td colspan="13"><div class="detail-grid"><div class="df"><div class="dl">Principal</div><div class="dv">250,000,000</div></div><div class="df"><div class="dl">Interest Received</div><div class="dv" style="color:var(--status-success)">1,162,500</div></div><div class="df"><div class="dl">Total Settlement</div><div class="dv">251,162,500</div></div><div class="df"><div class="dl">Day Count</div><div class="dv">A/365</div></div><div class="df"><div class="dl">Tenor</div><div class="dv">91 days</div></div><div class="df"><div class="dl">Book</div><div class="dv">Placement</div></div></div></td></tr>
+
+            <tr onclick="tog('d')" style="cursor:pointer"><td style="color:#94A3B8;font-size:10px" id="ad">▶</td><td><span class="mono fw-600">DEAL-00284</span></td><td><span class="badge badge-neutral">T-BILL</span></td><td>CBK Direct</td><td>KES</td><td class="text-right mono fw-600">500,000,000</td><td class="mono">14.87%</td><td class="mono text-xs">26/05/2026</td><td class="mono text-xs">25/08/2026</td><td style="font-size:12px">J. Mwangi</td><td style="font-size:12px">M. Njoki</td><td><span class="badge badge-danger">MATURED</span></td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation()">Rollover</button></td></tr>
+            <tr class="deal-exp" id="ed"><td colspan="13"><div class="detail-grid"><div class="df"><div class="dl">Face Value</div><div class="dv">500,000,000</div></div><div class="df"><div class="dl">Purchase Price</div><div class="dv">96.42%</div></div><div class="df"><div class="dl">Purchase Amount</div><div class="dv">482,100,000</div></div><div class="df"><div class="dl">Redemption</div><div class="dv" style="color:var(--status-success)">500,000,000</div></div><div class="df"><div class="dl">Book</div><div class="dv">HTM</div></div><div class="df"><div class="dl">CBK Ref</div><div class="dv" style="font-size:11px">TB91-AUG-2026</div></div></div></td></tr>
+
+            <tr onclick="tog('e')" style="cursor:pointer"><td style="color:#94A3B8;font-size:10px" id="ae">▶</td><td><span class="mono fw-600">DEAL-00283</span></td><td><span class="badge badge-info">REPO</span></td><td>DTBK</td><td>KES</td><td class="text-right mono fw-600">800,000,000</td><td class="mono">13.25%</td><td class="mono text-xs">25/08/2026</td><td class="mono text-xs">26/08/2026</td><td style="font-size:12px">J. Mwangi</td><td style="font-size:12px">M. Njoki</td><td><span class="badge badge-success">AUTHORISED</span></td><td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td></tr>
+            <tr class="deal-exp" id="ee"><td colspan="13"><div class="detail-grid"><div class="df"><div class="dl">Collateral</div><div class="dv" style="font-size:11px">T-Bond IFB/2025/10</div></div><div class="df"><div class="dl">Face Value</div><div class="dv">1,000,000,000</div></div><div class="df"><div class="dl">Haircut</div><div class="dv">20%</div></div><div class="df"><div class="dl">Repo Interest</div><div class="dv">289,041</div></div><div class="df"><div class="dl">Repurchase Amt</div><div class="dv">800,289,041</div></div><div class="df"><div class="dl">Tenor</div><div class="dv">ON (1 day)</div></div></div></td></tr>
+
+            <tr onclick="tog('f')" style="cursor:pointer"><td style="color:#94A3B8;font-size:10px" id="af">▶</td><td><span class="mono fw-600">DEAL-00282</span></td><td><span class="badge" style="background:rgba(124,58,237,.1);color:#7C3AED;border:1px solid rgba(124,58,237,.2)">ON BORROW</span></td><td>Equity Bank</td><td>KES</td><td class="text-right mono fw-600">1,200,000,000</td><td class="mono">13.00%</td><td class="mono text-xs">25/08/2026</td><td class="mono text-xs">26/08/2026</td><td style="font-size:12px">J. Mwangi</td><td style="font-size:12px">M. Njoki</td><td><span class="badge badge-success">AUTHORISED</span></td><td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td></tr>
+            <tr class="deal-exp" id="ef"><td colspan="13"><div class="detail-grid"><div class="df"><div class="dl">Direction</div><div class="dv">BORROWING</div></div><div class="df"><div class="dl">Rate Ref</div><div class="dv">CBR = 13.00%</div></div><div class="df"><div class="dl">Interest (1 day)</div><div class="dv">427,397</div></div><div class="df"><div class="dl">Repayment</div><div class="dv">1,200,427,397</div></div><div class="df"><div class="dl">Book</div><div class="dv">ON Borrowing</div></div><div class="df"><div class="dl">Settlement Acct</div><div class="dv" style="font-size:11px">CBK-001-KES</div></div></div></td></tr>
+
+            <tr onclick="tog('g')" style="cursor:pointer;background:rgba(217,119,6,.03)"><td style="color:#94A3B8;font-size:10px" id="ag">▶</td><td><span class="mono fw-600">DEAL-00281</span></td><td><span class="badge badge-warning">FX SWAP</span></td><td>Barclays Kenya</td><td>GBP/KES</td><td class="text-right mono fw-600">£500,000</td><td class="mono">163.45</td><td class="mono text-xs">25/08/2026</td><td class="mono text-xs">27/08/2026</td><td style="font-size:12px">J. Mwangi</td><td style="font-size:12px">—</td><td><span class="badge badge-warning">PENDING AUTH</span></td><td><a href="08-auth-queue.html" class="btn btn-outline btn-sm" onclick="event.stopPropagation()">Auth</a></td></tr>
+            <tr class="deal-exp" id="eg"><td colspan="13"><div class="detail-grid"><div class="df"><div class="dl">Near Rate</div><div class="dv">163.45</div></div><div class="df"><div class="dl">Far Rate</div><div class="dv">164.83</div></div><div class="df"><div class="dl">Swap Points</div><div class="dv">138</div></div><div class="df"><div class="dl">Near Val.</div><div class="dv">27/08/2026</div></div><div class="df"><div class="dl">Far Val.</div><div class="dv">27/11/2026</div></div><div class="df"><div class="dl">Queue Time</div><div class="dv" style="color:var(--status-danger)">4h 18m ⚑</div></div></div></td></tr>
+
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--text-muted)">Showing 7 of 287 deals · August 2026</span>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-outline btn-sm">‹ Prev</button>
+          <button class="btn btn-outline btn-sm" style="background:var(--brand-secondary);color:#fff;border-color:var(--brand-secondary)">1</button>
+          <button class="btn btn-outline btn-sm">2</button>
+          <button class="btn btn-outline btn-sm">3</button>
+          <button class="btn btn-outline btn-sm">Next ›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+function tog(id){
+  var r=document.getElementById('e'+id),a=document.getElementById('a'+id);
+  if(r.classList.contains('open')){r.classList.remove('open');a.textContent='▶';}
+  else{r.classList.add('open');a.textContent='▼';}
+}
+function setF(el){document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
+</script>
+</body>
+</html>

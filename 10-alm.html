@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALM / IRRBB — E&M Treasury Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.gap-cell{padding:8px 12px;text-align:right;font-family:var(--font-mono);font-size:12px;border-right:1px solid var(--surface-divider);}
+.gap-cell:last-child{border-right:none;}
+.gap-pos{color:var(--status-success);font-weight:700;}
+.gap-neg{color:var(--status-danger);font-weight:700;}
+.gap-lbl{font-size:11px;font-weight:700;color:var(--text-primary);padding:8px 12px;border-right:1px solid var(--surface-divider);white-space:nowrap;}
+.bucket-head{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;padding:8px 12px;text-align:center;border-right:1px solid var(--surface-divider);background:var(--surface-bg);}
+.scenario-card{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);padding:var(--space-4);position:relative;overflow:hidden;}
+.scenario-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--sc,#2563EB);}
+.irrbb-row{display:flex;justify-content:space-between;align-items:center;padding:10px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.irrbb-row:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<nav class="sidebar">
+  <div class="sidebar-logo"><div class="sidebar-logo-mark">E&M</div><div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
+    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
+    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
+    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
+    <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/></svg>Deal Register</a>
+    <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Settlement</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Analytics</div>
+    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    <a href="10-alm.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
+    <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">System</div>
+    <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Day End Close</a>
+    <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
+  </div>
+  <div class="sidebar-footer"><div class="user-mini"><div class="user-avatar">JM</div><div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">Treasurer · LE-001</div></div></div></div>
+</nav>
+
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">CBR</span><span class="rate">13.00%</span><span class="delta" style="color:#94A3B8">unch</span></div>
+    <div class="fx-tick"><span class="pair">91-TB</span><span class="rate">14.87%</span><span class="delta up">▲+5bp</span></div>
+    <div class="fx-tick"><span class="pair">182-TB</span><span class="rate">15.23%</span><span class="delta up">▲+3bp</span></div>
+    <div class="fx-tick"><span class="pair">364-TB</span><span class="rate">16.10%</span><span class="delta" style="color:#94A3B8">unch</span></div>
+    <div class="fx-tick"><span class="pair">5yr Bond</span><span class="rate">16.75%</span><span class="delta down">▼−5bp</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>Analytics</span><span class="sep"> / </span><span class="current">ALM / IRRBB</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm">Run Scenario</button>
+      <button class="btn btn-primary btn-sm">Export ALM Report</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">JM</div>
+      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">Treasurer · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">ALM &amp; IRRBB</h1><p class="page-subtitle">Asset &amp; Liability Management · Interest Rate Risk in the Banking Book · Business date: 25 Aug 2026</p></div>
+      <div class="page-actions">
+        <select class="form-control" style="padding:5px 12px;font-size:12px;width:160px"><option>KES (Base Currency)</option><option>USD Equivalent</option></select>
+        <button class="btn btn-outline btn-sm">Assumptions</button>
+      </div>
+    </div>
+
+    <!-- KPI row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-4)">
+      <div class="kpi-card" style="--kpi-accent:#2563EB;--kpi-icon-bg:rgba(37,99,235,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="kpi-label">Net Interest Income (NII)</div>
+        <div class="kpi-value mono" style="font-size:22px">412.3M</div>
+        <div class="kpi-meta"><span class="kpi-delta up">▲ 8.3%</span>&nbsp;vs prior month</div>
+      </div>
+      <div class="kpi-card" style="--kpi-accent:#0D7377;--kpi-icon-bg:rgba(13,115,119,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg></div>
+        <div class="kpi-label">Net Interest Margin</div>
+        <div class="kpi-value mono" style="font-size:22px">4.21%</div>
+        <div class="kpi-meta"><span class="kpi-delta up">▲ 12bp</span>&nbsp;vs prior month</div>
+      </div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-warning);--kpi-icon-bg:rgba(217,119,6,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+        <div class="kpi-label">EVE Sensitivity (+200bp)</div>
+        <div class="kpi-value mono" style="font-size:22px;color:var(--status-warning)">−1.8B</div>
+        <div class="kpi-meta">Limit: −KES 3.0B &nbsp;<span style="color:var(--status-success);font-weight:600">WITHIN</span></div>
+      </div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-success);--kpi-icon-bg:rgba(22,163,74,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div class="kpi-label">LCR (Liquidity)</div>
+        <div class="kpi-value mono" style="font-size:22px;color:var(--status-success)">118%</div>
+        <div class="kpi-meta">Min: 100% &nbsp;<span style="color:var(--status-success);font-weight:600">COMPLIANT</span></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" id="almTabs">
+      <div class="tab-item active" onclick="almTab('gap')">Repricing Gap</div>
+      <div class="tab-item" onclick="almTab('irrbb')">IRRBB Scenarios</div>
+      <div class="tab-item" onclick="almTab('lcr')">LCR / NSFR</div>
+      <div class="tab-item" onclick="almTab('nim')">NIM Analysis</div>
+    </div>
+
+    <!-- REPRICING GAP TAB -->
+    <div class="tab-panel active" id="tab-gap">
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Interest Rate Repricing Gap Analysis</div><div class="card-subtitle">Rate-sensitive assets minus rate-sensitive liabilities per time bucket (KES Millions)</div></div>
+          <span class="badge badge-success">Net Long Position</span>
+        </div>
+        <div class="table-wrap">
+          <table style="border-collapse:collapse">
+            <thead>
+              <tr style="border-bottom:2px solid var(--surface-border)">
+                <th class="bucket-head" style="text-align:left;min-width:160px">Item</th>
+                <th class="bucket-head">O/N</th>
+                <th class="bucket-head">1W</th>
+                <th class="bucket-head">1M</th>
+                <th class="bucket-head">3M</th>
+                <th class="bucket-head">6M</th>
+                <th class="bucket-head">1Y</th>
+                <th class="bucket-head">2–5Y</th>
+                <th class="bucket-head">5Y+</th>
+                <th class="bucket-head" style="background:rgba(10,22,40,.04)">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#F8FAFC"><td class="gap-lbl" style="font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase">RATE-SENSITIVE ASSETS</td><td colspan="9"></td></tr>
+              <tr><td class="gap-lbl">Cash &amp; CBK</td><td class="gap-cell">2,847</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell fw-700">2,847</td></tr>
+              <tr><td class="gap-lbl">T-Bills</td><td class="gap-cell">—</td><td class="gap-cell">500</td><td class="gap-cell">1,200</td><td class="gap-cell">8,400</td><td class="gap-cell">4,300</td><td class="gap-cell">3,900</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell fw-700">18,300</td></tr>
+              <tr><td class="gap-lbl">T-Bonds (Fixed)</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">1,500</td><td class="gap-cell">7,800</td><td class="gap-cell">3,200</td><td class="gap-cell fw-700">12,500</td></tr>
+              <tr><td class="gap-lbl">Fixed Deposits (Placed)</td><td class="gap-cell">—</td><td class="gap-cell">800</td><td class="gap-cell">2,100</td><td class="gap-cell">4,500</td><td class="gap-cell">3,200</td><td class="gap-cell">2,700</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell fw-700">13,300</td></tr>
+              <tr><td class="gap-lbl">Reverse Repos</td><td class="gap-cell">600</td><td class="gap-cell">400</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell fw-700">1,000</td></tr>
+              <tr style="background:rgba(10,22,40,.03)"><td class="gap-lbl fw-700">Total RSA</td><td class="gap-cell fw-700">3,447</td><td class="gap-cell fw-700">1,700</td><td class="gap-cell fw-700">3,300</td><td class="gap-cell fw-700">12,900</td><td class="gap-cell fw-700">7,500</td><td class="gap-cell fw-700">8,100</td><td class="gap-cell fw-700">7,800</td><td class="gap-cell fw-700">3,200</td><td class="gap-cell fw-700" style="color:var(--brand-secondary)">47,947</td></tr>
+
+              <tr style="background:#F8FAFC"><td class="gap-lbl" style="font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase">RATE-SENSITIVE LIABILITIES</td><td colspan="9"></td></tr>
+              <tr><td class="gap-lbl">ON Borrowings</td><td class="gap-cell">1,200</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell fw-700">1,200</td></tr>
+              <tr><td class="gap-lbl">Fixed Deposits (Received)</td><td class="gap-cell">—</td><td class="gap-cell">400</td><td class="gap-cell">1,800</td><td class="gap-cell">3,200</td><td class="gap-cell">4,100</td><td class="gap-cell">3,500</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell fw-700">13,000</td></tr>
+              <tr><td class="gap-lbl">Repos</td><td class="gap-cell">800</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell">—</td><td class="gap-cell fw-700">800</td></tr>
+              <tr style="background:rgba(10,22,40,.03)"><td class="gap-lbl fw-700">Total RSL</td><td class="gap-cell fw-700">2,000</td><td class="gap-cell fw-700">400</td><td class="gap-cell fw-700">1,800</td><td class="gap-cell fw-700">3,200</td><td class="gap-cell fw-700">4,100</td><td class="gap-cell fw-700">3,500</td><td class="gap-cell fw-700">—</td><td class="gap-cell fw-700">—</td><td class="gap-cell fw-700" style="color:var(--brand-secondary)">15,000</td></tr>
+
+              <tr style="border-top:2px solid var(--surface-border);background:rgba(13,115,119,.04)">
+                <td class="gap-lbl fw-700" style="color:#0D7377">REPRICING GAP</td>
+                <td class="gap-cell gap-pos">+1,447</td><td class="gap-cell gap-pos">+1,300</td><td class="gap-cell gap-pos">+1,500</td><td class="gap-cell gap-pos">+9,700</td><td class="gap-cell gap-pos">+3,400</td><td class="gap-cell gap-pos">+4,600</td><td class="gap-cell gap-pos">+7,800</td><td class="gap-cell gap-pos">+3,200</td>
+                <td class="gap-cell" style="font-size:14px;font-weight:800;color:#0D7377">+32,947</td>
+              </tr>
+              <tr style="background:rgba(13,115,119,.02)">
+                <td class="gap-lbl fw-700" style="color:#0D7377">CUMULATIVE GAP</td>
+                <td class="gap-cell gap-pos">+1,447</td><td class="gap-cell gap-pos">+2,747</td><td class="gap-cell gap-pos">+4,247</td><td class="gap-cell gap-pos">+13,947</td><td class="gap-cell gap-pos">+17,347</td><td class="gap-cell gap-pos">+21,947</td><td class="gap-cell gap-pos">+29,747</td><td class="gap-cell gap-pos">+32,947</td><td class="gap-cell"></td>
+              </tr>
+              <tr style="background:rgba(200,16,46,.03)">
+                <td class="gap-lbl" style="font-size:11px;color:var(--status-danger)">NII Impact (+100bp)</td>
+                <td class="gap-cell" style="color:var(--status-success);font-size:11px">+1.4M</td><td class="gap-cell" style="color:var(--status-success);font-size:11px">+1.3M</td><td class="gap-cell" style="color:var(--status-success);font-size:11px">+1.5M</td><td class="gap-cell" style="color:var(--status-success);font-size:11px">+9.7M</td><td class="gap-cell" style="color:var(--status-success);font-size:11px">+3.4M</td><td class="gap-cell" style="color:var(--status-success);font-size:11px">+4.6M</td><td class="gap-cell" style="color:var(--status-success);font-size:11px">+7.8M</td><td class="gap-cell" style="color:var(--status-success);font-size:11px">+3.2M</td>
+                <td class="gap-cell fw-700" style="color:var(--status-success)">+32.9M</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer"><span style="font-size:11px;color:var(--status-success);font-weight:600">✓ Positive repricing gap — bank is asset-sensitive. Rising rates increase NII.</span></div>
+      </div>
+    </div>
+
+    <!-- IRRBB SCENARIOS TAB -->
+    <div class="tab-panel" id="tab-irrbb">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-bottom:var(--space-4)">
+        <div class="scenario-card" style="--sc:#2563EB"><div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:var(--space-2)">Scenario 1 — Parallel Shift +200bp</div><div style="font-size:26px;font-weight:800;font-family:var(--font-mono);color:var(--status-warning)">−KES 1.8B</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">EVE impact · Limit −3.0B</div><div style="margin-top:8px"><div class="util-bar-track" style="height:6px"><div class="util-bar-fill warn" style="width:60%"></div></div><div style="font-size:10px;text-align:right;color:var(--status-warning);font-weight:600;margin-top:2px">60% of limit</div></div></div>
+        <div class="scenario-card" style="--sc:#0D7377"><div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:var(--space-2)">Scenario 2 — Parallel Shift −200bp</div><div style="font-size:26px;font-weight:800;font-family:var(--font-mono);color:var(--status-success)">+KES 1.4B</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">EVE impact · Falling rates benefit</div><div style="margin-top:8px"><div class="util-bar-track" style="height:6px"><div class="util-bar-fill" style="width:47%"></div></div><div style="font-size:10px;text-align:right;color:var(--status-success);font-weight:600;margin-top:2px">Gain</div></div></div>
+        <div class="scenario-card" style="--sc:#7C3AED"><div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:var(--space-2)">Scenario 3 — Short-term Shock +300bp</div><div style="font-size:26px;font-weight:800;font-family:var(--font-mono);color:var(--status-danger)">−KES 2.6B</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">EVE impact · Limit −3.0B</div><div style="margin-top:8px"><div class="util-bar-track" style="height:6px"><div class="util-bar-fill danger" style="width:87%"></div></div><div style="font-size:10px;text-align:right;color:var(--status-danger);font-weight:700;margin-top:2px">87% of limit ⚠</div></div></div>
+        <div class="scenario-card" style="--sc:#C8102E"><div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:var(--space-2)">Scenario 4 — Steepener</div><div style="font-size:26px;font-weight:800;font-family:var(--font-mono);color:var(--status-warning)">−KES 0.9B</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Short rates +200bp, long rates flat</div><div style="margin-top:8px"><div class="util-bar-track" style="height:6px"><div class="util-bar-fill warn" style="width:30%"></div></div><div style="font-size:10px;text-align:right;color:var(--status-warning);font-weight:600;margin-top:2px">30% of limit</div></div></div>
+        <div class="scenario-card" style="--sc:#D97706"><div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:var(--space-2)">Scenario 5 — Flattener</div><div style="font-size:26px;font-weight:800;font-family:var(--font-mono);color:var(--status-success)">+KES 0.3B</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Short flat, long rates −100bp</div><div style="margin-top:8px"><div class="util-bar-track" style="height:6px"><div class="util-bar-fill" style="width:10%"></div></div><div style="font-size:10px;text-align:right;color:var(--status-success);font-weight:600;margin-top:2px">Gain</div></div></div>
+        <div class="scenario-card" style="--sc:#16A34A"><div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:var(--space-2)">Scenario 6 — NII Stress +200bp</div><div style="font-size:26px;font-weight:800;font-family:var(--font-mono);color:var(--status-success)">+KES 32.9M</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">12-month NII gain · Asset sensitive</div><div style="margin-top:8px"><div class="util-bar-track" style="height:6px"><div class="util-bar-fill" style="width:55%"></div></div><div style="font-size:10px;text-align:right;color:var(--status-success);font-weight:600;margin-top:2px">Net benefit</div></div></div>
+      </div>
+      <div class="alert alert-warning"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg><div>Scenario 3 (Short-term shock +300bp) is at <strong>87% of the EVE limit</strong>. Consider hedging long-dated fixed rate assets or shortening duration of the bond portfolio. Review at next ALCO meeting.</div></div>
+    </div>
+
+    <!-- LCR / NSFR TAB -->
+    <div class="tab-panel" id="tab-lcr">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Liquidity Coverage Ratio (LCR)</div><div class="card-subtitle">CBK minimum: 100% · Internal buffer: 125%</div></div>
+          <div style="padding:var(--space-4)">
+            <div style="text-align:center;margin-bottom:var(--space-4)">
+              <div style="font-size:48px;font-weight:900;font-family:var(--font-mono);color:var(--status-success)">118%</div>
+              <div style="font-size:12px;color:var(--text-muted)">Current LCR &nbsp;·&nbsp; <span style="color:var(--status-warning);font-weight:600">Below internal 125% buffer</span></div>
+            </div>
+            <div class="irrbb-row"><span style="color:var(--text-muted)">High-Quality Liquid Assets (HQLA)</span><span class="mono fw-700" style="color:var(--status-success)">KES 8,240M</span></div>
+            <div class="irrbb-row"><span style="color:var(--text-muted)">Net Cash Outflows (30-day)</span><span class="mono fw-700">KES 6,983M</span></div>
+            <div class="irrbb-row" style="background:rgba(13,115,119,.03)"><span style="font-weight:700">LCR = HQLA / NCO</span><span class="mono fw-700" style="color:var(--status-success);font-size:16px">118%</span></div>
+            <div class="irrbb-row"><span style="color:var(--text-muted)">Level 1 Assets (CBK, T-Bills)</span><span class="mono fw-700">KES 7,100M</span></div>
+            <div class="irrbb-row"><span style="color:var(--text-muted)">Level 2A Assets</span><span class="mono fw-700">KES 1,140M</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Net Stable Funding Ratio (NSFR)</div><div class="card-subtitle">CBK minimum: 100%</div></div>
+          <div style="padding:var(--space-4)">
+            <div style="text-align:center;margin-bottom:var(--space-4)">
+              <div style="font-size:48px;font-weight:900;font-family:var(--font-mono);color:var(--status-success)">134%</div>
+              <div style="font-size:12px;color:var(--text-muted)">Current NSFR &nbsp;·&nbsp; <span style="color:var(--status-success);font-weight:600">Compliant</span></div>
+            </div>
+            <div class="irrbb-row"><span style="color:var(--text-muted)">Available Stable Funding (ASF)</span><span class="mono fw-700" style="color:var(--status-success)">KES 28,400M</span></div>
+            <div class="irrbb-row"><span style="color:var(--text-muted)">Required Stable Funding (RSF)</span><span class="mono fw-700">KES 21,194M</span></div>
+            <div class="irrbb-row" style="background:rgba(13,115,119,.03)"><span style="font-weight:700">NSFR = ASF / RSF</span><span class="mono fw-700" style="color:var(--status-success);font-size:16px">134%</span></div>
+            <div class="irrbb-row"><span style="color:var(--text-muted)">Stable Deposits</span><span class="mono fw-700">KES 18,200M</span></div>
+            <div class="irrbb-row"><span style="color:var(--text-muted)">Long-term Borrowings (&gt;1yr)</span><span class="mono fw-700">KES 10,200M</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NIM TAB -->
+    <div class="tab-panel" id="tab-nim">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Net Interest Margin Trend</div><div class="card-subtitle">Monthly NIM — January to August 2026</div></div>
+        <div class="card-body">
+          <div style="display:flex;align-items:flex-end;gap:var(--space-3);height:140px;margin-bottom:var(--space-3)">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div style="width:100%;background:#0D7377;border-radius:3px 3px 0 0;height:71%;opacity:.7"></div></div><div style="font-size:9px;color:var(--text-muted);margin-top:4px">Jan</div><div style="font-size:10px;font-weight:700;font-family:var(--font-mono)">3.71%</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div style="width:100%;background:#0D7377;border-radius:3px 3px 0 0;height:74%;opacity:.75"></div></div><div style="font-size:9px;color:var(--text-muted);margin-top:4px">Feb</div><div style="font-size:10px;font-weight:700;font-family:var(--font-mono)">3.84%</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div style="width:100%;background:#0D7377;border-radius:3px 3px 0 0;height:76%;opacity:.8"></div></div><div style="font-size:9px;color:var(--text-muted);margin-top:4px">Mar</div><div style="font-size:10px;font-weight:700;font-family:var(--font-mono)">3.96%</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div style="width:100%;background:#0D7377;border-radius:3px 3px 0 0;height:78%;opacity:.82"></div></div><div style="font-size:9px;color:var(--text-muted);margin-top:4px">Apr</div><div style="font-size:10px;font-weight:700;font-family:var(--font-mono)">4.02%</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div style="width:100%;background:#0D7377;border-radius:3px 3px 0 0;height:79%;opacity:.85"></div></div><div style="font-size:9px;color:var(--text-muted);margin-top:4px">May</div><div style="font-size:10px;font-weight:700;font-family:var(--font-mono)">4.08%</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div style="width:100%;background:#0D7377;border-radius:3px 3px 0 0;height:80%;opacity:.88"></div></div><div style="font-size:9px;color:var(--text-muted);margin-top:4px">Jun</div><div style="font-size:10px;font-weight:700;font-family:var(--font-mono)">4.12%</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div style="width:100%;background:#0D7377;border-radius:3px 3px 0 0;height:79%;opacity:.9"></div></div><div style="font-size:9px;color:var(--text-muted);margin-top:4px">Jul</div><div style="font-size:10px;font-weight:700;font-family:var(--font-mono)">4.09%</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="flex:1;display:flex;align-items:flex-end;width:100%"><div style="width:100%;background:#0D7377;border-radius:3px 3px 0 0;height:81%;border:2px solid var(--status-success)"></div></div><div style="font-size:9px;color:var(--brand-primary);font-weight:700;margin-top:4px">Aug★</div><div style="font-size:10px;font-weight:800;font-family:var(--font-mono);color:var(--status-success)">4.21%</div></div>
+          </div>
+          <div style="padding-top:var(--space-3);border-top:1px solid var(--surface-divider);display:flex;gap:var(--space-6)">
+            <div><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase">YTD Average NIM</div><div style="font-size:18px;font-weight:800;font-family:var(--font-mono)">4.00%</div></div>
+            <div><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase">YTD NII</div><div style="font-size:18px;font-weight:800;font-family:var(--font-mono);color:var(--status-success)">KES 3,244M</div></div>
+            <div><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase">NIM Target (FY2026)</div><div style="font-size:18px;font-weight:800;font-family:var(--font-mono)">4.25%</div></div>
+            <div><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase">Variance to Target</div><div style="font-size:18px;font-weight:800;font-family:var(--font-mono);color:var(--status-warning)">−4bp</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+function almTab(id){
+  document.querySelectorAll('#almTabs .tab-item').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  const ids=['gap','irrbb','lcr','nim'];
+  document.querySelectorAll('#almTabs .tab-item')[ids.indexOf(id)].classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+</script>
+</body>
+</html>

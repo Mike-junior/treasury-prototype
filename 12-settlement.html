@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settlement — E&M Treasury Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.swift-block {
+  background: #0A1628;
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 2;
+  color: #94A3B8;
+}
+.swift-block .sf { color: #4ADE80; }
+.swift-block .sv { color: #E2E8F0; }
+.swift-block .sc { color: #60A5FA; }
+.track-step { display:flex; align-items:flex-start; gap: var(--space-3); padding: 10px 0; border-bottom: 1px solid var(--surface-divider); }
+.track-step:last-child { border-bottom: none; }
+.track-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.track-line { width: 2px; height: 100%; background: var(--surface-divider); margin-left: 4px; }
+.sett-stat-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: var(--radius-full);
+  font-size: 12px; font-weight: 700;
+  border: 1.5px solid;
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-mark">E&M</div>
+    <div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
+    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
+    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
+    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
+    <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/></svg>Deal Register</a>
+    <a href="12-settlement.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Settlement</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Analytics</div>
+    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
+    <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">System</div>
+    <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Day End Close</a>
+    <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-mini">
+      <div class="user-avatar" style="background:#0D7377">SO</div>
+      <div class="user-mini-info"><div class="name">Susan Otieno</div><div class="role">Back Office · LE-001</div></div>
+    </div>
+  </div>
+</nav>
+
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲+0.23</span></div>
+    <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span class="delta down">▼−0.41</span></div>
+    <div class="fx-tick"><span class="pair">RTGS Cut-off</span><span class="rate">15:30 EAT</span><span class="delta" style="color:var(--status-success)">Open</span></div>
+    <div class="fx-tick"><span class="pair">SWIFT Cut-off</span><span class="rate">14:00 EAT</span><span class="delta" style="color:var(--status-success)">Open</span></div>
+    <div class="fx-tick"><span class="pair">Value Date</span><span class="rate">27 Aug 2026</span><span class="delta" style="color:#94A3B8">T+2</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb">
+      <a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a>
+      <span class="sep"> / </span><span>Operations</span>
+      <span class="sep"> / </span><span class="current">Settlement</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <button class="topbar-icon-btn"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+      <button class="btn btn-outline btn-sm">SWIFT Inbox</button>
+      <button class="btn btn-primary btn-sm">Generate All Instructions</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#0D7377;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">SO</div>
+      <div><div style="font-size:12px;font-weight:600">Susan Otieno</div><div style="font-size:10px;color:var(--text-muted)">Back Office · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Settlement</h1>
+        <p class="page-subtitle">Back Office · Payment instruction tracking &amp; SWIFT confirmation · Value date: 27 Aug 2026</p>
+      </div>
+      <div class="page-actions">
+        <div style="display:flex;align-items:center;gap:8px">
+          <label style="font-size:11px;font-weight:600;color:var(--text-muted)">Value Date</label>
+          <select class="form-control" style="padding:5px 12px;font-size:12px;width:160px">
+            <option>27 Aug 2026 (T+2)</option>
+            <option>25 Aug 2026 (Today)</option>
+            <option>26 Aug 2026 (T+1)</option>
+          </select>
+        </div>
+        <button class="btn btn-outline btn-sm">Export SWIFT Batch</button>
+      </div>
+    </div>
+
+    <!-- KPI row -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+      <div class="kpi-card" style="--kpi-accent:#2563EB;--kpi-icon-bg:rgba(37,99,235,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+        <div class="kpi-label">Due 27 Aug</div>
+        <div class="kpi-value">6</div>
+        <div class="kpi-meta">3 FX · 2 MM · 1 Bond</div>
+      </div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-success);--kpi-icon-bg:rgba(22,163,74,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="kpi-label">Confirmed</div>
+        <div class="kpi-value" style="color:var(--status-success)">4</div>
+        <div class="kpi-meta">SWIFT received</div>
+      </div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-warning);--kpi-icon-bg:rgba(217,119,6,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div class="kpi-label">Awaiting Confirm.</div>
+        <div class="kpi-value" style="color:var(--status-warning)">2</div>
+        <div class="kpi-meta">Instructions sent</div>
+      </div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-danger);--kpi-icon-bg:rgba(220,38,38,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+        <div class="kpi-label">Blocked (No Auth)</div>
+        <div class="kpi-value" style="color:var(--status-danger)">1</div>
+        <div class="kpi-meta">Deal-00281 pending</div>
+      </div>
+      <div class="kpi-card" style="--kpi-accent:#0D7377;--kpi-icon-bg:rgba(13,115,119,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="kpi-label">Gross Value</div>
+        <div class="kpi-value mono" style="font-size:18px">1.84B</div>
+        <div class="kpi-meta">KES equivalent</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:var(--space-4);align-items:start">
+
+      <!-- Settlement queue table -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Settlement Queue — 27 Aug 2026</div>
+            <div class="card-subtitle">All authorised deals with value date 27 Aug · Click row for SWIFT detail</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Deal ID</th>
+                <th>Type</th>
+                <th>Counterparty</th>
+                <th>Pay</th>
+                <th style="text-align:right">Pay Amount</th>
+                <th>Receive</th>
+                <th style="text-align:right">Recv Amount</th>
+                <th>Nostro</th>
+                <th>SWIFT Ref</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="showDetail('d287')" style="cursor:pointer">
+                <td><span class="mono fw-600">DEAL-00287</span></td>
+                <td><span class="badge badge-info">FX SPOT</span></td>
+                <td style="font-size:12px">Citi N.A.</td>
+                <td class="mono fw-600" style="color:var(--status-danger)">KES</td>
+                <td class="text-right mono">323,550,000</td>
+                <td class="mono fw-600" style="color:var(--status-success)">USD</td>
+                <td class="text-right mono">2,500,000</td>
+                <td style="font-size:11px">Citi USD NY</td>
+                <td class="mono text-xs" style="color:var(--status-success)">NYC20260825001</td>
+                <td><span class="badge badge-success">CONFIRMED</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td>
+              </tr>
+              <tr onclick="showDetail('d278')" style="cursor:pointer">
+                <td><span class="mono fw-600">DEAL-00278</span></td>
+                <td><span class="badge badge-info">FX SPOT</span></td>
+                <td style="font-size:12px">Stanbic Kenya</td>
+                <td class="mono fw-600" style="color:var(--status-danger)">KES</td>
+                <td class="text-right mono">140,850,000</td>
+                <td class="mono fw-600" style="color:var(--status-success)">EUR</td>
+                <td class="text-right mono">1,005,000</td>
+                <td style="font-size:11px">Deutsche EUR</td>
+                <td class="mono text-xs" style="color:var(--status-success)">FRA20260825044</td>
+                <td><span class="badge badge-success">CONFIRMED</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td>
+              </tr>
+              <tr onclick="showDetail('d281')" style="cursor:pointer;background:rgba(220,38,38,.03)">
+                <td><span class="mono fw-600">DEAL-00281</span></td>
+                <td><span class="badge badge-warning">FX SWAP</span></td>
+                <td style="font-size:12px">Barclays Kenya</td>
+                <td class="mono fw-600" style="color:var(--status-danger)">KES</td>
+                <td class="text-right mono">81,725,000</td>
+                <td class="mono fw-600" style="color:var(--status-success)">GBP</td>
+                <td class="text-right mono">500,000</td>
+                <td style="font-size:11px">Barclays GBP LDN</td>
+                <td class="mono text-xs" style="color:var(--status-danger)">— NOT AUTH —</td>
+                <td><span class="badge badge-danger">BLOCKED</span></td>
+                <td><a href="08-auth-queue.html" class="btn btn-danger btn-sm" onclick="event.stopPropagation()">Auth Queue</a></td>
+              </tr>
+              <tr onclick="showDetail('d283')" style="cursor:pointer">
+                <td><span class="mono fw-600">DEAL-00283</span></td>
+                <td><span class="badge badge-neutral">REPO</span></td>
+                <td style="font-size:12px">DTBK</td>
+                <td class="mono fw-600" style="color:var(--status-danger)">KES</td>
+                <td class="text-right mono">800,289,041</td>
+                <td class="mono fw-600" style="color:var(--status-success)">KES</td>
+                <td class="text-right mono">800,000,000</td>
+                <td style="font-size:11px">CBK RTGS</td>
+                <td class="mono text-xs" style="color:var(--status-success)">RTGS20260826001</td>
+                <td><span class="badge badge-success">CONFIRMED</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td>
+              </tr>
+              <tr onclick="showDetail('d284')" style="cursor:pointer;background:rgba(217,119,6,.03)">
+                <td><span class="mono fw-600">DEAL-00284</span></td>
+                <td><span class="badge badge-neutral">T-BILL</span></td>
+                <td style="font-size:12px">CBK Direct</td>
+                <td class="mono fw-600" style="color:var(--text-muted)">—</td>
+                <td class="text-right mono" style="color:var(--text-muted)">—</td>
+                <td class="mono fw-600" style="color:var(--status-success)">KES</td>
+                <td class="text-right mono">500,000,000</td>
+                <td style="font-size:11px">CBK Settlement</td>
+                <td class="mono text-xs" style="color:var(--status-warning)">AWAITING CBK</td>
+                <td><span class="badge badge-warning">PENDING</span></td>
+                <td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation()">Chase</button></td>
+              </tr>
+              <tr onclick="showDetail('d285')" style="cursor:pointer">
+                <td><span class="mono fw-600">DEAL-00285</span></td>
+                <td><span class="badge badge-neutral">FIXED DEP</span></td>
+                <td style="font-size:12px">StanChart Kenya</td>
+                <td class="mono fw-600" style="color:var(--text-muted)">—</td>
+                <td class="text-right mono" style="color:var(--text-muted)">—</td>
+                <td class="mono fw-600" style="color:var(--status-success)">KES</td>
+                <td class="text-right mono">251,162,500</td>
+                <td style="font-size:11px">CBK RTGS</td>
+                <td class="mono text-xs" style="color:var(--status-success)">RTGS20260825042</td>
+                <td><span class="badge badge-success">CONFIRMED</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;gap:16px">
+            <span style="font-size:11px;color:var(--text-muted)">Total Pay: <strong>KES 1,346,414,041</strong></span>
+            <span style="font-size:11px;color:var(--text-muted)">Total Receive: <strong>KES 1,840,162,500 equiv.</strong></span>
+          </div>
+          <a href="06-reconciliation.html" class="btn btn-ghost btn-sm">Reconcile →</a>
+        </div>
+      </div>
+
+      <!-- Right: SWIFT detail + tracker -->
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+
+        <!-- SWIFT message preview -->
+        <div class="card" id="swiftPanel">
+          <div class="card-header">
+            <div>
+              <div class="card-title">SWIFT Message Preview</div>
+              <div class="card-subtitle" id="swiftDealLabel">DEAL-00287 — FX Spot USD/KES</div>
+            </div>
+            <span class="badge badge-success" id="swiftStatusBadge">MT202 CONFIRMED</span>
+          </div>
+          <div class="card-body" style="padding:var(--space-3)">
+            <div class="swift-block" id="swiftContent">
+<span class="sc">{1:F01EMTEKENA0AXXX0001000001}</span>
+<span class="sc">{2:I202CITIKENA0XXXXN}</span>
+<span class="sc">{4:</span>
+<span class="sf">:20:</span><span class="sv">NYC20260825001</span>
+<span class="sf">:21:</span><span class="sv">DEAL-00287</span>
+<span class="sf">:32A:</span><span class="sv">260827USD2500000,</span>
+<span class="sf">:52A:</span><span class="sv">/EMTEKENA0AXXX</span>
+<span class="sf">    </span><span class="sv">E&M TECHNOLOGY HOUSE LTD</span>
+<span class="sf">:56A:</span><span class="sv">CITIUS33XXX</span>
+<span class="sf">    </span><span class="sv">CITIBANK N.A. NEW YORK</span>
+<span class="sf">:57A:</span><span class="sv">CITIKENA0XXX</span>
+<span class="sf">    </span><span class="sv">CITIBANK N.A. NAIROBI</span>
+<span class="sf">:58A:</span><span class="sv">/10941042</span>
+<span class="sf">    </span><span class="sv">CITIBANK N.A. NAIROBI</span>
+<span class="sf">:72:</span><span class="sv">/BNF/FX SPOT VALUE 270826</span>
+<span class="sf">    </span><span class="sv">/INS/DEAL-00287 E&M TMS</span>
+<span class="sc">-}</span>
+            </div>
+          </div>
+          <div class="card-footer" style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn btn-outline btn-sm">Copy SWIFT</button>
+            <button class="btn btn-primary btn-sm">Resend</button>
+          </div>
+        </div>
+
+        <!-- Settlement lifecycle tracker -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Settlement Lifecycle</div>
+            <div class="card-subtitle" id="trackDealLabel">DEAL-00287</div>
+          </div>
+          <div style="padding:var(--space-3) var(--space-4)">
+            <div class="track-step">
+              <div class="track-dot" style="background:var(--status-success)"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:var(--status-success)">Deal Authorised</div>
+                <div style="font-size:11px;color:var(--text-muted)">DEAL-00287 authorised by M. Njoki at 09:31</div>
+              </div>
+              <div style="font-size:10px;color:var(--text-muted)">09:31</div>
+            </div>
+            <div class="track-step">
+              <div class="track-dot" style="background:var(--status-success)"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:var(--status-success)">Settlement Instruction Generated</div>
+                <div style="font-size:11px;color:var(--text-muted)">MT202 SWIFT message auto-generated and queued</div>
+              </div>
+              <div style="font-size:10px;color:var(--text-muted)">09:32</div>
+            </div>
+            <div class="track-step">
+              <div class="track-dot" style="background:var(--status-success)"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:var(--status-success)">SWIFT Sent to Correspondent</div>
+                <div style="font-size:11px;color:var(--text-muted)">MT202 sent via SWIFT to Citi N.A. New York (CITIUS33)</div>
+              </div>
+              <div style="font-size:10px;color:var(--text-muted)">09:33</div>
+            </div>
+            <div class="track-step">
+              <div class="track-dot" style="background:var(--status-success)"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:var(--status-success)">MT910 Confirmation Received</div>
+                <div style="font-size:11px;color:var(--text-muted)">Citi confirmed receipt: Ref NYC20260825001</div>
+              </div>
+              <div style="font-size:10px;color:var(--text-muted)">10:15</div>
+            </div>
+            <div class="track-step" style="border-bottom:none">
+              <div class="track-dot" style="background:#CBD5E0"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:600;color:var(--text-muted)">Nostro Credit (Value Date)</div>
+                <div style="font-size:11px;color:var(--text-muted)">USD credited to Nostro on 27 Aug 2026</div>
+              </div>
+              <div style="font-size:10px;color:var(--text-muted)">27 Aug</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming settlements -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Upcoming Settlements</div>
+            <div class="card-subtitle">Next 5 business days</div>
+          </div>
+          <div style="padding:0">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px">
+              <span style="font-weight:600">26 Aug</span>
+              <span style="color:var(--text-muted)">Repo Return (DTBK)</span>
+              <span class="mono fw-600">KES 800M</span>
+              <span class="badge badge-success">Ready</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px">
+              <span style="font-weight:600">26 Aug</span>
+              <span style="color:var(--text-muted)">ON Repayment (Equity)</span>
+              <span class="mono fw-600">KES 1.2B</span>
+              <span class="badge badge-success">Ready</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px">
+              <span style="font-weight:600">27 Aug</span>
+              <span style="color:var(--text-muted)">Bond Coupon (CBK)</span>
+              <span class="mono fw-600">KES 187.5M</span>
+              <span class="badge badge-success">Ready</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px var(--space-4);font-size:12px">
+              <span style="font-weight:600">29 Aug</span>
+              <span style="color:var(--text-muted)">FX Fwd EUR (Stanbic)</span>
+              <span class="mono fw-600">€1.0M</span>
+              <span class="badge badge-warning">Nov 25 ←</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <a href="06-reconciliation.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View reconciliation status →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function showDetail(id) {
+  const data = {
+    d287: { label:'DEAL-00287 — FX Spot USD/KES', status:'MT202 CONFIRMED', statusClass:'badge-success' },
+    d278: { label:'DEAL-00278 — FX Spot EUR/KES', status:'MT202 CONFIRMED', statusClass:'badge-success' },
+    d281: { label:'DEAL-00281 — FX Swap GBP/KES', status:'BLOCKED — NO AUTH', statusClass:'badge-danger' },
+    d283: { label:'DEAL-00283 — Repo Return KES', status:'RTGS CONFIRMED', statusClass:'badge-success' },
+    d284: { label:'DEAL-00284 — T-Bill Maturity', status:'AWAITING CBK', statusClass:'badge-warning' },
+    d285: { label:'DEAL-00285 — Fixed Deposit Maturity', status:'RTGS CONFIRMED', statusClass:'badge-success' }
+  };
+  const d = data[id];
+  if (!d) return;
+  document.getElementById('swiftDealLabel').textContent = d.label;
+  const badge = document.getElementById('swiftStatusBadge');
+  badge.textContent = d.status;
+  badge.className = 'badge ' + d.statusClass;
+  document.getElementById('trackDealLabel').textContent = d.label.split(' — ')[0];
+}
+</script>
+</body>
+</html>

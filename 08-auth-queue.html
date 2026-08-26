@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auth Queue — E&M Treasury Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.auth-card {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-3);
+  overflow: hidden;
+  transition: box-shadow .15s;
+}
+.auth-card:hover { box-shadow: var(--shadow-md); }
+.auth-card.urgent { border-left: 4px solid var(--status-danger); }
+.auth-card.warning { border-left: 4px solid var(--status-warning); }
+.auth-card.normal { border-left: 4px solid var(--status-info); }
+.auth-card-header {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--surface-divider);
+}
+.auth-card-body { padding: var(--space-4); }
+.auth-card-footer {
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-bg);
+  border-top: 1px solid var(--surface-divider);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.deal-type-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; flex-shrink: 0;
+}
+.auth-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+.auth-field .lbl { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 2px; }
+.auth-field .val { font-size: 13px; font-weight: 700; color: var(--text-primary); font-family: var(--font-mono); }
+.auth-field .val.large { font-size: 16px; }
+
+.four-eyes {
+  display: flex; gap: var(--space-3); align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-bg);
+  border-top: 1px solid var(--surface-divider);
+}
+.eye-step {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border);
+  font-size: 11px; font-weight: 600;
+}
+.eye-step.done   { background: var(--success-bg); border-color: var(--success-border); color: var(--status-success); }
+.eye-step.active { background: var(--warning-bg); border-color: var(--warning-border); color: var(--status-warning); }
+.eye-step.pending{ background: var(--surface-card); color: var(--text-muted); }
+.eye-step .eye-avatar {
+  width: 20px; height: 20px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 8px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.eye-arrow { color: var(--text-muted); font-size: 14px; }
+
+.timeout-bar {
+  height: 4px;
+  background: var(--surface-divider);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.timeout-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.limit-warn-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--warning-bg); border: 1px solid var(--warning-border);
+  color: var(--status-warning);
+  padding: 3px 8px; border-radius: 12px;
+  font-size: 10px; font-weight: 700;
+}
+.limit-ok-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--success-bg); border: 1px solid var(--success-border);
+  color: var(--status-success);
+  padding: 3px 8px; border-radius: 12px;
+  font-size: 10px; font-weight: 700;
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-mark">E&M</div>
+    <div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
+    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
+    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="08-auth-queue.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
+    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
+    <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/></svg>Deal Register</a>
+    <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Settlement</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Analytics</div>
+    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
+    <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">System</div>
+    <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Day End Close</a>
+    <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-mini"><div class="user-avatar" style="background:#7C3AED">MN</div><div class="user-mini-info"><div class="name">Mary Njoki</div><div class="role">Authoriser · LE-001</div></div></div>
+  </div>
+</nav>
+
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲ +0.23</span></div>
+    <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span class="delta down">▼ −0.41</span></div>
+    <div class="fx-tick"><span class="pair">GBP/KES</span><span class="rate">163.78</span><span class="delta up">▲ +0.67</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>Operations</span><span class="sep"> / </span><span class="current">Authorisation Queue</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <button class="topbar-icon-btn"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot"></span></button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#7C3AED;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">MN</div>
+      <div><div style="font-size:12px;font-weight:600">Mary Njoki</div><div style="font-size:10px;color:var(--text-muted)">Authoriser · 25 Aug 2026 · 10:42</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Authorisation Queue</h1>
+        <p class="page-subtitle">Four-eyes deal approval · You are authorising as: <strong>Mary Njoki (Level 2 Authoriser)</strong> · LE-001</p>
+      </div>
+      <div class="page-actions">
+        <span class="badge badge-warning" style="font-size:12px;padding:6px 12px">5 Awaiting Your Approval</span>
+        <button class="btn btn-outline btn-sm">Approve All Low-Risk</button>
+        <button class="btn btn-outline btn-sm">History</button>
+      </div>
+    </div>
+
+    <!-- Alert: Timeout warning -->
+    <div class="alert alert-warning" style="margin-bottom:var(--space-4)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <div>DEAL-00281 (FX Swap GBP/KES) has been in the queue for <strong>4h 18m</strong> — exceeds the 4-hour SLA. Escalation triggered to Treasurer.
+        <span style="margin-left:12px;font-weight:700;cursor:pointer;color:#92400E;text-decoration:underline">View Deal</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:var(--space-4);align-items:start">
+      <div>
+
+        <!-- Deal 1: FX Forward — Urgent -->
+        <div class="auth-card warning">
+          <div class="auth-card-header">
+            <div class="deal-type-icon" style="background:rgba(37,99,235,.1);color:#2563EB">FWD</div>
+            <div style="flex:1">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div style="font-size:14px;font-weight:800">DEAL-00286 — FX Forward EUR/KES</div>
+                  <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Captured by James Mwangi · 09:55 AM · BUY EUR 1,000,000 vs KES</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:11px;color:var(--text-muted)">Time in queue</div>
+                  <div style="font-size:14px;font-weight:800;color:var(--status-warning)">0h 47m</div>
+                  <div class="timeout-bar" style="width:80px;margin-left:auto"><div class="timeout-fill" style="width:16%;background:var(--status-success)"></div></div>
+                  <div style="font-size:9px;color:var(--text-muted);margin-top:2px">SLA: 4h remaining</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="auth-card-body">
+            <div class="auth-detail-grid">
+              <div class="auth-field"><div class="lbl">Counterparty</div><div class="val" style="font-size:12px">Standard Bank Kenya</div></div>
+              <div class="auth-field"><div class="lbl">Notional</div><div class="val large">€1,000,000</div></div>
+              <div class="auth-field"><div class="lbl">All-In Rate</div><div class="val large">140.85</div></div>
+              <div class="auth-field"><div class="lbl">Settlement</div><div class="val" style="font-size:12px">KES 140,850,000</div></div>
+              <div class="auth-field"><div class="lbl">Value Date</div><div class="val" style="font-size:12px">25 Nov 2026</div></div>
+              <div class="auth-field"><div class="lbl">Tenor</div><div class="val" style="font-size:12px">92 days</div></div>
+              <div class="auth-field"><div class="lbl">Spot Rate</div><div class="val" style="font-size:12px">140.12</div></div>
+              <div class="auth-field"><div class="lbl">Fwd Points</div><div class="val" style="font-size:12px">+73 pts</div></div>
+            </div>
+            <div style="margin-top:var(--space-3);display:flex;gap:8px;flex-wrap:wrap">
+              <span class="limit-warn-chip">⚠ EUR NOP at 84% post-deal</span>
+              <span class="limit-ok-chip">✓ CTY Limit PASS</span>
+              <span class="limit-ok-chip">✓ Dealer Limit PASS</span>
+              <span class="limit-ok-chip">✓ Rate within tolerance</span>
+            </div>
+          </div>
+          <div class="four-eyes">
+            <div class="eye-step done"><div class="eye-avatar" style="background:var(--brand-primary)">JM</div>Captured — James Mwangi</div>
+            <span class="eye-arrow">›</span>
+            <div class="eye-step active"><div class="eye-avatar" style="background:#7C3AED">MN</div>Awaiting Your Auth</div>
+            <span class="eye-arrow">›</span>
+            <div class="eye-step pending"><div class="eye-avatar" style="background:#CBD5E0">?</div>2nd Authoriser</div>
+            <span class="eye-arrow">›</span>
+            <div class="eye-step pending"><div class="eye-avatar" style="background:#CBD5E0">→</div>Settlement</div>
+          </div>
+          <div class="auth-card-footer">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="form-group" style="margin:0">
+                <input type="text" class="form-control" style="width:200px;padding:5px 10px;font-size:11px" placeholder="Auth PIN / Notes (optional)…">
+              </div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm">View Full Details</button>
+              <button class="btn btn-danger btn-sm">Reject</button>
+              <button class="btn btn-warning btn-sm">Return to Dealer</button>
+              <button class="btn btn-success">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Authorise Deal
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deal 2: FX Swap — Timed Out -->
+        <div class="auth-card urgent">
+          <div class="auth-card-header">
+            <div class="deal-type-icon" style="background:rgba(200,16,46,.1);color:var(--brand-primary)">SWP</div>
+            <div style="flex:1">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div style="font-size:14px;font-weight:800">DEAL-00281 — FX Swap GBP/KES</div>
+                  <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Captured by James Mwangi · 06:24 AM · Near £500K · Far £500K</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:11px;color:var(--text-muted)">Time in queue</div>
+                  <div style="font-size:14px;font-weight:800;color:var(--status-danger)">4h 18m</div>
+                  <div class="timeout-bar" style="width:80px;margin-left:auto"><div class="timeout-fill" style="width:100%;background:var(--status-danger)"></div></div>
+                  <div style="font-size:9px;color:var(--status-danger);font-weight:700;margin-top:2px">⚑ SLA BREACHED</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="auth-card-body">
+            <div class="auth-detail-grid">
+              <div class="auth-field"><div class="lbl">Counterparty</div><div class="val" style="font-size:12px">Barclays Kenya</div></div>
+              <div class="auth-field"><div class="lbl">Near Notional</div><div class="val large">£500,000</div></div>
+              <div class="auth-field"><div class="lbl">Near Rate</div><div class="val large">163.45</div></div>
+              <div class="auth-field"><div class="lbl">Far Rate</div><div class="val" style="font-size:12px">164.83</div></div>
+              <div class="auth-field"><div class="lbl">Near Val. Date</div><div class="val" style="font-size:12px">27 Aug 2026</div></div>
+              <div class="auth-field"><div class="lbl">Far Val. Date</div><div class="val" style="font-size:12px">27 Nov 2026</div></div>
+              <div class="auth-field"><div class="lbl">Swap Points</div><div class="val" style="font-size:12px">138 pts</div></div>
+              <div class="auth-field"><div class="lbl">P&amp;L Impact</div><div class="val" style="font-size:12px;color:var(--status-success)">+KES 12,500</div></div>
+            </div>
+            <div style="margin-top:var(--space-3);display:flex;gap:8px;flex-wrap:wrap">
+              <span class="limit-ok-chip">✓ All limits PASS</span>
+              <span class="limit-ok-chip">✓ Rate within tolerance</span>
+              <span style="display:inline-flex;align-items:center;gap:5px;background:var(--danger-bg);border:1px solid var(--danger-border);color:var(--status-danger);padding:3px 8px;border-radius:12px;font-size:10px;font-weight:700">⚑ SLA timeout — escalated to Treasurer</span>
+            </div>
+          </div>
+          <div class="four-eyes">
+            <div class="eye-step done"><div class="eye-avatar" style="background:var(--brand-primary)">JM</div>Captured — James Mwangi</div>
+            <span class="eye-arrow">›</span>
+            <div class="eye-step active" style="border-color:var(--danger-border);background:var(--danger-bg);color:var(--status-danger)"><div class="eye-avatar" style="background:#7C3AED">MN</div>OVERDUE — Your Auth</div>
+            <span class="eye-arrow">›</span>
+            <div class="eye-step pending"><div class="eye-avatar" style="background:#CBD5E0">?</div>2nd Authoriser</div>
+            <span class="eye-arrow">›</span>
+            <div class="eye-step pending"><div class="eye-avatar" style="background:#CBD5E0">→</div>Settlement</div>
+          </div>
+          <div class="auth-card-footer">
+            <div style="font-size:11px;color:var(--status-danger);font-weight:600">⚑ Escalated to Treasurer at 10:24 AM</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm">View Full Details</button>
+              <button class="btn btn-danger btn-sm">Reject</button>
+              <button class="btn btn-success">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Authorise Deal
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deal 3: Fixed Deposit -->
+        <div class="auth-card normal">
+          <div class="auth-card-header">
+            <div class="deal-type-icon" style="background:rgba(13,115,119,.1);color:#0D7377">FD</div>
+            <div style="flex:1">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div style="font-size:14px;font-weight:800">DEAL-00279 — Fixed Deposit KES</div>
+                  <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Captured by Peter Otieno · 08:30 AM · 91-day placement</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:14px;font-weight:700;color:var(--status-success)">2h 12m</div>
+                  <div class="timeout-bar" style="width:80px;margin-left:auto"><div class="timeout-fill" style="width:55%;background:var(--status-warning)"></div></div>
+                  <div style="font-size:9px;color:var(--text-muted);margin-top:2px">1h 48m SLA remaining</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="auth-card-body">
+            <div class="auth-detail-grid">
+              <div class="auth-field"><div class="lbl">Counterparty</div><div class="val" style="font-size:12px">StanChart Kenya</div></div>
+              <div class="auth-field"><div class="lbl">Principal</div><div class="val large">KES 50M</div></div>
+              <div class="auth-field"><div class="lbl">Rate (p.a.)</div><div class="val large">14.50%</div></div>
+              <div class="auth-field"><div class="lbl">Maturity</div><div class="val" style="font-size:12px">24 Nov 2026</div></div>
+            </div>
+            <div style="margin-top:var(--space-3);display:flex;gap:8px">
+              <span class="limit-ok-chip">✓ All limits PASS</span>
+              <span class="limit-ok-chip">✓ Rate above market (14.87% ref)</span>
+            </div>
+          </div>
+          <div class="auth-card-footer">
+            <span style="font-size:11px;color:var(--text-muted)">No limit warnings · Low risk deal</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm">View Details</button>
+              <button class="btn btn-danger btn-sm">Reject</button>
+              <button class="btn btn-success">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Authorise Deal
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /left -->
+
+      <!-- Right: Queue summary -->
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Queue Summary</div></div>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span>Total in queue</span><span class="fw-700">5</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--status-danger)">SLA breached</span><span class="fw-700" style="color:var(--status-danger)">1</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--status-warning)">Near SLA (&lt;1h)</span><span class="fw-700" style="color:var(--status-warning)">1</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span>Normal</span><span class="fw-700">3</span></div>
+            <div style="margin-top:4px;padding-top:8px;border-top:1px solid var(--surface-divider);display:flex;justify-content:space-between;font-size:12px"><span>Total deal value</span><span class="fw-700 mono">KES 2.1B</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">By Product Type</div></div>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">
+              <span>FX Forward</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="width:60px;height:4px;background:var(--surface-divider);border-radius:2px"><div style="width:40%;height:100%;background:var(--status-info);border-radius:2px"></div></div>
+                <span class="fw-600">2</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">
+              <span>FX Swap</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="width:60px;height:4px;background:var(--surface-divider);border-radius:2px"><div style="width:20%;height:100%;background:var(--brand-primary);border-radius:2px"></div></div>
+                <span class="fw-600">1</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">
+              <span>Fixed Deposit</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="width:60px;height:4px;background:var(--surface-divider);border-radius:2px"><div style="width:20%;height:100%;background:#0D7377;border-radius:2px"></div></div>
+                <span class="fw-600">1</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">
+              <span>Overnight Borrowing</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="width:60px;height:4px;background:var(--surface-divider);border-radius:2px"><div style="width:20%;height:100%;background:#7C3AED;border-radius:2px"></div></div>
+                <span class="fw-600">1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">Today's Auth Activity</div></div>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Authorised today</span><span class="fw-600" style="color:var(--status-success)">19</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Rejected today</span><span class="fw-600" style="color:var(--status-danger)">0</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Returned to dealer</span><span class="fw-600" style="color:var(--status-warning)">1</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Avg auth time</span><span class="fw-600">18 min</span></div>
+          </div>
+          <div class="card-footer"><a href="09-deal-register.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View all authorised deals →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>

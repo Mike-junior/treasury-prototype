@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Position — E&M Treasury Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+/* Cash position table rows */
+.pos-section { background:var(--surface-bg); font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; }
+.pos-section td { padding:8px var(--space-4); border-bottom:1px solid var(--surface-divider); }
+.pos-indent { padding-left:32px !important; }
+.pos-total td { background:#F0F4FF; font-weight:800; font-size:12px; }
+.pos-total .mono { color:var(--brand-secondary); }
+.pos-surplus { color:var(--status-success); font-weight:700; }
+.pos-deficit { color:var(--status-danger); font-weight:700; }
+.pos-adequate { color:var(--status-info); font-weight:700; }
+
+/* Currency tab bar */
+.ccy-tabs { display:flex; gap:var(--space-2); flex-wrap:wrap; margin-bottom:var(--space-4); }
+.ccy-tab {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 16px;
+  border:1px solid var(--surface-border);
+  border-radius:var(--radius-md);
+  cursor:pointer; font-size:12px; font-weight:600;
+  background:var(--surface-card);
+  transition:all .15s;
+}
+.ccy-tab:hover { border-color:#94A3B8; }
+.ccy-tab.active { background:var(--brand-secondary); color:#fff; border-color:var(--brand-secondary); }
+.ccy-tab .flag { font-size:16px; }
+.ccy-tab .status { width:7px; height:7px; border-radius:50%; }
+
+/* Maturity ladder */
+.ladder-bar { display:flex; align-items:flex-end; gap:4px; height:100px; }
+.ladder-col { display:flex; flex-direction:column; align-items:center; flex:1; }
+.ladder-col .asset { background:#0D7377; border-radius:3px 3px 0 0; width:100%; }
+.ladder-col .liab  { background:var(--brand-primary); border-radius:3px 3px 0 0; width:100%; opacity:.8; }
+.ladder-col .lbl   { font-size:9px; color:var(--text-muted); margin-top:4px; white-space:nowrap; }
+
+/* Forecast line chart */
+.forecast-chart { position:relative; height:120px; }
+.forecast-chart svg { width:100%; height:100%; }
+
+/* Position detail rows */
+.detail-row {
+  display:grid; grid-template-columns:2fr 1fr 1fr 1fr 120px;
+  gap:var(--space-3); align-items:center;
+  padding:10px var(--space-4);
+  border-bottom:1px solid var(--surface-divider);
+  font-size:12px;
+}
+.detail-row:last-child { border-bottom:none; }
+.detail-row.header { background:var(--surface-bg); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+<!-- Sidebar (condensed) -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-mark">E&M</div>
+    <div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
+    <a href="04-cash-position.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
+    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+    <a href="#" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
+    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
+    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-mini"><div class="user-avatar">JM</div><div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">Treasurer · LE-001</div></div></div>
+  </div>
+</nav>
+
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲ +0.23</span></div>
+    <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span class="delta down">▼ −0.41</span></div>
+    <div class="fx-tick"><span class="pair">GBP/KES</span><span class="rate">163.78</span><span class="delta up">▲ +0.67</span></div>
+    <div class="fx-tick"><span class="pair">CBR</span><span class="rate">13.00%</span><span class="delta" style="color:#94A3B8">unch</span></div>
+    <div class="fx-tick"><span class="pair">CRR</span><span class="rate">4.25%</span><span class="delta" style="color:#94A3B8">unch</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Cash &amp; Liquidity Position</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <button class="topbar-icon-btn"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">JM</div>
+      <div style="line-height:1.2"><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">Treasurer · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Cash &amp; Liquidity Position</h1>
+        <p class="page-subtitle">Business date: Tuesday, 25 August 2026 &nbsp;·&nbsp; LE-001 Kenya &nbsp;·&nbsp; All positions KES equivalent unless noted</p>
+      </div>
+      <div class="page-actions">
+        <span style="font-size:12px;color:var(--text-muted)">Last updated: 10:42:15</span>
+        <button class="btn btn-outline btn-sm">30-Day Forecast</button>
+        <button class="btn btn-outline btn-sm">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+        <a href="03-deal-capture.html" class="btn btn-primary btn-sm">Deploy Surplus</a>
+      </div>
+    </div>
+
+    <!-- Currency selector -->
+    <div class="ccy-tabs">
+      <div class="ccy-tab active">
+        <span class="flag">🇰🇪</span> KES — Kenyan Shilling
+        <span class="status" style="background:var(--status-success)"></span>
+      </div>
+      <div class="ccy-tab">
+        <span class="flag">🇺🇸</span> USD
+        <span class="status" style="background:var(--status-success)"></span>
+      </div>
+      <div class="ccy-tab">
+        <span class="flag">🇪🇺</span> EUR
+        <span class="status" style="background:var(--status-warning)"></span>
+      </div>
+      <div class="ccy-tab">
+        <span class="flag">🇬🇧</span> GBP
+        <span class="status" style="background:var(--status-success)"></span>
+      </div>
+      <div class="ccy-tab">
+        <span class="flag">🇹🇿</span> TZS
+        <span class="status" style="background:var(--status-success)"></span>
+      </div>
+      <div class="ccy-tab">
+        <span class="flag">🇺🇬</span> UGX
+        <span class="status" style="background:var(--status-danger)"></span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--space-4);align-items:start">
+
+      <!-- Left: Cash Position Worksheet -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Cash Position Worksheet — KES</div>
+            <div class="card-subtitle">Assembled from 6 sources · Updated in real-time (FR-09.1)</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <span class="badge badge-success">SURPLUS</span>
+            <button class="btn btn-outline btn-sm">Toggle Pending</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Source / Line Item</th><th>Instrument / Account</th><th style="text-align:right">Confirmed (KES)</th><th style="text-align:right">Pending (KES)</th><th style="text-align:right">Total (KES)</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr class="pos-section"><td colspan="6">1. Opening Bank Balance</td></tr>
+              <tr><td class="pos-indent">CBK Settlement Account</td><td class="mono text-xs">CBK-001-KES</td><td class="text-right mono">2,847,500,000</td><td class="text-right mono">—</td><td class="text-right mono fw-600">2,847,500,000</td><td><span class="badge badge-success">Confirmed</span></td></tr>
+              <tr><td class="pos-indent">CRR Reserve Account</td><td class="mono text-xs">CBK-CRR-001</td><td class="text-right mono">(1,200,000,000)</td><td class="text-right mono">—</td><td class="text-right mono fw-600 pos-deficit">(1,200,000,000)</td><td><span class="badge badge-info">CRR Hold</span></td></tr>
+
+              <tr class="pos-section"><td colspan="6">2. Treasury Deal Maturities — Today</td></tr>
+              <tr><td class="pos-indent">T-Bill 91D — Maturity</td><td class="mono text-xs">DEAL-00284</td><td class="text-right mono">500,000,000</td><td class="text-right mono">—</td><td class="text-right mono fw-600">500,000,000</td><td><span class="badge badge-success">Received</span></td></tr>
+              <tr><td class="pos-indent">Fixed Deposit Maturity</td><td class="mono text-xs">DEAL-00285</td><td class="text-right mono">251,162,500</td><td class="text-right mono">—</td><td class="text-right mono fw-600">251,162,500</td><td><span class="badge badge-success">Received</span></td></tr>
+
+              <tr class="pos-section"><td colspan="6">3. Scheduled Interest Payments</td></tr>
+              <tr><td class="pos-indent">T-Bond IFB/2025/10 — Coupon</td><td class="mono text-xs">BOND-0043</td><td class="text-right mono">187,500,000</td><td class="text-right mono">—</td><td class="text-right mono fw-600">187,500,000</td><td><span class="badge badge-success">Received</span></td></tr>
+
+              <tr class="pos-section"><td colspan="6">4. Treasury Deal Settlements — Outgoing</td></tr>
+              <tr><td class="pos-indent">FX Spot USD Purchase</td><td class="mono text-xs">DEAL-00287</td><td class="text-right mono">(323,550,000)</td><td class="text-right mono">—</td><td class="text-right mono fw-600 pos-deficit">(323,550,000)</td><td><span class="badge badge-success">Settled</span></td></tr>
+              <tr><td class="pos-indent">Overnight Borrowing — Principal + Interest</td><td class="mono text-xs">DEAL-00282</td><td class="text-right mono">—</td><td class="text-right mono">(1,200,427,397)</td><td class="text-right mono fw-600 pos-deficit">(1,200,427,397)</td><td><span class="badge badge-warning">Pending Auth</span></td></tr>
+
+              <tr class="pos-section"><td colspan="6">5. Forecast Customer Flows</td></tr>
+              <tr><td class="pos-indent">Customer KES inflows (forecast)</td><td class="text-xs">Retail + Corporate</td><td class="text-right mono">4,200,000,000</td><td class="text-right mono">—</td><td class="text-right mono fw-600">4,200,000,000</td><td><span class="badge badge-neutral">Forecast</span></td></tr>
+              <tr><td class="pos-indent">Customer KES outflows (forecast)</td><td class="text-xs">Retail + Corporate</td><td class="text-right mono">(3,800,000,000)</td><td class="text-right mono">—</td><td class="text-right mono fw-600 pos-deficit">(3,800,000,000)</td><td><span class="badge badge-neutral">Forecast</span></td></tr>
+
+              <tr class="pos-section"><td colspan="6">6. Nostro &amp; Correspondent Balances</td></tr>
+              <tr><td class="pos-indent">Nostro KES — CBK (Settlement)</td><td class="mono text-xs">NOST-CBK-KES</td><td class="text-right mono">850,000,000</td><td class="text-right mono">—</td><td class="text-right mono fw-600">850,000,000</td><td><span class="badge badge-success">Confirmed</span></td></tr>
+
+              <tr class="pos-total">
+                <td colspan="2" style="padding:10px var(--space-4);font-size:13px;font-weight:800">NET AVAILABLE POSITION (KES)</td>
+                <td class="text-right mono" style="font-size:14px">2,312,612,500</td>
+                <td class="text-right mono" style="font-size:14px;color:var(--status-warning)">(1,200,427,397)</td>
+                <td class="text-right mono pos-surplus" style="font-size:16px">+1,112,185,103</td>
+                <td><span class="badge badge-success">SURPLUS</span></td>
+              </tr>
+              <tr style="background:var(--success-bg)">
+                <td colspan="6" style="padding:8px var(--space-4);font-size:11px;color:var(--status-success);font-weight:600">
+                  ✓ Statutory Reserve Requirement: KES 1,200,000,000 HELD &nbsp;·&nbsp; Target Balance: KES 500,000,000 &nbsp;·&nbsp; Available for Deployment: KES 612,185,103
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:var(--text-muted)">Includes pending deals. Refresh for live position.</span>
+          <button class="btn btn-primary btn-sm" onclick="alert('Navigating to Deal Capture with pre-populated fields...')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Deploy KES 612M
+          </button>
+        </div>
+      </div>
+
+      <!-- Right panel: Forecast + Ladder -->
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+
+        <!-- 7-day forecast -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">7-Day Cash Forecast</div><div class="card-subtitle">Projected daily net positions (KES B)</div></div>
+          </div>
+          <div class="card-body">
+            <!-- SVG line chart approximation -->
+            <div style="height:110px;position:relative;margin-bottom:var(--space-3)">
+              <svg viewBox="0 0 300 100" style="width:100%;height:100%;overflow:visible">
+                <defs>
+                  <linearGradient id="fg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0D7377" stop-opacity=".3"/>
+                    <stop offset="100%" stop-color="#0D7377" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <!-- grid lines -->
+                <line x1="0" y1="20" x2="300" y2="20" stroke="#E2E8F0" stroke-width="1"/>
+                <line x1="0" y1="50" x2="300" y2="50" stroke="#E2E8F0" stroke-width="1"/>
+                <line x1="0" y1="80" x2="300" y2="80" stroke="#E2E8F0" stroke-width="1"/>
+                <!-- zero line -->
+                <line x1="0" y1="60" x2="300" y2="60" stroke="#CBD5E0" stroke-width="1" stroke-dasharray="4,3"/>
+                <!-- filled area -->
+                <path d="M0,55 L43,45 L86,30 L129,35 L172,25 L215,40 L258,28 L300,32 L300,90 L258,90 L215,90 L172,90 L129,90 L86,90 L43,90 L0,90Z" fill="url(#fg)"/>
+                <!-- line -->
+                <path d="M0,55 L43,45 L86,30 L129,35 L172,25 L215,40 L258,28 L300,32" fill="none" stroke="#0D7377" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- dots -->
+                <circle cx="0" cy="55" r="3" fill="#0D7377"/>
+                <circle cx="43" cy="45" r="3" fill="#0D7377"/>
+                <circle cx="86" cy="30" r="3" fill="#0D7377"/>
+                <circle cx="129" cy="35" r="3" fill="#0D7377"/>
+                <circle cx="172" cy="25" r="3" fill="#0D7377"/>
+                <circle cx="215" cy="40" r="3" fill="#0D7377"/>
+                <circle cx="258" cy="28" r="3" fill="#0D7377"/>
+                <circle cx="300" cy="32" r="3" fill="#0D7377"/>
+                <!-- today marker -->
+                <line x1="0" y1="0" x2="0" y2="95" stroke="#C8102E" stroke-width="1.5" stroke-dasharray="3,2"/>
+                <text x="3" y="10" font-size="8" fill="#C8102E" font-weight="600">TODAY</text>
+              </svg>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:9px;text-align:center;color:var(--text-muted)">
+              <div style="font-weight:700;color:var(--brand-primary)">25</div><div>26</div><div>27</div><div>28</div><div>29</div><div>01</div><div>02</div>
+            </div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-muted)">Today</span><span class="mono fw-600" style="color:var(--status-success)">+1.1B</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-muted)">26 Aug</span><span class="mono fw-600" style="color:var(--status-success)">+1.8B</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-muted)">27 Aug (Maturity)</span><span class="mono fw-600" style="color:var(--status-success)">+2.5B</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-muted)">28 Aug</span><span class="mono fw-600" style="color:var(--status-success)">+2.1B</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-muted)">29 Aug</span><span class="mono fw-600" style="color:var(--status-success)">+3.1B</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Maturity Ladder -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Maturity Ladder</div><div class="card-subtitle">Assets vs Liabilities by bucket</div></div>
+          </div>
+          <div class="card-body">
+            <div style="display:flex;gap:12px;margin-bottom:var(--space-3)">
+              <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:#0D7377;display:inline-block"></span>Assets</span>
+              <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:var(--brand-primary);opacity:.8;display:inline-block"></span>Liabilities</span>
+            </div>
+            <div class="ladder-bar">
+              <div class="ladder-col"><div style="display:flex;gap:2px;align-items:flex-end;width:100%;flex:1"><div class="asset" style="height:80%;flex:1"></div><div class="liab" style="height:90%;flex:1"></div></div><div class="lbl">O/N</div></div>
+              <div class="ladder-col"><div style="display:flex;gap:2px;align-items:flex-end;width:100%;flex:1"><div class="asset" style="height:95%;flex:1"></div><div class="liab" style="height:60%;flex:1"></div></div><div class="lbl">1W</div></div>
+              <div class="ladder-col"><div style="display:flex;gap:2px;align-items:flex-end;width:100%;flex:1"><div class="asset" style="height:70%;flex:1"></div><div class="liab" style="height:40%;flex:1"></div></div><div class="lbl">1M</div></div>
+              <div class="ladder-col"><div style="display:flex;gap:2px;align-items:flex-end;width:100%;flex:1"><div class="asset" style="height:100%;flex:1"></div><div class="liab" style="height:50%;flex:1"></div></div><div class="lbl">3M</div></div>
+              <div class="ladder-col"><div style="display:flex;gap:2px;align-items:flex-end;width:100%;flex:1"><div class="asset" style="height:85%;flex:1"></div><div class="liab" style="height:30%;flex:1"></div></div><div class="lbl">6M</div></div>
+              <div class="ladder-col"><div style="display:flex;gap:2px;align-items:flex-end;width:100%;flex:1"><div class="asset" style="height:60%;flex:1"></div><div class="liab" style="height:20%;flex:1"></div></div><div class="lbl">1Y</div></div>
+              <div class="ladder-col"><div style="display:flex;gap:2px;align-items:flex-end;width:100%;flex:1"><div class="asset" style="height:75%;flex:1"></div><div class="liab" style="height:15%;flex:1"></div></div><div class="lbl">2Y+</div></div>
+            </div>
+            <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--surface-divider)">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-2);font-size:11px">
+                <div style="text-align:center"><div style="color:var(--text-muted)">Total Assets</div><div class="mono fw-700" style="color:#0D7377">KES 28.4B</div></div>
+                <div style="text-align:center"><div style="color:var(--text-muted)">Total Liabilities</div><div class="mono fw-700" style="color:var(--brand-primary)">KES 21.7B</div></div>
+                <div style="text-align:center"><div style="color:var(--text-muted)">Net Gap</div><div class="mono fw-700" style="color:var(--status-success)">+KES 6.7B</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <a href="07-reports.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View full ALM gap analysis →</a>
+          </div>
+        </div>
+
+        <!-- SRR Alert -->
+        <div class="alert alert-success" style="margin:0">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div>
+            <div style="font-weight:700;margin-bottom:2px">Statutory Reserve — COMPLIANT</div>
+            <div>CRR held: KES 1,200,000,000 &nbsp;·&nbsp; Required: KES 1,156,000,000 &nbsp;·&nbsp; Buffer: KES 44,000,000</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>

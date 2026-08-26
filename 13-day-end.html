@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day End Close — E&M Treasury Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.eod-step{display:flex;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--surface-divider);align-items:flex-start;transition:background .12s;}
+.eod-step:last-child{border-bottom:none;}
+.eod-step:hover{background:var(--surface-bg);}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;margin-top:2px;}
+.step-info{flex:1;}
+.step-info .st{font-size:13px;font-weight:700;color:var(--text-primary);}
+.step-info .sd{font-size:11px;color:var(--text-muted);margin-top:2px;line-height:1.5;}
+.step-info .sm{font-size:10px;color:var(--text-muted);margin-top:3px;}
+.step-done  .step-num{background:var(--status-success);color:#fff;}
+.step-active .step-num{background:var(--brand-primary);color:#fff;animation:pulse-red 1.5s infinite;}
+.step-block .step-num{background:var(--status-danger);color:#fff;}
+.step-pending .step-num{background:#E5E7EB;color:#9CA3AF;}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(200,16,46,.4)} 50%{box-shadow:0 0 0 6px rgba(200,16,46,0)}}
+.phase-header{padding:var(--space-2) var(--space-4);background:var(--surface-bg);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-muted);border-bottom:1px solid var(--surface-divider);}
+.connector{width:2px;height:16px;background:var(--surface-divider);margin:0 auto;margin-left:25px;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<nav class="sidebar">
+  <div class="sidebar-logo"><div class="sidebar-logo-mark">E&M</div><div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
+    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
+    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
+    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
+    <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/></svg>Deal Register</a>
+    <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Settlement</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Analytics</div>
+    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
+    <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">System</div>
+    <a href="13-day-end.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Day End Close</a>
+    <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
+  </div>
+  <div class="sidebar-footer"><div class="user-mini"><div class="user-avatar">JM</div><div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">Treasurer · LE-001</div></div></div></div>
+</nav>
+
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">Business Date</span><span class="rate">25 Aug 2026</span><span class="delta" style="color:var(--status-warning)">OPEN</span></div>
+    <div class="fx-tick"><span class="pair">Next Business Day</span><span class="rate">26 Aug 2026</span><span class="delta" style="color:#94A3B8">Wed</span></div>
+    <div class="fx-tick"><span class="pair">Server Time</span><span class="rate">10:42:35</span><span class="delta" style="color:#94A3B8">EAT</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>System</span><span class="sep"> / </span><span class="current">Day End Close</span></div>
+    <div class="topbar-spacer"></div>
+    <div style="background:var(--warning-bg);border:1px solid var(--warning-border);color:var(--status-warning);padding:5px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:700">Business Date: OPEN — 25 Aug 2026</div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">JM</div>
+      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">Treasurer · 10:42</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Day End Close</h1><p class="page-subtitle">EOD process for 25 August 2026 · Authorised by: Treasurer · LE-001</p></div>
+      <div class="page-actions">
+        <span style="font-size:12px;color:var(--text-muted)">Progress: 5 / 12 steps complete</span>
+        <button class="btn btn-outline btn-sm">EOD History</button>
+        <button class="btn btn-primary" onclick="alert('Initiating Day End Close sequence...')">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Run Next Step
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="card" style="margin-bottom:var(--space-4)">
+      <div style="padding:var(--space-4)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2)">
+          <div style="font-size:13px;font-weight:700">EOD Progress — 25 Aug 2026</div>
+          <div style="font-size:13px;font-weight:800;color:var(--brand-primary)">5 / 12 <span style="font-size:11px;color:var(--text-muted);font-weight:400">steps complete</span></div>
+        </div>
+        <div class="util-bar-track" style="height:10px"><div class="util-bar-fill" style="width:41.6%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px"><span>5 Done</span><span style="color:var(--status-danger);font-weight:600">1 Blocked</span><span>6 Pending</span></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:var(--space-4);align-items:start">
+
+      <!-- Checklist -->
+      <div class="card">
+        <!-- Phase 1 -->
+        <div class="phase-header">Phase 1 — Deal Closing</div>
+        <div class="eod-step step-done">
+          <div class="step-num">✓</div>
+          <div class="step-info"><div class="st">Lock Deal Capture</div><div class="sd">Freeze all FX and MM deal entry. Deals already in auth queue allowed to complete.</div><div class="sm">✓ Completed at 17:00:03 · System automated</div></div>
+          <span class="badge badge-success">DONE</span>
+        </div>
+        <div class="eod-step step-done">
+          <div class="step-num">✓</div>
+          <div class="step-info"><div class="st">Auth Queue Clearance Check</div><div class="sd">Verify no authorised deals remain pending settlement confirmation.</div><div class="sm">✓ 19 deals authorised · 0 timed-out · 5 still pending (carried forward)</div></div>
+          <span class="badge badge-success">DONE</span>
+        </div>
+        <div class="eod-step step-done">
+          <div class="step-num">✓</div>
+          <div class="step-info"><div class="st">Settlement Cut-Off Confirmation</div><div class="sd">Confirm all value-date deals have SWIFT confirmations or CBK RTGS receipts.</div><div class="sm">✓ 14 settlements confirmed · 1 pending T+1</div></div>
+          <span class="badge badge-success">DONE</span>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="phase-header">Phase 2 — Reconciliation</div>
+        <div class="eod-step step-done">
+          <div class="step-num">✓</div>
+          <div class="step-info"><div class="st">Nostro Reconciliation Sign-Off</div><div class="sd">Back Office confirms all nostro accounts have been reconciled or breaks documented.</div><div class="sm">✓ 97.2% matched · 4 breaks documented with resolution plans</div></div>
+          <span class="badge badge-success">DONE</span>
+        </div>
+        <div class="eod-step step-done">
+          <div class="step-num">✓</div>
+          <div class="step-info"><div class="st">GL Posting Verification</div><div class="sd">Confirm all treasury transactions have corresponding GL entries in the core banking system.</div><div class="sm">✓ 287 deals · 287 GL entries · 0 exceptions</div></div>
+          <span class="badge badge-success">DONE</span>
+        </div>
+        <div class="eod-step step-block">
+          <div class="step-num" style="background:var(--status-danger)">!</div>
+          <div class="step-info">
+            <div class="st" style="color:var(--status-danger)">Nostro Break Resolution — USD Account</div>
+            <div class="sd">2 aged breaks in USD Nostro must be resolved or formally escalated before EOD close.</div>
+            <div class="sm" style="color:var(--status-danger);font-weight:600">⚑ BLOCKING: REF NYC20260822015 ($12,500 diff) · REF NYC20260822019 ($750,000 unmatched)</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+            <span class="badge badge-danger">BLOCKED</span>
+            <a href="06-reconciliation.html" class="btn btn-danger btn-sm">Resolve Now</a>
+          </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="phase-header">Phase 3 — Rate &amp; Position Close</div>
+        <div class="eod-step step-pending">
+          <div class="step-num">7</div>
+          <div class="step-info"><div class="st">EOD FX Rate Capture</div><div class="sd">Lock official CBK mid-rates for all currencies. Used for P&amp;L mark-to-market and NOP return.</div><div class="sm">Awaiting: USD/KES, EUR/KES, GBP/KES official rates</div></div>
+          <span class="badge badge-neutral">PENDING</span>
+        </div>
+        <div class="eod-step step-pending">
+          <div class="step-num">8</div>
+          <div class="step-info"><div class="st">NOP Calculation &amp; Sign-Off</div><div class="sd">Compute final EOD Net Open Position using locked rates. Treasurer sign-off required.</div><div class="sm">Depends on: Step 7</div></div>
+          <span class="badge badge-neutral">PENDING</span>
+        </div>
+        <div class="eod-step step-pending">
+          <div class="step-num">9</div>
+          <div class="step-info"><div class="st">Interest Accrual Processing</div><div class="sd">Post daily accruals on all active placements, borrowings, and bonds.</div><div class="sm">Estimated: KES 12.4M accruals today</div></div>
+          <span class="badge badge-neutral">PENDING</span>
+        </div>
+
+        <!-- Phase 4 -->
+        <div class="phase-header">Phase 4 — Regulatory &amp; Reporting</div>
+        <div class="eod-step step-pending">
+          <div class="step-num">10</div>
+          <div class="step-info"><div class="st">CBK NOP Daily Return Submission</div><div class="sd">Submit EOD NOP return to Central Bank of Kenya. Deadline: 17:00.</div><div class="sm">Depends on: Step 8</div></div>
+          <span class="badge badge-neutral">PENDING</span>
+        </div>
+        <div class="eod-step step-pending">
+          <div class="step-num">11</div>
+          <div class="step-info"><div class="st">Daily Position Report Distribution</div><div class="sd">Auto-send daily treasury position report to ALCO distribution list.</div><div class="sm">Recipients: CFO, Risk, Treasury, Internal Audit</div></div>
+          <span class="badge badge-neutral">PENDING</span>
+        </div>
+
+        <!-- Phase 5 -->
+        <div class="phase-header">Phase 5 — Business Date Rollover</div>
+        <div class="eod-step step-pending" style="border-bottom:none">
+          <div class="step-num">12</div>
+          <div class="step-info"><div class="st">Business Date Advance to 26 Aug 2026</div><div class="sd">Roll the system business date. Open Deal Capture for 26 Aug 2026. Maturity alerts for tomorrow auto-generated.</div><div class="sm" style="color:var(--status-danger);font-weight:600">⚑ Requires all prior steps complete · Authoriser + Treasurer sign-off required</div></div>
+          <span class="badge badge-neutral">PENDING</span>
+        </div>
+      </div>
+
+      <!-- Right side summary -->
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+
+        <!-- Today's EOD summary -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">EOD Summary</div><div class="card-subtitle">25 Aug 2026</div></div>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Total deals today</span><span class="fw-700">24</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Settled today</span><span class="fw-700" style="color:var(--status-success)">19</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Carried forward</span><span class="fw-700" style="color:var(--status-warning)">5</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Maturities processed</span><span class="fw-700">2</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">GL entries posted</span><span class="fw-700">287</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Nostro breaks</span><span class="fw-700" style="color:var(--status-danger)">4 (2 blocking)</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding-top:8px;border-top:1px solid var(--surface-divider)"><span class="fw-700">EOD Status</span><span class="badge badge-danger">BLOCKED</span></div>
+          </div>
+        </div>
+
+        <!-- Tomorrow's preview -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Tomorrow — 26 Aug 2026</div></div>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Deals settling T+1</span><span class="fw-700">3</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Maturities due</span><span class="fw-700" style="color:var(--status-warning)">2</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Coupon payments</span><span class="fw-700">0</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Deals auth pending</span><span class="fw-700" style="color:var(--status-warning)">5</span></div>
+          </div>
+          <div class="card-footer"><a href="04-cash-position.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View cash position for tomorrow →</a></div>
+        </div>
+
+        <!-- Sign-off panel -->
+        <div class="card" style="border-color:var(--danger-border)">
+          <div class="card-header" style="background:var(--danger-bg)"><div class="card-title" style="color:var(--status-danger)">EOD Sign-Off</div></div>
+          <div style="padding:var(--space-4)">
+            <div class="alert alert-danger" style="margin-bottom:var(--space-3)">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <div>Cannot proceed to date rollover. 2 blocking Nostro breaks must be resolved first.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px;background:var(--surface-bg);border-radius:6px"><span>Treasurer sign-off</span><span class="badge badge-warning">PENDING</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px;background:var(--surface-bg);border-radius:6px"><span>Authoriser sign-off</span><span class="badge badge-warning">PENDING</span></div>
+            </div>
+            <button class="btn btn-outline w-full" style="margin-top:var(--space-3);justify-content:center;width:100%" disabled>Initiate Date Rollover (blocked)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>

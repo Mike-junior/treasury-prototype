@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Limits &amp; Exposure — E&M Treasury Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.breach-row { background:rgba(220,38,38,.04) !important; }
+.warn-row   { background:rgba(217,119,6,.04) !important; }
+.limit-type-chip {
+  display:inline-block; padding:2px 8px; border-radius:12px;
+  font-size:10px; font-weight:700; letter-spacing:.3px;
+}
+.lt-hard    { background:rgba(220,38,38,.1);  color:#991B1B; }
+.lt-warn    { background:rgba(217,119,6,.1);  color:#92400E; }
+.lt-approval{ background:rgba(37,99,235,.1);  color:#1E3A8A; }
+.lt-monitor { background:#F3F4F6; color:#4B5563; }
+
+.breach-lifecycle {
+  display:flex; gap:0; align-items:center;
+  font-size:10px;
+}
+.lifecycle-step {
+  display:flex; align-items:center; gap:4px;
+  padding:4px 8px;
+  background:var(--surface-bg);
+  border:1px solid var(--surface-border);
+  font-weight:600; color:var(--text-muted);
+  position:relative;
+}
+.lifecycle-step:not(:last-child)::after {
+  content:'›';
+  position:absolute; right:-8px;
+  color:var(--surface-border); font-size:14px;
+  z-index:1;
+}
+.lifecycle-step.done  { background:var(--success-bg); color:var(--status-success); border-color:var(--success-border); }
+.lifecycle-step.active{ background:var(--warning-bg); color:var(--status-warning); border-color:var(--warning-border); font-weight:700; }
+
+/* Dimensional breakdown */
+.dim-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:var(--space-3); }
+.dim-card {
+  background:var(--surface-card);
+  border:1px solid var(--surface-border);
+  border-radius:var(--radius-md);
+  padding:var(--space-3);
+}
+.dim-card .name  { font-size:11px; font-weight:700; color:var(--text-primary); margin-bottom:4px; }
+.dim-card .sub   { font-size:10px; color:var(--text-muted); }
+.dim-card .pct   { font-size:18px; font-weight:800; font-family:var(--font-mono); margin:6px 0; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-mark">E&M</div>
+    <div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
+    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
+    <a href="05-limits-exposure.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
+    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-mini"><div class="user-avatar">KO</div><div class="user-mini-info"><div class="name">Kevin Omondi</div><div class="role">Middle Office · LE-001</div></div></div>
+  </div>
+</nav>
+
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲ +0.23</span></div>
+    <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span class="delta down">▼ −0.41</span></div>
+    <div class="fx-tick"><span class="pair">GBP/KES</span><span class="rate">163.78</span><span class="delta up">▲ +0.67</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Limits &amp; Exposure</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <button class="topbar-icon-btn"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot"></span></button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#0D7377;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">KO</div>
+      <div style="line-height:1.2"><div style="font-size:12px;font-weight:600">Kevin Omondi</div><div style="font-size:10px;color:var(--text-muted)">Middle Office · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Limits &amp; Exposure</h1>
+        <p class="page-subtitle">Middle Office · Real-time limit utilisation across all dimensions (FR-06)</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-outline btn-sm">Configure Limits</button>
+        <button class="btn btn-outline btn-sm">Breach History</button>
+        <button class="btn btn-outline btn-sm">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <!-- KPI row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-4)">
+      <div class="kpi-card" style="--kpi-accent:#C8102E;--kpi-icon-bg:rgba(200,16,46,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <div class="kpi-label">Active Breaches</div>
+        <div class="kpi-value" style="color:var(--status-danger)">0</div>
+        <div class="kpi-meta">0 Hard · 2 Warning</div>
+      </div>
+      <div class="kpi-card" style="--kpi-accent:#D97706;--kpi-icon-bg:rgba(217,119,6,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="kpi-label">Warning Limits</div>
+        <div class="kpi-value" style="color:var(--status-warning)">2</div>
+        <div class="kpi-meta">EUR NOP · ZAR NOP</div>
+      </div>
+      <div class="kpi-card" style="--kpi-accent:#2563EB;--kpi-icon-bg:rgba(37,99,235,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="kpi-label">Active Counterparties</div>
+        <div class="kpi-value">18</div>
+        <div class="kpi-meta">12 Banks · 6 Others</div>
+      </div>
+      <div class="kpi-card" style="--kpi-accent:#0D7377;--kpi-icon-bg:rgba(13,115,119,.08)">
+        <div class="kpi-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="kpi-label">Avg. CTY Utilisation</div>
+        <div class="kpi-value">43%</div>
+        <div class="kpi-meta"><span class="kpi-delta" style="color:var(--status-success)">▲ 3%</span>&nbsp;vs yesterday</div>
+      </div>
+    </div>
+
+    <!-- Active Warnings Banner -->
+    <div class="alert alert-warning" style="margin-bottom:var(--space-4)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>
+        <strong>2 Warning-level limit events active.</strong> EUR NOP at 84% (threshold: 80%). ZAR NOP at 99% — approaching hard limit of 100%. Review and remediate before day end. Unacknowledged escalation in 3h 22m.
+        <span style="margin-left:12px;font-weight:700;cursor:pointer;color:#92400E;text-decoration:underline">Acknowledge Now</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--space-4);align-items:start">
+
+      <!-- Main limits table -->
+      <div>
+        <!-- Tabs -->
+        <div class="tabs" id="limitTabs">
+          <div class="tab-item active" onclick="switchLimitTab('cty')">Counterparty Limits</div>
+          <div class="tab-item" onclick="switchLimitTab('nop')">NOP / FX Limits</div>
+          <div class="tab-item" onclick="switchLimitTab('sector')">Sector &amp; Rating</div>
+          <div class="tab-item" onclick="switchLimitTab('dealer')">Dealer Limits</div>
+        </div>
+
+        <!-- Counterparty tab -->
+        <div class="tab-panel active" id="tab-cty">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Counterparty Exposure Limits</div><div class="card-subtitle">Including PENDING_AUTH deals · Grouped to ultimate parent</div></div>
+              <input type="text" class="form-control" style="width:200px;padding:5px 10px;font-size:11px" placeholder="Filter counterparty…">
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Counterparty</th><th>Type</th><th>Limit Type</th><th style="text-align:right">Exposure</th><th style="text-align:right">Limit</th><th style="min-width:140px">Utilisation</th><th>Status</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td><div style="font-weight:600;font-size:12px">Citi N.A. (Nairobi)</div><div style="font-size:10px;color:var(--text-muted)">Citi Group</div></td><td>Bank</td><td><span class="limit-type-chip lt-hard">HARD</span></td><td class="text-right mono">323.6M</td><td class="text-right mono">800.0M</td><td><div class="util-bar-track"><div class="util-bar-fill" style="width:40%"></div></div><div class="util-bar-label"><span></span><span style="color:var(--status-success)">40%</span></div></td><td><span class="badge badge-success">NORMAL</span></td><td><button class="btn btn-ghost btn-sm">Detail</button></td></tr>
+                  <tr><td><div style="font-weight:600;font-size:12px">Standard Bank Kenya</div><div style="font-size:10px;color:var(--text-muted)">Stanbic Group</div></td><td>Bank</td><td><span class="limit-type-chip lt-hard">HARD</span></td><td class="text-right mono">540.0M</td><td class="text-right mono">800.0M</td><td><div class="util-bar-track"><div class="util-bar-fill" style="width:67%"></div></div><div class="util-bar-label"><span></span><span style="color:var(--status-success)">67%</span></div></td><td><span class="badge badge-success">NORMAL</span></td><td><button class="btn btn-ghost btn-sm">Detail</button></td></tr>
+                  <tr class="warn-row"><td><div style="font-weight:600;font-size:12px">KCB Group Ltd</div><div style="font-size:10px;color:var(--text-muted)">KCB Group</div></td><td>Bank</td><td><span class="limit-type-chip lt-warn">WARNING</span></td><td class="text-right mono">760.0M</td><td class="text-right mono">900.0M</td><td><div class="util-bar-track"><div class="util-bar-fill warn" style="width:84%"></div></div><div class="util-bar-label"><span></span><span style="color:var(--status-warning);font-weight:700">84% ⚠</span></div></td><td><span class="badge badge-warning">WARNING</span></td><td><button class="btn btn-outline btn-sm">Review</button></td></tr>
+                  <tr><td><div style="font-weight:600;font-size:12px">Equity Bank Kenya</div><div style="font-size:10px;color:var(--text-muted)">Equity Group</div></td><td>Bank</td><td><span class="limit-type-chip lt-hard">HARD</span></td><td class="text-right mono">1,200.0M</td><td class="text-right mono">1,500.0M</td><td><div class="util-bar-track"><div class="util-bar-fill" style="width:80%"></div></div><div class="util-bar-label"><span></span><span style="color:var(--status-success)">80%</span></div></td><td><span class="badge badge-success">NORMAL</span></td><td><button class="btn btn-ghost btn-sm">Detail</button></td></tr>
+                  <tr><td><div style="font-weight:600;font-size:12px">Cooperative Bank</div><div style="font-size:10px;color:var(--text-muted)">Co-op Group</div></td><td>Bank</td><td><span class="limit-type-chip lt-hard">HARD</span></td><td class="text-right mono">220.0M</td><td class="text-right mono">700.0M</td><td><div class="util-bar-track"><div class="util-bar-fill" style="width:31%"></div></div><div class="util-bar-label"><span></span><span style="color:var(--status-success)">31%</span></div></td><td><span class="badge badge-success">NORMAL</span></td><td><button class="btn btn-ghost btn-sm">Detail</button></td></tr>
+                  <tr><td><div style="font-weight:600;font-size:12px">DTB Kenya</div><div style="font-size:10px;color:var(--text-muted)">DTB Group</div></td><td>Bank</td><td><span class="limit-type-chip lt-hard">HARD</span></td><td class="text-right mono">800.0M</td><td class="text-right mono">1,000.0M</td><td><div class="util-bar-track"><div class="util-bar-fill" style="width:80%"></div></div><div class="util-bar-label"><span></span><span style="color:var(--status-success)">80%</span></div></td><td><span class="badge badge-success">NORMAL</span></td><td><button class="btn btn-ghost btn-sm">Detail</button></td></tr>
+                  <tr><td><div style="font-weight:600;font-size:12px">Safaricom PLC</div><div style="font-size:10px;color:var(--text-muted)">Safaricom Group</div></td><td>Corporate</td><td><span class="limit-type-chip lt-approval">APPROVAL</span></td><td class="text-right mono">200.0M</td><td class="text-right mono">300.0M</td><td><div class="util-bar-track"><div class="util-bar-fill info" style="width:67%"></div></div><div class="util-bar-label"><span></span><span style="color:var(--status-info)">67%</span></div></td><td><span class="badge badge-info">APPROVAL</span></td><td><button class="btn btn-ghost btn-sm">Detail</button></td></tr>
+                  <tr><td><div style="font-weight:600;font-size:12px">CBK — Direct</div><div style="font-size:10px;color:var(--text-muted)">Central Bank</div></td><td>Central Bank</td><td><span class="limit-type-chip lt-monitor">MONITOR</span></td><td class="text-right mono">7,800.0M</td><td class="text-right mono">—</td><td><div class="util-bar-track"><div class="util-bar-fill info" style="width:100%"></div></div><div class="util-bar-label"><span></span><span>Monitored</span></div></td><td><span class="badge badge-neutral">MONITOR</span></td><td><button class="btn btn-ghost btn-sm">Detail</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOP tab -->
+        <div class="tab-panel" id="tab-nop">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Net Open Position Limits</div><div class="card-subtitle">All FX exposure sources · Real-time (FR-11)</div></div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Currency</th><th>Limit Type</th><th style="text-align:right">Current NOP</th><th style="text-align:right">Overnight Limit</th><th style="text-align:right">Intraday Limit</th><th style="min-width:160px">Utilisation</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>USD</strong></td><td><span class="limit-type-chip lt-hard">HARD</span></td><td class="text-right mono" style="color:var(--status-success)">+128.4M</td><td class="text-right mono">200.0M</td><td class="text-right mono">300.0M</td><td><div class="util-bar-track"><div class="util-bar-fill" style="width:64%"></div></div><div class="util-bar-label"><span></span><span>64%</span></div></td><td><span class="badge badge-success">NORMAL</span></td></tr>
+                  <tr class="warn-row"><td><strong>EUR</strong></td><td><span class="limit-type-chip lt-warn">WARNING</span></td><td class="text-right mono" style="color:var(--status-warning)">+42.1M</td><td class="text-right mono">50.0M</td><td class="text-right mono">75.0M</td><td><div class="util-bar-track"><div class="util-bar-fill warn" style="width:84%"></div></div><div class="util-bar-label"><span></span><span style="color:var(--status-warning);font-weight:700">84% ⚠</span></div></td><td><span class="badge badge-warning">WARNING</span></td></tr>
+                  <tr><td><strong>GBP</strong></td><td><span class="limit-type-chip lt-hard">HARD</span></td><td class="text-right mono" style="color:var(--status-info)">−8.3M</td><td class="text-right mono">30.0M</td><td class="text-right mono">45.0M</td><td><div class="util-bar-track"><div class="util-bar-fill info" style="width:28%"></div></div><div class="util-bar-label"><span></span><span>28%</span></div></td><td><span class="badge badge-success">NORMAL</span></td></tr>
+                  <tr class="breach-row"><td><strong>ZAR</strong></td><td><span class="limit-type-chip lt-hard">HARD</span></td><td class="text-right mono" style="color:var(--status-danger)">+24.7M</td><td class="text-right mono">25.0M</td><td class="text-right mono">35.0M</td><td><div class="util-bar-track"><div class="util-bar-fill danger" style="width:99%"></div></div><div class="util-bar-label"><span></span><span style="color:var(--status-danger);font-weight:700">99% !</span></div></td><td><span class="badge badge-danger">NEAR BREACH</span></td></tr>
+                  <tr><td><strong>TZS</strong></td><td><span class="limit-type-chip lt-hard">HARD</span></td><td class="text-right mono">+15.0M</td><td class="text-right mono">40.0M</td><td class="text-right mono">60.0M</td><td><div class="util-bar-track"><div class="util-bar-fill" style="width:38%"></div></div><div class="util-bar-label"><span></span><span>38%</span></div></td><td><span class="badge badge-success">NORMAL</span></td></tr>
+                  <tr><td><strong>Aggregate NOP</strong></td><td><span class="limit-type-chip lt-hard">HARD</span></td><td class="text-right mono fw-700">KES 725M</td><td class="text-right mono">1,000.0M</td><td class="text-right mono">1,400.0M</td><td><div class="util-bar-track"><div class="util-bar-fill warn" style="width:72%"></div></div><div class="util-bar-label"><span></span><span style="color:var(--status-warning)">72%</span></div></td><td><span class="badge badge-success">NORMAL</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sector tab -->
+        <div class="tab-panel" id="tab-sector">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Sector &amp; Rating Band Limits</div></div>
+            <div class="dim-grid" style="padding:var(--space-4)">
+              <div class="dim-card"><div class="name">Banking Sector</div><div class="sub">Max exposure across all banks</div><div class="pct" style="color:var(--status-success)">58%</div><div class="util-bar-track" style="height:4px"><div class="util-bar-fill" style="width:58%;height:100%"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:3px">KES 14.8B / 25.5B limit</div></div>
+              <div class="dim-card"><div class="name">Government Securities</div><div class="sub">CBK, T-Bills, T-Bonds</div><div class="pct" style="color:var(--status-success)">71%</div><div class="util-bar-track" style="height:4px"><div class="util-bar-fill" style="width:71%;height:100%"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:3px">KES 21.3B / 30.0B limit</div></div>
+              <div class="dim-card"><div class="name">Corporate (Unrated)</div><div class="sub">Non-bank corporates</div><div class="pct" style="color:var(--status-warning)">82%</div><div class="util-bar-track" style="height:4px"><div class="util-bar-fill warn" style="width:82%;height:100%"></div></div><div style="font-size:10px;color:var(--status-warning);font-weight:600;margin-top:3px">KES 2.5B / 3.0B limit ⚠</div></div>
+              <div class="dim-card"><div class="name">AAA Rated</div><div class="sub">Int'l rating band</div><div class="pct" style="color:var(--status-success)">33%</div><div class="util-bar-track" style="height:4px"><div class="util-bar-fill" style="width:33%;height:100%"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:3px">KES 3.3B / 10.0B limit</div></div>
+              <div class="dim-card"><div class="name">A-Rated and above</div><div class="sub">Investment grade</div><div class="pct" style="color:var(--status-success)">55%</div><div class="util-bar-track" style="height:4px"><div class="util-bar-fill" style="width:55%;height:100%"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:3px">KES 11.0B / 20.0B limit</div></div>
+              <div class="dim-card"><div class="name">Cross-border / Offshore</div><div class="sub">Non-KE domiciled</div><div class="pct" style="color:var(--status-info)">44%</div><div class="util-bar-track" style="height:4px"><div class="util-bar-fill info" style="width:44%;height:100%"></div></div><div style="font-size:10px;color:var(--text-muted);margin-top:3px">KES 2.2B / 5.0B limit</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dealer tab -->
+        <div class="tab-panel" id="tab-dealer">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Dealer Daily Limits</div><div class="card-subtitle">Per-dealer trading authority</div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Dealer</th><th>Role</th><th style="text-align:right">Daily Limit</th><th style="text-align:right">Used Today</th><th style="min-width:160px">Utilisation</th><th>Stop-Loss</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>James Mwangi</strong></td><td>Dealer</td><td class="text-right mono">5,000.0M</td><td class="text-right mono">2,323.6M</td><td><div class="util-bar-track"><div class="util-bar-fill" style="width:46%"></div></div><div class="util-bar-label"><span></span><span>46%</span></div></td><td class="mono">−50.0M</td><td><span class="badge badge-success">NORMAL</span></td></tr>
+                  <tr><td><strong>Wanjiru Kamau</strong></td><td>Dealer</td><td class="text-right mono">3,000.0M</td><td class="text-right mono">1,800.0M</td><td><div class="util-bar-track"><div class="util-bar-fill warn" style="width:60%"></div></div><div class="util-bar-label"><span></span><span>60%</span></div></td><td class="mono">−30.0M</td><td><span class="badge badge-success">NORMAL</span></td></tr>
+                  <tr><td><strong>Peter Otieno</strong></td><td>Junior Dealer</td><td class="text-right mono">1,000.0M</td><td class="text-right mono">120.0M</td><td><div class="util-bar-track"><div class="util-bar-fill" style="width:12%"></div></div><div class="util-bar-label"><span></span><span>12%</span></div></td><td class="mono">−10.0M</td><td><span class="badge badge-success">NORMAL</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Active breach lifecycle -->
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Active Breach Events</div><div class="card-subtitle">Requiring Middle Office action</div></div>
+            <span class="badge badge-warning">2</span>
+          </div>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-4)">
+
+            <!-- Breach 1 -->
+            <div style="border:1px solid var(--warning-border);border-radius:var(--radius-md);padding:var(--space-3);background:var(--warning-bg)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div>
+                  <div style="font-size:12px;font-weight:700;color:#92400E">EUR NOP — 84%</div>
+                  <div style="font-size:11px;color:#92400E;margin-top:2px">Warning threshold: 80% · Hard: 100%</div>
+                </div>
+                <span class="badge badge-warning">ACTIVE</span>
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">Passive breach: EUR rate movement drove NOP above warning threshold at 10:22 AM</div>
+              <div class="breach-lifecycle" style="gap:4px;flex-wrap:wrap">
+                <div class="lifecycle-step done">DETECTED</div>
+                <div class="lifecycle-step active">NOTIFIED</div>
+                <div class="lifecycle-step">ACK'd</div>
+                <div class="lifecycle-step">REMEDIATED</div>
+                <div class="lifecycle-step">CLOSED</div>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:6px">
+                <button class="btn btn-warning btn-sm" style="flex:1;font-size:11px">Acknowledge</button>
+                <button class="btn btn-outline btn-sm" style="font-size:11px">Remediation Plan</button>
+              </div>
+            </div>
+
+            <!-- Breach 2 -->
+            <div style="border:1px solid var(--danger-border);border-radius:var(--radius-md);padding:var(--space-3);background:var(--danger-bg)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div>
+                  <div style="font-size:12px;font-weight:700;color:#991B1B">ZAR NOP — 99% (NEAR HARD)</div>
+                  <div style="font-size:11px;color:#991B1B;margin-top:2px">Hard limit: 25M · Current: 24.7M</div>
+                </div>
+                <span class="badge badge-danger">ESCALATED</span>
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">New FX deal blocked. Escalated to Treasurer at 10:38 AM. Unacknowledged for 14 min.</div>
+              <div class="breach-lifecycle" style="gap:4px;flex-wrap:wrap">
+                <div class="lifecycle-step done">DETECTED</div>
+                <div class="lifecycle-step done">NOTIFIED</div>
+                <div class="lifecycle-step active">ACK REQUIRED</div>
+                <div class="lifecycle-step">REMEDIATED</div>
+                <div class="lifecycle-step">CLOSED</div>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:6px">
+                <button class="btn btn-danger btn-sm" style="flex:1;font-size:11px">Acknowledge with Justification</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Limit check log -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recent Limit Checks</div><div class="card-subtitle">Last 10 pre-deal checks</div></div>
+          <div style="padding:0">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:11px">
+              <span class="mono">DEAL-00287</span><span>FX Spot USD</span><span class="badge badge-success">PASSED</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:11px">
+              <span class="mono">DEAL-00286</span><span>FX Fwd EUR</span><span class="badge badge-warning">WARNED</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:11px">
+              <span class="mono">ATTEMPT</span><span>FX Spot ZAR</span><span class="badge badge-danger">BLOCKED</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);font-size:11px">
+              <span class="mono">DEAL-00283</span><span>Repo KES</span><span class="badge badge-success">PASSED</span>
+            </div>
+          </div>
+          <div class="card-footer"><a href="07-reports.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View limit utilisation report →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function switchLimitTab(id) {
+  document.querySelectorAll('#limitTabs .tab-item').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const ids = ['cty','nop','sector','dealer'];
+  const idx = ids.indexOf(id);
+  document.querySelectorAll('#limitTabs .tab-item')[idx].classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+</script>
+</body>
+</html>
