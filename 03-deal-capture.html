@@ -10,146 +10,245 @@
     rel="stylesheet">
   <link rel="stylesheet" href="treasury-design-system.css">
   <style>
-    .tab-panel {
+    .prod-tabs {
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid var(--surface-border);
+      margin-bottom: var(--space-4);
+      overflow-x: auto;
+    }
+
+    .prod-tab {
+      padding: 9px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      transition: color .15s, border-color .15s;
+    }
+
+    .prod-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .prod-tab.active {
+      color: var(--brand-primary);
+      border-bottom-color: var(--brand-primary);
+    }
+
+    .steps {
+      display: flex;
+      align-items: center;
+      margin-bottom: var(--space-5);
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      white-space: nowrap;
+      transition: color .15s;
+    }
+
+    .step-item.done {
+      color: var(--status-success);
+    }
+
+    .step-item.active {
+      color: var(--brand-primary);
+      border-bottom-color: var(--brand-primary);
+    }
+
+    .step-item:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      background: var(--surface-border);
+      color: var(--text-muted);
+    }
+
+    .step-item.done .step-num {
+      background: var(--status-success);
+      color: #fff;
+    }
+
+    .step-item.active .step-num {
+      background: var(--brand-primary);
+      color: #fff;
+    }
+
+    .step-sep {
+      flex: 1;
+      height: 1px;
+      background: var(--surface-border);
+      max-width: 30px;
+    }
+
+    .step-panel {
       display: none;
     }
 
-    .tab-panel.active {
+    .step-panel.active {
       display: block;
+      animation: fadeIn .2s ease;
     }
 
-    .calc-result {
-      background: var(--surface-bg);
-      border: 1px solid var(--surface-border);
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .sect-lbl {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--surface-divider);
+      margin-bottom: 12px;
+      grid-column: 1/-1;
+    }
+
+    .prod-info {
+      background: var(--info-bg);
+      border: 1px solid var(--info-border);
       border-radius: var(--radius-md);
-      padding: var(--space-4);
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--status-info);
+      margin-bottom: var(--space-4);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .prod-info svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      margin-top: 1px;
     }
 
     .calc-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
+      padding: 7px 0;
       border-bottom: 1px solid var(--surface-divider);
+      font-size: 12px;
     }
 
     .calc-row:last-child {
       border-bottom: none;
     }
 
-    .calc-row .lbl {
-      font-size: 12px;
+    .calc-row .ck {
       color: var(--text-muted);
     }
 
-    .calc-row .val {
-      font-size: 12px;
+    .calc-row .cv {
       font-weight: 700;
       font-family: var(--font-mono);
-      color: var(--text-primary);
     }
 
-    .calc-row .val.total {
-      font-size: 15px;
+    .calc-row .cv.big {
+      font-size: 14px;
       color: var(--brand-primary);
     }
 
-    .challenge-box {
-      background: var(--warning-bg);
-      border: 1px solid var(--warning-border);
-      border-radius: var(--radius-md);
-      padding: var(--space-4);
-      display: none;
+    .calc-row .cv.ok {
+      color: var(--status-success);
     }
 
-    .challenge-box.visible {
-      display: block;
+    .calc-row .cv.warn {
+      color: var(--status-warning);
     }
 
-    .mandate-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: var(--info-bg);
-      border: 1px solid var(--info-border);
-      color: var(--status-info);
-      padding: 3px 10px;
-      border-radius: var(--radius-full);
-      font-size: 11px;
-      font-weight: 600;
-    }
-
-    .limit-check-row {
+    .lc-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       padding: 8px var(--space-4);
       border-bottom: 1px solid var(--surface-divider);
       font-size: 12px;
     }
 
-    .limit-check-row:last-child {
+    .lc-row:last-child {
       border-bottom: none;
     }
 
-    .limit-status {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 600;
+    .challenge {
+      display: none;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      margin-top: var(--space-3);
     }
 
-    .step-indicator {
-      display: flex;
-      gap: 0;
-      margin-bottom: var(--space-5);
-      border-bottom: 2px solid var(--surface-border);
+    .challenge.visible {
+      display: block;
     }
 
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px var(--space-5);
+    .rtbl {
+      width: 100%;
+      border-collapse: collapse;
       font-size: 12px;
-      font-weight: 600;
+    }
+
+    .rtbl td {
+      padding: 8px var(--space-3);
+      border-bottom: 1px solid var(--surface-divider);
+    }
+
+    .rtbl tr:last-child td {
+      border-bottom: none;
+    }
+
+    .rtbl .rk {
       color: var(--text-muted);
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      cursor: pointer;
+      width: 42%;
     }
 
-    .step.done {
-      color: var(--status-success);
-    }
-
-    .step.active {
-      color: var(--brand-primary);
-      border-bottom-color: var(--brand-primary);
-    }
-
-    .step .num {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
+    .rtbl .rv {
       font-weight: 700;
-      background: var(--surface-border);
+      font-family: var(--font-mono);
+    }
+
+    .rtbl .rsh td {
+      background: var(--surface-bg);
+      font-size: 10px;
+      font-weight: 800;
       color: var(--text-muted);
-      flex-shrink: 0;
-    }
-
-    .step.done .num {
-      background: var(--status-success);
-      color: #fff;
-    }
-
-    .step.active .num {
-      background: var(--brand-primary);
-      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      padding: 7px var(--space-3);
     }
   </style>
 </head>
@@ -157,7 +256,6 @@
 <body>
   <div class="app-shell">
 
-    <!-- Sidebar -->
     <nav class="sidebar">
       <div class="sidebar-logo">
         <div class="sidebar-logo-mark">E&M</div>
@@ -191,8 +289,8 @@
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-label">Operations</div>
-        <a href="#" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24">
+        <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" />
             <polyline points="12 6 12 12 16 14" />
           </svg>Auth Queue<span class="nav-badge">5</span></a>
@@ -201,13 +299,18 @@
             <polyline points="9 11 12 14 22 4" />
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
           </svg>Reconciliation<span class="nav-badge warning">4</span></a>
-        <a href="#" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24">
+        <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
             <line x1="8" y1="6" x2="21" y2="6" />
             <line x1="8" y1="12" x2="21" y2="12" />
             <line x1="8" y1="18" x2="21" y2="18" />
             <line x1="3" y1="6" x2="3.01" y2="6" />
           </svg>Deal Register</a>
+        <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>Settlement</a>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-section-label">Analytics</div>
@@ -217,10 +320,34 @@
             <line x1="12" y1="20" x2="12" y2="4" />
             <line x1="6" y1="20" x2="6" y2="14" />
           </svg>Reports</a>
+        <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path d="M3 3v18h18" />
+            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
+          </svg>ALM / IRRBB</a>
+        <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>Reg. Reports</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">System</div>
+        <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>Day End Close</a>
+        <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+          </svg>Configuration</a>
       </div>
       <div class="sidebar-footer">
         <div class="user-mini">
-          <div class="user-avatar">MA</div>
+          <div class="user-avatar">JM</div>
           <div class="user-mini-info">
             <div class="name">Mike Agola</div>
             <div class="role">Dealer · LE-001</div>
@@ -231,27 +358,23 @@
 
     <div class="main-content">
       <div class="fx-ticker-bar">
-        <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲
-            +0.23</span></div>
-        <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span class="delta down">▼
-            −0.41</span></div>
-        <div class="fx-tick"><span class="pair">GBP/KES</span><span class="rate">163.78</span><span class="delta up">▲
-            +0.67</span></div>
+        <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span
+            class="delta up">▲+0.23</span></div>
+        <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span
+            class="delta down">▼−0.41</span></div>
+        <div class="fx-tick"><span class="pair">GBP/KES</span><span class="rate">163.78</span><span
+            class="delta up">▲+0.67</span></div>
         <div class="fx-tick"><span class="pair">CBR</span><span class="rate">13.00%</span><span class="delta"
             style="color:#94A3B8">unch</span></div>
-        <div class="fx-tick"><span class="pair">91-TB</span><span class="rate">14.87%</span><span class="delta up">▲
-            +5bp</span></div>
-        <div class="fx-tick"><span class="pair">182-TB</span><span class="rate">15.23%</span><span class="delta up">▲
-            +3bp</span></div>
-        <div class="fx-tick"><span class="pair">364-TB</span><span class="rate">16.10%</span><span class="delta"
-            style="color:#94A3B8">unch</span></div>
+        <div class="fx-tick"><span class="pair">91-TB</span><span class="rate">14.87%</span><span
+            class="delta up">▲+5bp</span></div>
+        <div class="fx-tick"><span class="pair">182-TB</span><span class="rate">15.23%</span></div>
+        <div class="fx-tick"><span class="pair">364-TB</span><span class="rate">16.10%</span></div>
       </div>
 
       <div class="topbar">
-        <div class="topbar-breadcrumb">
-          <a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span>
-          <span class="current">Deal Capture</span>
-        </div>
+        <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span
+            class="sep"> / </span><span class="current">Deal Capture</span></div>
         <div class="topbar-spacer"></div>
         <div class="live-badge">Live</div>
         <div class="topbar-actions">
@@ -264,9 +387,9 @@
         <div
           style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
           <div
-            style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">
-            MA</div>
-          <div style="line-height:1.2">
+            style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">
+            JM</div>
+          <div>
             <div style="font-size:12px;font-weight:600">Mike Agola</div>
             <div style="font-size:10px;color:var(--text-muted)">Dealer · 25 Aug 2026 · 10:42</div>
           </div>
@@ -277,494 +400,628 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">Deal Capture</h1>
-            <p class="page-subtitle">Front Office · LE-001 Kenya · Money Market &amp; FX Book</p>
+            <p class="page-subtitle">Front Office · LE-001 Kenya · Mandate: FX + MM · Each product tab is a standalone
+              deal type</p>
           </div>
-          <div class="page-actions">
-            <div class="mandate-pill">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-              Mandate: FX + MM · LE-001
-            </div>
-            <button class="btn btn-outline btn-sm">What-If Calculator</button>
-            <button class="btn btn-outline btn-sm">Bulk Upload</button>
-          </div>
+          <div class="page-actions"><button class="btn btn-outline btn-sm">Bulk Upload</button></div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 320px;gap:var(--space-4);align-items:start">
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:var(--space-4);align-items:start">
 
-          <!-- Left: Form -->
+          <!-- ══ MAIN FORM CARD ══ -->
           <div class="card">
             <div class="card-header">
               <div>
                 <div class="card-title">New Deal</div>
-                <div class="card-subtitle">All fields marked * are required</div>
+                <div class="card-subtitle">Each product tab is independent. Complete all 4 steps, then submit for
+                  four-eyes authorisation.</div>
               </div>
               <span class="badge badge-neutral">DRAFT</span>
             </div>
             <div class="card-body">
 
-              <!-- Product type tabs -->
-              <div class="tabs" style="margin-bottom:var(--space-4)" id="productTabs">
-                <div class="tab-item active" onclick="switchTab('fx-spot')">FX Spot</div>
-                <div class="tab-item" onclick="switchTab('fx-fwd')">FX Forward</div>
-                <div class="tab-item" onclick="switchTab('fx-swap')">FX Swap</div>
-                <div class="tab-item" onclick="switchTab('mm-fd')">Fixed Deposit</div>
-                <div class="tab-item" onclick="switchTab('mm-repo')">Repo / Reverse</div>
-                <div class="tab-item" onclick="switchTab('mm-tbill')">T-Bill / T-Bond</div>
-                <div class="tab-item" onclick="switchTab('on-borrow')">Overnight</div>
+              <!-- PRODUCT TABS — each is standalone, switching resets the form -->
+              <div class="prod-tabs">
+                <div class="prod-tab active" id="pt-spot" onclick="setProduct('spot')">FX Spot</div>
+                <div class="prod-tab" id="pt-fwd" onclick="setProduct('fwd')">FX Forward</div>
+                <div class="prod-tab" id="pt-swap" onclick="setProduct('swap')">FX Swap</div>
+                <div class="prod-tab" id="pt-fd" onclick="setProduct('fd')">Fixed Deposit</div>
+                <div class="prod-tab" id="pt-repo" onclick="setProduct('repo')">Repo / Reverse</div>
+                <div class="prod-tab" id="pt-tbill" onclick="setProduct('tbill')">T-Bill / T-Bond</div>
+                <div class="prod-tab" id="pt-on" onclick="setProduct('on')">Overnight</div>
               </div>
 
-              <!-- FX SPOT PANEL -->
-              <div class="tab-panel active" id="tab-fx-spot">
-                <div class="step-indicator">
-                  <div class="step done">
-                    <div class="num">✓</div>Counterparty
-                  </div>
-                  <div class="step active">
-                    <div class="num">2</div>Trade Details
-                  </div>
-                  <div class="step">
-                    <div class="num">3</div>Rate &amp; Settlement
-                  </div>
-                  <div class="step">
-                    <div class="num">4</div>Review &amp; Submit
-                  </div>
-                </div>
+              <!-- Product description banner — updates per tab -->
+              <div class="prod-info"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg><span id="prodDesc">FX Spot — Exchange of two currencies at the spot rate, settling T+2 business
+                  days. Limit checks: CTY, NOP, Dealer. Four-eyes authorisation required. SWIFT MT202 auto-generated on
+                  authorisation (FR-02).</span></div>
 
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group">
-                    <label class="form-label">Portfolio <span class="req">*</span></label>
-                    <select class="form-control">
+              <!-- STEP WIZARD — all 4 steps clickable -->
+              <div class="steps">
+                <div class="step-item done" id="s1" onclick="goStep(1)">
+                  <div class="step-num" id="sn1">✓</div>Counterparty
+                </div>
+                <div class="step-sep"></div>
+                <div class="step-item active" id="s2" onclick="goStep(2)">
+                  <div class="step-num" id="sn2">2</div>Trade Details
+                </div>
+                <div class="step-sep"></div>
+                <div class="step-item" id="s3" onclick="goStep(3)">
+                  <div class="step-num" id="sn3">3</div>Rate &amp; Settlement
+                </div>
+                <div class="step-sep"></div>
+                <div class="step-item" id="s4" onclick="goStep(4)">
+                  <div class="step-num" id="sn4">4</div>Review &amp; Submit
+                </div>
+              </div>
+
+              <!-- ══ STEP 1: COUNTERPARTY ══ -->
+              <div class="step-panel" id="panel1">
+                <div class="form-grid-3">
+                  <div class="form-group"><label class="form-label">Portfolio <span
+                        style="color:var(--brand-primary)">*</span></label><select class="form-control">
                       <option>FX Trading Book</option>
                       <option>Client Sales Book</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Counterparty <span class="req">*</span></label>
-                    <select class="form-control">
+                      <option>Proprietary Book</option>
+                    </select></div>
+                  <div class="form-group"><label class="form-label">Counterparty <span
+                        style="color:var(--brand-primary)">*</span></label>
+                    <select class="form-control" id="ctySelect" onchange="updateCtyLimit()">
                       <option>Citi N.A. (Nairobi)</option>
                       <option>Standard Bank Kenya</option>
                       <option>Stanbic Bank Kenya</option>
                       <option>Barclays Kenya</option>
+                      <option>KCB Group</option>
+                      <option>Equity Bank</option>
                     </select>
                   </div>
-                  <div class="form-group">
-                    <label class="form-label">Deal Source</label>
-                    <select class="form-control">
+                  <div class="form-group"><label class="form-label">Deal Source</label><select class="form-control">
                       <option>MANUAL</option>
-                      <option>STP</option>
+                      <option>STP (Auto)</option>
                       <option>BULK_UPLOAD</option>
-                    </select>
+                    </select></div>
+                </div>
+                <div
+                  style="margin-top:var(--space-4);padding:var(--space-3) var(--space-4);background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md)">
+                  <div
+                    style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">
+                    Counterparty Limit Status</div>
+                  <div style="display:flex;gap:var(--space-5);font-size:12px;flex-wrap:wrap" id="ctyLimitRow">
+                    <span><span style="color:var(--text-muted)">Limit:</span> <strong>KES 800M</strong></span>
+                    <span><span style="color:var(--text-muted)">Exposure:</span> <strong>KES 323.6M</strong></span>
+                    <span><span style="color:var(--text-muted)">Utilisation:</span> <strong
+                        style="color:var(--status-success)">40% ✓</strong></span>
+                    <span><span style="color:var(--text-muted)">Available:</span> <strong
+                        style="color:var(--status-success)">KES 476.4M</strong></span>
+                  </div>
+                </div>
+                <div
+                  style="margin-top:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md)">
+                  <div
+                    style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">
+                    Dealer Mandate</div>
+                  <div style="display:flex;gap:var(--space-5);font-size:12px;flex-wrap:wrap">
+                    <span><span style="color:var(--text-muted)">Dealer:</span> <strong>Mike Agola</strong></span>
+                    <span><span style="color:var(--text-muted)">Mandate:</span> <strong>FX + MM</strong></span>
+                    <span><span style="color:var(--text-muted)">Daily Limit:</span> <strong>KES 5,000M</strong></span>
+                    <span><span style="color:var(--text-muted)">Used Today:</span> <strong
+                        style="color:var(--status-success)">KES 2,323.6M (46%) ✓</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ══ STEP 2: TRADE DETAILS ══ -->
+              <div class="step-panel active" id="panel2">
+
+                <!-- FX Spot -->
+                <div id="td-spot">
+                  <div class="form-grid-3">
+                    <div class="sect-lbl">Currency &amp; Direction</div>
+                    <div class="form-group"><label class="form-label">Buy Currency <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control"
+                        onchange="recalc()">
+                        <option>KES — Kenyan Shilling</option>
+                        <option>USD — US Dollar</option>
+                        <option>EUR — Euro</option>
+                        <option>GBP — British Pound</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Sell Currency <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control"
+                        onchange="recalc()">
+                        <option>USD — US Dollar</option>
+                        <option>KES — Kenyan Shilling</option>
+                        <option>EUR — Euro</option>
+                        <option>GBP — British Pound</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Direction <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control"
+                        onchange="recalc()">
+                        <option>BUY</option>
+                        <option>SELL</option>
+                      </select></div>
+                    <div class="sect-lbl">Amounts &amp; Dates</div>
+                    <div class="form-group"><label class="form-label">Notional Amount <span
+                          style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control"
+                        id="notional" value="2,500,000" oninput="recalc()"></div>
+                    <div class="form-group"><label class="form-label">Trade Date <span
+                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
+                        value="2026-08-25"></div>
+                    <div class="form-group"><label class="form-label">Value Date <span
+                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
+                        value="2026-08-27"><span class="form-hint">T+2 business days</span></div>
                   </div>
                 </div>
 
-                <div class="section-divider" style="margin-bottom:var(--space-3)">Trade Details</div>
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group">
-                    <label class="form-label">Buy Currency <span class="req">*</span></label>
-                    <select class="form-control">
-                      <option>KES — Kenyan Shilling</option>
-                      <option>USD — US Dollar</option>
-                      <option>EUR — Euro</option>
-                      <option>GBP — British Pound</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Sell Currency <span class="req">*</span></label>
-                    <select class="form-control">
-                      <option>USD — US Dollar</option>
-                      <option>KES — Kenyan Shilling</option>
-                      <option>EUR — Euro</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Direction</label>
-                    <select class="form-control">
-                      <option>BUY</option>
-                      <option>SELL</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Notional Amount <span class="req">*</span></label>
-                    <input type="text" class="form-control" value="2,500,000" oninput="calcSpot()">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Trade Date <span class="req">*</span></label>
-                    <input type="date" class="form-control" value="2026-08-25">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Value Date <span class="req">*</span></label>
-                    <input type="date" class="form-control" value="2026-08-27">
-                    <span class="form-hint">T+2 business days</span>
+                <!-- FX Forward -->
+                <div id="td-fwd" style="display:none">
+                  <div class="form-grid-3">
+                    <div class="sect-lbl">Currency &amp; Direction</div>
+                    <div class="form-group"><label class="form-label">Buy Currency <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>KES</option>
+                        <option>USD</option>
+                        <option>EUR</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Sell Currency <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>EUR</option>
+                        <option>USD</option>
+                        <option>KES</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Direction <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>BUY</option>
+                        <option>SELL</option>
+                      </select></div>
+                    <div class="sect-lbl">Amounts, Tenor &amp; Dates</div>
+                    <div class="form-group"><label class="form-label">Notional <span
+                          style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control"
+                        value="1,000,000"></div>
+                    <div class="form-group"><label class="form-label">Trade Date <span
+                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
+                        value="2026-08-25"></div>
+                    <div class="form-group"><label class="form-label">Value Date <span
+                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
+                        value="2026-11-25"><span class="form-hint">Max 1-year forward</span></div>
+                    <div class="form-group"><label class="form-label">Tenor (days)</label><input type="text"
+                        class="form-control" value="92" readonly style="background:#F8FAFC"></div>
                   </div>
                 </div>
 
-                <div class="section-divider" style="margin-bottom:var(--space-3)">Rate &amp; Settlement</div>
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group">
-                    <label class="form-label">Spot Rate <span class="req">*</span></label>
-                    <input type="text" class="form-control" value="129.42" id="spotRate" oninput="calcSpot()">
-                    <span class="form-hint">Market: 129.45 &nbsp;<span
-                        style="color:var(--status-success);font-weight:600">✓ Within 10bp</span></span>
+                <!-- FX Swap -->
+                <div id="td-swap" style="display:none">
+                  <div class="form-grid-3">
+                    <div class="sect-lbl">Swap Structure</div>
+                    <div class="form-group"><label class="form-label">Currency Pair <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>GBP/KES</option>
+                        <option>USD/KES</option>
+                        <option>EUR/KES</option>
+                      </select></div>
                   </div>
-                  <div class="form-group">
-                    <label class="form-label">Our Nostro Account</label>
-                    <select class="form-control">
-                      <option>USD Nostro — Citi New York</option>
-                      <option>USD Nostro — JPMorgan NY</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Counterparty Ref.</label>
-                    <input type="text" class="form-control" placeholder="Counterparty deal ref.">
-                  </div>
-                </div>
-
-                <!-- Rate challenge (shown when rate deviates > 10bp) -->
-                <div class="challenge-box" id="challengeBox">
-                  <div style="display:flex;gap:8px;align-items:flex-start">
-                    <svg width="16" height="16" fill="none" stroke="#92400E" stroke-width="2" viewBox="0 0 24 24">
-                      <path
-                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                      <line x1="12" y1="9" x2="12" y2="13" />
-                      <line x1="12" y1="17" x2="12.01" y2="17" />
-                    </svg>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-top:var(--space-3)">
                     <div>
-                      <div style="font-size:12px;font-weight:700;color:#92400E">Off-market rate challenge</div>
-                      <div style="font-size:11px;color:#92400E;margin-top:2px">Captured rate deviates more than 10bp
-                        from live market data. Justification required before submission. (FR-05.3)</div>
+                      <div class="sect-lbl" style="border:none;margin-bottom:8px">Near Leg (Spot / Buy)</div>
+                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Notional
+                          <span style="color:var(--brand-primary)">*</span></label><input type="text"
+                          class="form-control" value="500,000"></div>
+                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Value Date
+                          <span style="color:var(--brand-primary)">*</span></label><input type="date"
+                          class="form-control" value="2026-08-27"></div>
+                    </div>
+                    <div>
+                      <div class="sect-lbl" style="border:none;margin-bottom:8px">Far Leg (Forward / Sell)</div>
+                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Notional
+                          <span style="color:var(--brand-primary)">*</span></label><input type="text"
+                          class="form-control" value="500,000"></div>
+                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Value Date
+                          <span style="color:var(--brand-primary)">*</span></label><input type="date"
+                          class="form-control" value="2026-11-27"></div>
                     </div>
                   </div>
-                  <div class="form-group" style="margin-top:10px">
-                    <label class="form-label">Justification <span class="req">*</span></label>
-                    <textarea class="form-control" rows="2" placeholder="Enter reason for off-market rate…"></textarea>
+                  <div class="alert alert-info" style="margin-top:var(--space-3)"><svg fill="none" stroke="currentColor"
+                      stroke-width="2" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                    </svg>An FX Swap creates two linked but independently limit-checked legs. Both must pass all limit
+                    checks before the deal can be authorised.</div>
+                </div>
+
+                <!-- Fixed Deposit -->
+                <div id="td-fd" style="display:none">
+                  <div class="form-grid-3">
+                    <div class="sect-lbl">Principal &amp; Direction</div>
+                    <div class="form-group"><label class="form-label">Direction <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>PLACEMENT (Lend)</option>
+                        <option>DEPOSIT (Borrow)</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Currency <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>KES</option>
+                        <option>USD</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Principal Amount <span
+                          style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control"
+                        value="50,000,000"></div>
+                    <div class="sect-lbl">Tenor &amp; Dates</div>
+                    <div class="form-group"><label class="form-label">Trade Date <span
+                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
+                        value="2026-08-25"></div>
+                    <div class="form-group"><label class="form-label">Tenor</label><select class="form-control">
+                        <option>ON (1 day)</option>
+                        <option>1W</option>
+                        <option>1M</option>
+                        <option selected>91 days</option>
+                        <option>182 days</option>
+                        <option>364 days</option>
+                        <option>Custom</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Maturity Date</label><input type="date"
+                        class="form-control" value="2026-11-24" readonly style="background:#F8FAFC;font-weight:700">
+                    </div>
+                    <div class="form-group"><label class="form-label">Day Count</label><select class="form-control">
+                        <option>Actual/365 (Fixed)</option>
+                        <option>Actual/360</option>
+                        <option>30/360</option>
+                      </select></div>
                   </div>
                 </div>
 
-                <div class="form-group">
+                <!-- Repo -->
+                <div id="td-repo" style="display:none">
+                  <div class="form-grid-3">
+                    <div class="sect-lbl">Repo Structure</div>
+                    <div class="form-group"><label class="form-label">Type <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>REPO (Sell &amp; Buyback)</option>
+                        <option>REVERSE REPO (Buy &amp; Sellback)</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Collateral Instrument <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>T-Bond IFB/2025/10 — 16.00%</option>
+                        <option>T-Bond FXD1/2024/15 — 15.75%</option>
+                      </select></div>
+                    <div class="sect-lbl">Amounts &amp; Dates</div>
+                    <div class="form-group"><label class="form-label">Face Value of Collateral <span
+                          style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control"
+                        value="1,000,000,000"></div>
+                    <div class="form-group"><label class="form-label">Cash Amount <span
+                          style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control"
+                        value="800,000,000"></div>
+                    <div class="form-group"><label class="form-label">Haircut (%)</label><input type="text"
+                        class="form-control" value="20" readonly style="background:#F8FAFC"></div>
+                    <div class="form-group"><label class="form-label">Start Date <span
+                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
+                        value="2026-08-25"></div>
+                    <div class="form-group"><label class="form-label">End Date <span
+                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
+                        value="2026-08-26"></div>
+                  </div>
+                </div>
+
+                <!-- T-Bill -->
+                <div id="td-tbill" style="display:none">
+                  <div class="form-grid-3">
+                    <div class="sect-lbl">Instrument Details</div>
+                    <div class="form-group"><label class="form-label">Instrument Type <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>T-Bill 91-Day</option>
+                        <option>T-Bill 182-Day</option>
+                        <option>T-Bill 364-Day</option>
+                        <option>T-Bond (specify)</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Book Classification <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>HTM (Hold-to-Maturity)</option>
+                        <option>AFS (Available-for-Sale)</option>
+                        <option>HFT (Trading)</option>
+                      </select></div>
+                    <div class="sect-lbl">Amounts &amp; Dates</div>
+                    <div class="form-group"><label class="form-label">Face Value <span
+                          style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control"
+                        value="500,000,000"></div>
+                    <div class="form-group"><label class="form-label">Issue / Auction Date <span
+                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
+                        value="2026-08-25"></div>
+                    <div class="form-group"><label class="form-label">Maturity Date</label><input type="date"
+                        class="form-control" value="2026-11-24" readonly style="background:#F8FAFC;font-weight:700">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Overnight -->
+                <div id="td-on" style="display:none">
+                  <div class="form-grid-3">
+                    <div class="sect-lbl">Overnight Details</div>
+                    <div class="form-group"><label class="form-label">Direction <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>BORROWING</option>
+                        <option>PLACEMENT</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Currency <span
+                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
+                        <option>KES</option>
+                        <option>USD</option>
+                      </select></div>
+                    <div class="form-group"><label class="form-label">Principal Amount <span
+                          style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control"
+                        value="1,200,000,000"></div>
+                    <div class="form-group"><label class="form-label">Trade Date <span
+                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
+                        value="2026-08-25"></div>
+                    <div class="form-group"><label class="form-label">Value Date</label><input type="date"
+                        class="form-control" value="2026-08-25" readonly style="background:#F8FAFC"><span
+                        class="form-hint">Same day settlement</span></div>
+                    <div class="form-group"><label class="form-label">Maturity Date</label><input type="date"
+                        class="form-control" value="2026-08-26" readonly style="background:#F8FAFC"><span
+                        class="form-hint">T+1 (next business day)</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ══ STEP 3: RATE & SETTLEMENT ══ -->
+              <div class="step-panel" id="panel3">
+
+                <!-- FX rate section (spot, fwd, swap) -->
+                <div id="rs-fx">
+                  <div class="form-grid-3">
+                    <div class="sect-lbl">Rate Entry</div>
+                    <div class="form-group">
+                      <label class="form-label">Spot Rate <span style="color:var(--brand-primary)">*</span></label>
+                      <input type="text" class="form-control" id="spotRateInput" value="129.42" oninput="checkRate()">
+                      <span class="form-hint">Live market: <strong>129.45</strong> &nbsp;<span id="rateOkSpan"
+                          style="color:var(--status-success);font-weight:600">✓ Within 10bp tolerance</span></span>
+                    </div>
+                    <div class="form-group" id="fwdPtsGrp" style="display:none">
+                      <label class="form-label">Forward Points (system)</label>
+                      <input type="text" class="form-control" value="+73" readonly style="background:#F8FAFC">
+                      <span class="form-hint">Derived from KES/EUR yield curve differential</span>
+                    </div>
+                    <div class="form-group" id="allInGrp" style="display:none">
+                      <label class="form-label">All-In Forward Rate</label>
+                      <input type="text" class="form-control" value="140.85" readonly
+                        style="background:#F8FAFC;font-weight:700;color:var(--brand-teal)">
+                    </div>
+                    <div class="sect-lbl">Nostro Accounts</div>
+                    <div class="form-group">
+                      <label class="form-label">Our KES Nostro</label>
+                      <select class="form-control">
+                        <option>CBK Settlement Account</option>
+                        <option>KES Nostro — Internal</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Our FCY Nostro</label>
+                      <select class="form-control">
+                        <option>USD Nostro — Citi N.A. New York</option>
+                        <option>USD Nostro — JPMorgan NY</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Counterparty Reference</label>
+                      <input type="text" class="form-control" placeholder="Their deal reference (optional)">
+                    </div>
+                  </div>
+                  <!-- Off-market challenge box -->
+                  <div class="challenge" id="challengeBox">
+                    <div style="display:flex;gap:8px;align-items:flex-start">
+                      <svg width="15" height="15" fill="none" stroke="#92400E" stroke-width="2" viewBox="0 0 24 24"
+                        style="flex-shrink:0;margin-top:2px">
+                        <path
+                          d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                      </svg>
+                      <div>
+                        <div style="font-size:12px;font-weight:700;color:#92400E">Off-Market Rate Challenge — FR-05.3
+                        </div>
+                        <div style="font-size:11px;color:#92400E;margin-top:2px">Rate deviates more than 10bp from live
+                          market data. Written justification required before submission.</div>
+                      </div>
+                    </div>
+                    <div class="form-group" style="margin-top:10px">
+                      <label class="form-label">Justification <span style="color:var(--brand-primary)">*</span></label>
+                      <textarea class="form-control" rows="2"
+                        placeholder="State business reason for off-market rate…"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- MM rate section (FD, Repo, T-Bill, Overnight) -->
+                <div id="rs-mm" style="display:none">
+                  <div class="form-grid-3">
+                    <div class="sect-lbl">Interest / Yield</div>
+                    <div class="form-group">
+                      <label class="form-label">Rate (p.a.) <span style="color:var(--brand-primary)">*</span></label>
+                      <input type="text" class="form-control" id="mmRate" value="14.50" oninput="recalcMM()">
+                      <span class="form-hint" id="mmHint">Market reference: 91-TB 14.87%</span>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Day Count</label>
+                      <select class="form-control">
+                        <option>Actual/365 (Fixed)</option>
+                        <option>Actual/360</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Interest Amount</label>
+                      <input type="text" class="form-control" id="mmInterest" value="1,162,500" readonly
+                        style="background:#F8FAFC;font-weight:700;color:var(--status-success)">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Total Settlement</label>
+                      <input type="text" class="form-control" id="mmTotal" value="51,162,500" readonly
+                        style="background:#F8FAFC;font-weight:700;color:var(--brand-primary)">
+                    </div>
+                    <div class="sect-lbl">Settlement</div>
+                    <div class="form-group">
+                      <label class="form-label">Settlement Account</label>
+                      <select class="form-control">
+                        <option>CBK RTGS Account</option>
+                        <option>KES Nostro — Internal</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-top:var(--space-3)">
                   <label class="form-label">Dealer Notes</label>
                   <textarea class="form-control" rows="2"
-                    placeholder="Internal notes (not sent to counterparty)…"></textarea>
+                    placeholder="Internal notes — not sent to counterparty…"></textarea>
                 </div>
               </div>
 
-              <!-- FX FORWARD PANEL -->
-              <div class="tab-panel" id="tab-fx-fwd">
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group"><label class="form-label">Portfolio <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>FX Trading Book</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Counterparty <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>Standard Bank Kenya</option>
-                      <option>Citi N.A.</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Direction <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>BUY</option>
-                      <option>SELL</option>
-                    </select></div>
-                </div>
-                <div class="section-divider" style="margin-bottom:var(--space-3)">Trade Details</div>
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group"><label class="form-label">Buy Currency <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>KES</option>
-                      <option>USD</option>
-                      <option>EUR</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Sell Currency <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>EUR</option>
-                      <option>USD</option>
-                      <option>KES</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Notional Amount <span
-                        class="req">*</span></label><input type="text" class="form-control" value="1,000,000"></div>
-                  <div class="form-group"><label class="form-label">Trade Date <span class="req">*</span></label><input
-                      type="date" class="form-control" value="2026-08-25"></div>
-                  <div class="form-group"><label class="form-label">Value Date <span class="req">*</span></label><input
-                      type="date" class="form-control" value="2026-11-25"></div>
-                  <div class="form-group"><label class="form-label">Tenor (days)</label><input type="text"
-                      class="form-control" value="92" readonly style="background:#F8FAFC"></div>
-                </div>
-                <div class="section-divider" style="margin-bottom:var(--space-3)">Forward Rate</div>
-                <div class="form-grid-3">
-                  <div class="form-group"><label class="form-label">Spot Rate <span class="req">*</span></label><input
-                      type="text" class="form-control" value="140.12"></div>
-                  <div class="form-group"><label class="form-label">Forward Points <span
-                        class="req">*</span></label><input type="text" class="form-control" value="73"
-                      placeholder="Derived from yield curve"><span class="form-hint">System-derived: +73 pts</span>
-                  </div>
-                  <div class="form-group"><label class="form-label">All-In Forward Rate</label><input type="text"
-                      class="form-control" value="140.85" readonly style="background:#F8FAFC;font-weight:700"></div>
-                  <div class="form-group"><label class="form-label">Our Account (KES)</label><select
-                      class="form-control">
-                      <option>KES Nostro — CBK</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Our Account (EUR)</label><select
-                      class="form-control">
-                      <option>EUR Nostro — Deutsche Bank Frankfurt</option>
-                    </select></div>
-                </div>
-              </div>
-
-              <!-- FX SWAP PANEL -->
-              <div class="tab-panel" id="tab-fx-swap">
+              <!-- ══ STEP 4: REVIEW & SUBMIT ══ -->
+              <div class="step-panel" id="panel4">
                 <div class="alert alert-info" style="margin-bottom:var(--space-4)">
                   <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10" />
                     <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
                   </svg>
-                  FX Swap creates two linked legs: a near-leg (Spot) and a far-leg (Forward). Both legs undergo the same
-                  limit check and four-eyes authorisation.
+                  Review carefully before submitting. Once submitted, a Level-2 Authoriser will be notified. The deal
+                  cannot be edited after submission — use "Return to Dealer" from the Auth Queue if changes are needed
+                  (FR-04).
                 </div>
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group"><label class="form-label">Portfolio <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>FX Trading Book</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Counterparty <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>Barclays Kenya</option>
-                      <option>Citi N.A.</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Currency Pair <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>GBP/KES</option>
-                      <option>USD/KES</option>
-                    </select></div>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
-                  <div>
-                    <div class="section-divider" style="margin-bottom:var(--space-3)">Near Leg (Spot / Buy)</div>
-                    <div class="form-group" style="margin-bottom:var(--space-3)"><label class="form-label">Near Notional
-                        <span class="req">*</span></label><input type="text" class="form-control" value="500,000"></div>
-                    <div class="form-group" style="margin-bottom:var(--space-3)"><label class="form-label">Near Value
-                        Date <span class="req">*</span></label><input type="date" class="form-control"
-                        value="2026-08-27"></div>
-                    <div class="form-group"><label class="form-label">Near Spot Rate <span
-                          class="req">*</span></label><input type="text" class="form-control" value="163.45"></div>
-                  </div>
-                  <div>
-                    <div class="section-divider" style="margin-bottom:var(--space-3)">Far Leg (Forward / Sell)</div>
-                    <div class="form-group" style="margin-bottom:var(--space-3)"><label class="form-label">Far Notional
-                        <span class="req">*</span></label><input type="text" class="form-control" value="500,000"></div>
-                    <div class="form-group" style="margin-bottom:var(--space-3)"><label class="form-label">Far Value
-                        Date <span class="req">*</span></label><input type="date" class="form-control"
-                        value="2026-11-27"></div>
-                    <div class="form-group"><label class="form-label">Far All-In Rate <span
-                          class="req">*</span></label><input type="text" class="form-control" value="164.83"></div>
-                  </div>
-                </div>
-                <div class="section-divider" style="margin:var(--space-3) 0">Swap Points</div>
-                <div class="form-grid-3">
-                  <div class="form-group"><label class="form-label">Swap Points</label><input type="text"
-                      class="form-control" value="138" readonly style="background:#F8FAFC;font-weight:700"><span
-                      class="form-hint">Far rate − Near rate × 100</span></div>
-                </div>
-              </div>
-
-              <!-- FIXED DEPOSIT PANEL -->
-              <div class="tab-panel" id="tab-mm-fd">
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group"><label class="form-label">Portfolio <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>Placement/Deposit Book</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Counterparty <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>StanChart Kenya</option>
-                      <option>KCB Group</option>
-                      <option>Equity Bank</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Direction <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>PLACEMENT (Lend)</option>
-                      <option>DEPOSIT (Borrow)</option>
-                    </select></div>
-                </div>
-                <div class="section-divider" style="margin-bottom:var(--space-3)">Principal &amp; Rate</div>
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group"><label class="form-label">Currency <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>KES</option>
-                      <option>USD</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Principal Amount <span
-                        class="req">*</span></label><input type="text" class="form-control" value="50,000,000"></div>
-                  <div class="form-group"><label class="form-label">Interest Rate (p.a.) <span
-                        class="req">*</span></label><input type="text" class="form-control" value="14.50"><span
-                      class="form-hint">Market ref: 14.87% (91-TB)</span></div>
-                </div>
-                <div class="section-divider" style="margin-bottom:var(--space-3)">Tenor &amp; Dates</div>
-                <div class="form-grid-3">
-                  <div class="form-group"><label class="form-label">Trade Date <span class="req">*</span></label><input
-                      type="date" class="form-control" value="2026-08-25"></div>
-                  <div class="form-group"><label class="form-label">Value Date <span class="req">*</span></label><input
-                      type="date" class="form-control" value="2026-08-25"></div>
-                  <div class="form-group"><label class="form-label">Tenor <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>ON (1 day)</option>
-                      <option>1W</option>
-                      <option>1M</option>
-                      <option>91 days</option>
-                      <option>182 days</option>
-                      <option>364 days</option>
-                      <option>Custom</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Maturity Date</label><input type="date"
-                      class="form-control" value="2026-11-24" readonly style="background:#F8FAFC;font-weight:700"></div>
-                  <div class="form-group"><label class="form-label">Day Count Convention</label><select
-                      class="form-control">
-                      <option>Actual/365 (Fixed)</option>
-                      <option>Actual/360</option>
-                      <option>30/360</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Settlement Amount</label><input type="text"
-                      class="form-control" value="51,162,500" readonly
-                      style="background:#F8FAFC;font-weight:700;color:var(--brand-teal)"></div>
-                </div>
-              </div>
-
-              <!-- REPO/REVERSE PANEL -->
-              <div class="tab-panel" id="tab-mm-repo">
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group"><label class="form-label">Type <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>REPO (Sell &amp; Buyback)</option>
-                      <option>REVERSE REPO (Buy &amp; Sellback)</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Counterparty <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>DTBK</option>
-                      <option>Cooperative Bank</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Collateral Instrument <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>T-Bond IFB/2025/10 — 16.00%</option>
-                      <option>T-Bond FXD1/2024/15 — 15.75%</option>
-                    </select></div>
-                </div>
-                <div class="form-grid-3">
-                  <div class="form-group"><label class="form-label">Face Value of Collateral <span
-                        class="req">*</span></label><input type="text" class="form-control" value="1,000,000,000"></div>
-                  <div class="form-group"><label class="form-label">Cash Amount <span class="req">*</span></label><input
-                      type="text" class="form-control" value="800,000,000"></div>
-                  <div class="form-group"><label class="form-label">Repo Rate (p.a.) <span
-                        class="req">*</span></label><input type="text" class="form-control" value="13.25"></div>
-                  <div class="form-group"><label class="form-label">Start Date <span class="req">*</span></label><input
-                      type="date" class="form-control" value="2026-08-25"></div>
-                  <div class="form-group"><label class="form-label">End Date <span class="req">*</span></label><input
-                      type="date" class="form-control" value="2026-08-26"></div>
-                  <div class="form-group"><label class="form-label">Haircut (%)</label><input type="text"
-                      class="form-control" value="20" readonly style="background:#F8FAFC"></div>
-                </div>
-              </div>
-
-              <!-- T-BILL PANEL -->
-              <div class="tab-panel" id="tab-mm-tbill">
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group"><label class="form-label">Instrument Type <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>T-Bill 91-Day</option>
-                      <option>T-Bill 182-Day</option>
-                      <option>T-Bill 364-Day</option>
-                      <option>T-Bond (specify)</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Counterparty <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>CBK Direct (Primary)</option>
-                      <option>StanChart Kenya (Secondary)</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Book <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>HTM (Hold-to-Maturity)</option>
-                      <option>AFS (Available-for-Sale)</option>
-                      <option>HFT (Trading)</option>
-                    </select></div>
-                </div>
-                <div class="form-grid-3">
-                  <div class="form-group"><label class="form-label">Face Value <span class="req">*</span></label><input
-                      type="text" class="form-control" value="500,000,000"></div>
-                  <div class="form-group"><label class="form-label">Purchase Price (%)</label><input type="text"
-                      class="form-control" value="96.42"><span class="form-hint">Derived from yield</span></div>
-                  <div class="form-group"><label class="form-label">Purchase Yield <span
-                        class="req">*</span></label><input type="text" class="form-control" value="14.87"></div>
-                  <div class="form-group"><label class="form-label">Issue / Auction Date <span
-                        class="req">*</span></label><input type="date" class="form-control" value="2026-08-25"></div>
-                  <div class="form-group"><label class="form-label">Maturity Date</label><input type="date"
-                      class="form-control" value="2026-11-24" readonly style="background:#F8FAFC;font-weight:700"></div>
-                  <div class="form-group"><label class="form-label">Settlement Amount</label><input type="text"
-                      class="form-control" value="482,100,000" readonly
-                      style="background:#F8FAFC;font-weight:700;color:var(--brand-teal)"></div>
-                </div>
-              </div>
-
-              <!-- OVERNIGHT PANEL -->
-              <div class="tab-panel" id="tab-on-borrow">
-                <div class="alert alert-info" style="margin-bottom:var(--space-4)">
-                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
-                  Overnight borrowings/placements settle same day and mature T+1. CBR benchmark: 13.00%
-                </div>
-                <div class="form-grid-3" style="margin-bottom:var(--space-4)">
-                  <div class="form-group"><label class="form-label">Direction <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>BORROWING</option>
-                      <option>PLACEMENT</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Counterparty <span
-                        class="req">*</span></label><select class="form-control">
-                      <option>Equity Bank</option>
-                      <option>KCB Group</option>
-                      <option>Cooperative Bank</option>
-                    </select></div>
-                  <div class="form-group"><label class="form-label">Book <span class="req">*</span></label><select
-                      class="form-control">
-                      <option>Overnight Borrowing Book</option>
-                    </select></div>
-                </div>
-                <div class="form-grid-3">
-                  <div class="form-group"><label class="form-label">Principal Amount <span
-                        class="req">*</span></label><input type="text" class="form-control" value="1,200,000,000"></div>
-                  <div class="form-group"><label class="form-label">Rate (p.a.) <span class="req">*</span></label><input
-                      type="text" class="form-control" value="13.00"><span class="form-hint">CBR: 13.00%</span></div>
-                  <div class="form-group"><label class="form-label">Trade Date <span class="req">*</span></label><input
-                      type="date" class="form-control" value="2026-08-25"></div>
-                  <div class="form-group"><label class="form-label">Value Date <span class="req">*</span></label><input
-                      type="date" class="form-control" value="2026-08-25" readonly style="background:#F8FAFC"></div>
-                  <div class="form-group"><label class="form-label">Maturity Date</label><input type="date"
-                      class="form-control" value="2026-08-26" readonly style="background:#F8FAFC;font-weight:700"></div>
-                  <div class="form-group"><label class="form-label">Interest Amount</label><input type="text"
-                      class="form-control" value="427,397" readonly
-                      style="background:#F8FAFC;font-weight:700;color:var(--brand-teal)"><span
-                      class="form-hint">Principal × Rate × 1/365</span></div>
-                </div>
+                <table class="rtbl">
+                  <tbody>
+                    <tr class="rsh">
+                      <td colspan="2">Product &amp; Counterparty</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Product Type</td>
+                      <td class="rv" id="rv-prod">FX Spot</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Portfolio</td>
+                      <td class="rv">FX Trading Book</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Counterparty</td>
+                      <td class="rv">Citi N.A. (Nairobi)</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Deal Source</td>
+                      <td class="rv">MANUAL</td>
+                    </tr>
+                    <tr class="rsh">
+                      <td colspan="2">Trade Details</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Buy Currency</td>
+                      <td class="rv">KES — Kenyan Shilling</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Sell Currency</td>
+                      <td class="rv">USD — US Dollar</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Direction</td>
+                      <td class="rv">BUY</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Notional</td>
+                      <td class="rv">USD 2,500,000</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Trade Date</td>
+                      <td class="rv">25 Aug 2026</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Value Date</td>
+                      <td class="rv">27 Aug 2026</td>
+                    </tr>
+                    <tr class="rsh">
+                      <td colspan="2">Rate &amp; Settlement</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Spot Rate</td>
+                      <td class="rv">129.42</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Market Rate (Live)</td>
+                      <td class="rv">129.45</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Rate Deviation</td>
+                      <td class="rv" style="color:var(--status-success)">−3bp ✓ Within tolerance</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Settlement (KES)</td>
+                      <td class="rv" style="color:var(--brand-primary);font-size:15px">323,550,000</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">KES Nostro</td>
+                      <td class="rv">CBK Settlement Account</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">FCY Nostro</td>
+                      <td class="rv">USD Nostro — Citi N.A. NY</td>
+                    </tr>
+                    <tr class="rsh">
+                      <td colspan="2">Pre-Deal Limit Check</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">CTY Limit (Citi N.A.)</td>
+                      <td class="rv" style="color:var(--status-success)">✓ PASS — 40% utilised</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">USD NOP Overnight</td>
+                      <td class="rv" style="color:var(--status-success)">✓ PASS — 64% utilised</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Aggregate NOP</td>
+                      <td class="rv" style="color:var(--status-warning)">⚠ WARN — 72% utilised (soft limit)</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Dealer Daily Limit</td>
+                      <td class="rv" style="color:var(--status-success)">✓ PASS — 46% utilised</td>
+                    </tr>
+                    <tr class="rsh">
+                      <td colspan="2">Authorisation Workflow</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Captured By</td>
+                      <td class="rv">Mike Agola (Dealer)</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Authorisation Level</td>
+                      <td class="rv">Level 2 Authoriser (Four-Eyes)</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Auth SLA</td>
+                      <td class="rv">4 hours from submission</td>
+                    </tr>
+                    <tr>
+                      <td class="rk">Post-Auth Action</td>
+                      <td class="rv">SWIFT MT202 auto-generated → Settlement</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
 
             </div><!-- /card-body -->
 
+            <!-- FOOTER BUTTONS -->
             <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
               <div style="display:flex;gap:8px">
-                <button class="btn btn-ghost btn-sm">Save as Draft</button>
-                <button class="btn btn-outline btn-sm">Reset</button>
+                <button class="btn btn-ghost btn-sm" id="btnPrev" onclick="prevStep()" style="display:none">←
+                  Back</button>
+                <button class="btn btn-ghost btn-sm">Save Draft</button>
               </div>
               <div style="display:flex;gap:8px">
-                <button class="btn btn-outline" onclick="runLimitCheck()">
-                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <button class="btn btn-outline" id="btnLimitCheck" onclick="runLimitCheck()" style="display:none">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
                   Run Limit Check
                 </button>
-                <button class="btn btn-primary">
-                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <button class="btn btn-primary" id="btnNext" onclick="nextStep()">Next: Trade Details →</button>
+                <button class="btn btn-success" id="btnSubmit" onclick="submitDeal()" style="display:none">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                   Submit for Authorisation
@@ -773,134 +1030,232 @@
             </div>
           </div><!-- /card -->
 
-          <!-- Right: Calculation Panel + Limit Check -->
+          <!-- ══ RIGHT PANEL ══ -->
           <div style="display:flex;flex-direction:column;gap:var(--space-4)">
 
-            <!-- Auto-calc -->
+            <!-- Auto-calculations -->
             <div class="card">
               <div class="card-header">
                 <div class="card-title">Auto-Calculations</div>
               </div>
               <div class="card-body" style="padding:var(--space-3)">
-                <div class="calc-result">
-                  <div class="calc-row"><span class="lbl">Notional (USD)</span><span class="val">2,500,000</span></div>
-                  <div class="calc-row"><span class="lbl">Spot Rate</span><span class="val">129.42</span></div>
-                  <div class="calc-row"><span class="lbl">Settlement (KES)</span><span
-                      class="val total">323,550,000</span></div>
-                  <div class="calc-row"><span class="lbl">Value Date</span><span class="val">27 Aug 2026</span></div>
-                  <div class="calc-row"><span class="lbl">Market Rate</span><span class="val"
-                      style="color:var(--status-success)">129.45</span></div>
-                  <div class="calc-row"><span class="lbl">Rate Deviation</span><span class="val"
-                      style="color:var(--status-success)">−3bp ✓</span></div>
+                <div
+                  style="background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);padding:var(--space-3)">
+                  <div class="calc-row"><span class="ck">Notional</span><span class="cv" id="calcNotional">USD
+                      2,500,000</span></div>
+                  <div class="calc-row"><span class="ck">Spot Rate</span><span class="cv" id="calcRate">129.42</span>
+                  </div>
+                  <div class="calc-row"><span class="ck">Settlement (KES)</span><span class="cv big"
+                      id="calcSettlement">323,550,000</span></div>
+                  <div class="calc-row"><span class="ck">Value Date</span><span class="cv">27 Aug 2026</span></div>
+                  <div class="calc-row"><span class="ck">Market Rate</span><span class="cv ok">129.45</span></div>
+                  <div class="calc-row"><span class="ck">Rate Deviation</span><span class="cv ok"
+                      id="calcDeviation">−3bp ✓</span></div>
                 </div>
               </div>
             </div>
 
-            <!-- Limit Check Panel -->
-            <div class="card" id="limitPanel" style="display:none">
+            <!-- Limit check results -->
+            <div class="card" id="limitCard" style="display:none">
               <div class="card-header">
-                <div class="card-title">Pre-Deal Limit Check</div>
-                <span class="badge badge-success" id="limitStatus">PASSED</span>
+                <div class="card-title">Limit Check</div><span class="badge badge-success">PASSED</span>
               </div>
-              <div style="font-size:11px">
-                <div class="limit-check-row"><span>Counterparty Single Limit</span>
-                  <div class="limit-status" style="color:var(--status-success)"><svg width="12" height="12" fill="none"
-                      stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>PASS (42%)</div>
-                </div>
-                <div class="limit-check-row"><span>Counterparty Group Limit (Citi)</span>
-                  <div class="limit-status" style="color:var(--status-success)"><svg width="12" height="12" fill="none"
-                      stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>PASS (38%)</div>
-                </div>
-                <div class="limit-check-row"><span>USD NOP Overnight Limit</span>
-                  <div class="limit-status" style="color:var(--status-success)"><svg width="12" height="12" fill="none"
-                      stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>PASS (64%)</div>
-                </div>
-                <div class="limit-check-row"><span>Aggregate NOP Limit</span>
-                  <div class="limit-status" style="color:var(--status-warning)"><svg width="12" height="12" fill="none"
-                      stroke="#D97706" stroke-width="2" viewBox="0 0 24 24">
-                      <path
-                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                    </svg>WARN (72%)</div>
-                </div>
-                <div class="limit-check-row"><span>Settlement Limit</span>
-                  <div class="limit-status" style="color:var(--status-success)"><svg width="12" height="12" fill="none"
-                      stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>PASS (31%)</div>
-                </div>
-                <div class="limit-check-row"><span>Dealer Daily Limit</span>
-                  <div class="limit-status" style="color:var(--status-success)"><svg width="12" height="12" fill="none"
-                      stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>PASS (18%)</div>
-                </div>
+              <div>
+                <div class="lc-row"><span>CTY Limit — Citi</span><span
+                    style="color:var(--status-success);font-weight:600;font-size:11px">✓ PASS (40%)</span></div>
+                <div class="lc-row"><span>CTY Group Limit</span><span
+                    style="color:var(--status-success);font-weight:600;font-size:11px">✓ PASS (38%)</span></div>
+                <div class="lc-row"><span>USD NOP Overnight</span><span
+                    style="color:var(--status-success);font-weight:600;font-size:11px">✓ PASS (64%)</span></div>
+                <div class="lc-row"><span>Aggregate NOP</span><span
+                    style="color:var(--status-warning);font-weight:600;font-size:11px">⚠ WARN (72%)</span></div>
+                <div class="lc-row"><span>Settlement Limit</span><span
+                    style="color:var(--status-success);font-weight:600;font-size:11px">✓ PASS (31%)</span></div>
+                <div class="lc-row"><span>Dealer Daily Limit</span><span
+                    style="color:var(--status-success);font-weight:600;font-size:11px">✓ PASS (46%)</span></div>
               </div>
-              <div class="card-footer">
-                <div style="font-size:11px;color:var(--status-warning);font-weight:600">⚠ 1 Warning — deal may proceed
-                  with note</div>
-              </div>
+              <div class="card-footer"><span style="font-size:11px;color:var(--status-warning)">⚠ 1 warning — deal may
+                  proceed with note</span></div>
             </div>
 
-            <!-- Authorisation queue summary -->
+            <!-- Pending auth queue -->
             <div class="card">
               <div class="card-header">
-                <div class="card-title">Pending Authorisations</div>
-                <span class="badge badge-warning">5</span>
+                <div class="card-title">Pending Authorisations</div><span class="badge badge-warning">5</span>
               </div>
               <div style="padding:0">
                 <div
                   style="display:flex;justify-content:space-between;align-items:center;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px">
-                  <span class="mono" style="font-weight:600">DEAL-00286</span>
-                  <span>FX Forward EUR/KES</span>
-                  <span class="badge badge-warning">PENDING</span>
-                </div>
+                  <span class="mono fw-600">DEAL-00286</span><span>FX Fwd EUR/KES</span><span
+                    class="badge badge-warning">PENDING</span></div>
                 <div
                   style="display:flex;justify-content:space-between;align-items:center;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px">
-                  <span class="mono" style="font-weight:600">DEAL-00281</span>
-                  <span>FX Swap GBP/KES</span>
-                  <span class="badge badge-warning">PENDING</span>
-                </div>
+                  <span class="mono fw-600">DEAL-00281</span><span>FX Swap GBP/KES</span><span
+                    class="badge badge-danger">OVERDUE</span></div>
                 <div
                   style="display:flex;justify-content:space-between;align-items:center;padding:9px var(--space-4);font-size:12px">
-                  <span class="mono" style="font-weight:600">DEAL-00279</span>
-                  <span>Fixed Deposit KES</span>
-                  <span class="badge badge-warning">PENDING</span>
-                </div>
+                  <span class="mono fw-600">DEAL-00279</span><span>Fixed Dep KES</span><span
+                    class="badge badge-warning">PENDING</span></div>
               </div>
-              <div class="card-footer">
-                <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center">View Auth Queue
-                  →</button>
-              </div>
+              <div class="card-footer"><a href="08-auth-queue.html"
+                  style="font-size:11px;font-weight:600;color:var(--brand-primary)">View Auth Queue →</a></div>
             </div>
-
-          </div><!-- /right panel -->
-        </div><!-- /grid -->
-      </div><!-- /page-content -->
-    </div><!-- /main-content -->
-  </div><!-- /app-shell -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    function switchTab(id) {
-      document.querySelectorAll('.tab-item').forEach((t, i) => t.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      const ids = ['fx-spot', 'fx-fwd', 'fx-swap', 'mm-fd', 'mm-repo', 'mm-tbill', 'on-borrow'];
-      const idx = ids.indexOf(id);
-      if (idx >= 0) {
-        document.querySelectorAll('.tab-item')[idx].classList.add('active');
-        document.getElementById('tab-' + id).classList.add('active');
+    // ─── State ────────────────────────────────────────────────────────────────
+    var prod = 'spot';
+    var step = 2;
+    var stepLabels = ['', 'Counterparty', 'Trade Details', 'Rate & Settlement', 'Review & Submit'];
+    var nextLabels = ['', 'Next: Trade Details →', 'Next: Rate & Settlement →', 'Next: Review & Submit →', ''];
+
+    var prodDescs = {
+      spot: 'FX Spot — Standalone deal type. Exchange two currencies at the spot rate, settling T+2. Limit checks: CTY settlement limit, NOP overnight, dealer daily. Four-eyes authorisation required. SWIFT MT202 auto-generated on authorisation (FR-02).',
+      fwd: 'FX Forward — Standalone deal type. Pre-agreed exchange rate for a future date up to 1 year. Forward points are system-derived from the KES yield curve. Both CTY and NOP limits checked (FR-03).',
+      swap: 'FX Swap — Standalone deal type. Two linked but independently limit-checked legs: a Near leg (Spot) and a Far leg (Forward). Both legs must pass all limits and go through four-eyes authorisation together (FR-03).',
+      fd: 'Fixed Deposit — Standalone MM deal. Placement (lend) or deposit (borrow) with a counterparty bank for a fixed tenor. Interest calculated on Actual/365. CTY settlement limit applies (FR-07).',
+      repo: 'Repo / Reverse Repo — Standalone MM deal. Sale and repurchase of government securities with a haircut applied to face value. Collateral eligibility and CTY limits are checked (FR-08).',
+      tbill: 'T-Bill / T-Bond — Standalone investment deal. Primary market (CBK auction) or secondary market purchase. HTM, AFS or HFT book classification required. Duration risk tracked in ALM module (FR-07).',
+      on: 'Overnight Borrowing/Placement — Standalone MM deal. Same-day settlement, T+1 maturity. Rate benchmarked against CBR (13.00%). CTY and dealer limits apply. Accrues one day\'s interest (FR-07).'
+    };
+
+    var mmHints = {fd: 'Market ref: 91-TB 14.87%', repo: 'Market ref: CBR 13.00%', tbill: 'Market ref: 91-TB 14.87% | 182-TB 15.23% | 364-TB 16.10%', on: 'Benchmark: CBR 13.00%'};
+
+    // ─── Product switch ────────────────────────────────────────────────────────
+    function setProduct(p) {
+      prod = p;
+      // update tab highlights
+      ['spot', 'fwd', 'swap', 'fd', 'repo', 'tbill', 'on'].forEach(function (id) {
+        document.getElementById('pt-' + id).classList.toggle('active', id === p);
+      });
+      // update description banner
+      document.getElementById('prodDesc').textContent = prodDescs[p];
+      // show correct trade-details block
+      ['spot', 'fwd', 'swap', 'fd', 'repo', 'tbill', 'on'].forEach(function (id) {
+        var el = document.getElementById('td-' + id);
+        if (el) el.style.display = id === p ? '' : 'none';
+      });
+      // show FX vs MM rate fields
+      var isFX = ['spot', 'fwd', 'swap'].indexOf(p) !== -1;
+      document.getElementById('rs-fx').style.display = isFX ? '' : 'none';
+      document.getElementById('rs-mm').style.display = isFX ? 'none' : '';
+      // forward-points only for fwd/swap
+      var showFwdPts = (p === 'fwd' || p === 'swap');
+      document.getElementById('fwdPtsGrp').style.display = showFwdPts ? '' : 'none';
+      document.getElementById('allInGrp').style.display = showFwdPts ? '' : 'none';
+      // MM hint text
+      if (!isFX && mmHints[p]) document.getElementById('mmHint').textContent = mmHints[p];
+      // reset to step 1
+      step = 1;
+      goStep(1);
+      // update Review tab product name
+      document.getElementById('rv-prod').textContent = {
+        spot: 'FX Spot', fwd: 'FX Forward', swap: 'FX Swap',
+        fd: 'Fixed Deposit', repo: 'Repo / Reverse Repo',
+        tbill: 'T-Bill / T-Bond', on: 'Overnight Borrowing'
+      }[p];
+    }
+
+    // ─── Step navigation ──────────────────────────────────────────────────────
+    function goStep(n) {
+      step = n;
+      // panels
+      for (var i = 1; i <= 4; i++) {
+        var p = document.getElementById('panel' + i);
+        p.classList.toggle('active', i === n);
+      }
+      // step items
+      for (var i = 1; i <= 4; i++) {
+        var si = document.getElementById('s' + i);
+        si.classList.remove('active', 'done');
+        var sn = document.getElementById('sn' + i);
+        if (i < n) {si.classList.add('done'); sn.textContent = '✓';}
+        else if (i === n) {si.classList.add('active'); sn.textContent = i;}
+        else {sn.textContent = i;}
+      }
+      // back button
+      document.getElementById('btnPrev').style.display = n > 1 ? '' : 'none';
+      // next/submit/limitCheck buttons
+      document.getElementById('btnNext').style.display = n < 4 ? '' : 'none';
+      document.getElementById('btnSubmit').style.display = n === 4 ? '' : 'none';
+      document.getElementById('btnLimitCheck').style.display = n === 3 ? '' : 'none';
+      // next button label
+      if (n < 4) document.getElementById('btnNext').textContent = nextLabels[n];
+    }
+
+    function nextStep() {if (step < 4) goStep(step + 1);}
+    function prevStep() {if (step > 1) goStep(step - 1);}
+
+    // ─── Rate deviation check ─────────────────────────────────────────────────
+    function checkRate() {
+      var entered = parseFloat((document.getElementById('spotRateInput').value || '0').replace(/,/g, ''));
+      var market = 129.45;
+      var dev = ((entered - market) / market) * 10000; // basis points
+      var ok = Math.abs(dev) <= 10;
+      var span = document.getElementById('rateOkSpan');
+      span.textContent = ok ? '✓ Within 10bp tolerance' : ('⚠ Deviation: ' + dev.toFixed(0) + 'bp — justification required');
+      span.style.color = ok ? 'var(--status-success)' : 'var(--status-danger)';
+      document.getElementById('challengeBox').classList.toggle('visible', !ok);
+      recalc();
+    }
+
+    // ─── Auto-calc ────────────────────────────────────────────────────────────
+    function recalc() {
+      var notional = parseFloat((document.getElementById('notional') ? document.getElementById('notional').value : '2500000').replace(/,/g, '')) || 0;
+      var rate = parseFloat((document.getElementById('spotRateInput') ? document.getElementById('spotRateInput').value : '129.42').replace(/,/g, '')) || 129.42;
+      var market = 129.45;
+      var sett = (notional * rate).toFixed(0);
+      var dev = ((rate - market) / market * 10000).toFixed(0);
+      document.getElementById('calcNotional').textContent = 'USD ' + Number(notional).toLocaleString();
+      document.getElementById('calcRate').textContent = rate;
+      document.getElementById('calcSettlement').textContent = Number(sett).toLocaleString();
+      document.getElementById('calcDeviation').textContent = (dev >= 0 ? '+' : '') + dev + 'bp' + (Math.abs(dev) <= 10 ? ' ✓' : ' ⚠');
+      document.getElementById('calcDeviation').style.color = Math.abs(dev) <= 10 ? 'var(--status-success)' : 'var(--status-danger)';
+    }
+
+    // ─── MM recalc ────────────────────────────────────────────────────────────
+    function recalcMM() {
+      // simple illustrative recalc for FD: principal 50M × rate/100 × 91/365
+      var rate = parseFloat(document.getElementById('mmRate').value) || 0;
+      var interest = Math.round(50000000 * (rate / 100) * (91 / 365));
+      document.getElementById('mmInterest').value = Number(interest).toLocaleString();
+      document.getElementById('mmTotal').value = Number(50000000 + interest).toLocaleString();
+    }
+
+    // ─── Limit check ─────────────────────────────────────────────────────────
+    function runLimitCheck() {
+      document.getElementById('limitCard').style.display = '';
+      document.getElementById('limitCard').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    }
+
+    // ─── Submit ───────────────────────────────────────────────────────────────
+    function submitDeal() {
+      if (confirm('Submit this deal for four-eyes authorisation?\n\nOnce submitted, the deal cannot be edited until an authoriser returns it.')) {
+        alert('Deal submitted successfully!\nDEAL-00288 created and sent to the Auth Queue.\nAuthoriser: Mary Njoki has been notified.');
+        window.location.href = '08-auth-queue.html';
       }
     }
-    function runLimitCheck() {
-      const panel = document.getElementById('limitPanel');
-      panel.style.display = 'block';
-      panel.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+
+    // ─── Counterparty limit display ───────────────────────────────────────────
+    function updateCtyLimit() {
+      var data = {
+        'Citi N.A. (Nairobi)': 'Limit: KES 800M &nbsp;|&nbsp; Exposure: KES 323.6M &nbsp;|&nbsp; <strong style="color:var(--status-success)">40% ✓</strong> &nbsp;|&nbsp; Available: KES 476.4M',
+        'Standard Bank Kenya': 'Limit: KES 800M &nbsp;|&nbsp; Exposure: KES 540.0M &nbsp;|&nbsp; <strong style="color:var(--status-success)">67% ✓</strong> &nbsp;|&nbsp; Available: KES 260.0M',
+        'Stanbic Bank Kenya': 'Limit: KES 600M &nbsp;|&nbsp; Exposure: KES 210.0M &nbsp;|&nbsp; <strong style="color:var(--status-success)">35% ✓</strong> &nbsp;|&nbsp; Available: KES 390.0M',
+        'Barclays Kenya': 'Limit: KES 700M &nbsp;|&nbsp; Exposure: KES 420.0M &nbsp;|&nbsp; <strong style="color:var(--status-success)">60% ✓</strong> &nbsp;|&nbsp; Available: KES 280.0M',
+        'KCB Group': 'Limit: KES 900M &nbsp;|&nbsp; Exposure: KES 760.0M &nbsp;|&nbsp; <strong style="color:var(--status-warning)">84% ⚠</strong> &nbsp;|&nbsp; Available: KES 140.0M',
+        'Equity Bank': 'Limit: KES 1,500M &nbsp;|&nbsp; Exposure: KES 1,200.0M &nbsp;|&nbsp; <strong style="color:var(--status-success)">80% ✓</strong> &nbsp;|&nbsp; Available: KES 300.0M'
+      };
+      var sel = document.getElementById('ctySelect').value;
+      document.getElementById('ctyLimitRow').innerHTML = data[sel] || '';
     }
+
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    goStep(2);
   </script>
 </body>
 
