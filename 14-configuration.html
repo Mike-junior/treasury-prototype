@@ -1,178 +1,697 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Configuration — E&M Treasury Management System</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="treasury-design-system.css">
-<style>
-.config-nav{display:flex;flex-direction:column;gap:2px;}
-.config-nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-md);font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:background .12s;}
-.config-nav-item:hover{background:var(--surface-bg);}
-.config-nav-item.active{background:rgba(10,22,40,.07);color:var(--brand-secondary);font-weight:700;}
-.config-nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.6;}
-.config-nav-item.active svg{opacity:1;}
-.config-section{display:none;}
-.config-section.active{display:block;}
-.toggle-wrap{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--surface-divider);}
-.toggle-wrap:last-child{border-bottom:none;}
-.toggle-info .ti{font-size:13px;font-weight:600;color:var(--text-primary);}
-.toggle-info .td{font-size:11px;color:var(--text-muted);margin-top:2px;}
-.toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
-.toggle input{opacity:0;width:0;height:0;}
-.toggle-slider{position:absolute;inset:0;background:#CBD5E0;border-radius:11px;cursor:pointer;transition:.2s;}
-.toggle-slider::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
-input:checked + .toggle-slider{background:var(--status-success);}
-input:checked + .toggle-slider::before{transform:translateX(18px);}
-.user-row{display:flex;align-items:center;gap:var(--space-3);padding:10px var(--space-4);border-bottom:1px solid var(--surface-divider);}
-.user-row:last-child{border-bottom:none;}
-.u-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuration — E&M Treasury Management System</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="treasury-design-system.css">
+  <style>
+    .config-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .config-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background .12s;
+    }
+
+    .config-nav-item:hover {
+      background: var(--surface-bg);
+    }
+
+    .config-nav-item.active {
+      background: rgba(10, 22, 40, .07);
+      color: var(--brand-secondary);
+      font-weight: 700;
+    }
+
+    .config-nav-item svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      opacity: .6;
+    }
+
+    .config-nav-item.active svg {
+      opacity: 1;
+    }
+
+    .config-section {
+      display: none;
+    }
+
+    .config-section.active {
+      display: block;
+    }
+
+    .toggle-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--surface-divider);
+    }
+
+    .toggle-wrap:last-child {
+      border-bottom: none;
+    }
+
+    .toggle-info .ti {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .toggle-info .td {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #CBD5E0;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+    }
+
+    input:checked+.toggle-slider {
+      background: var(--status-success);
+    }
+
+    input:checked+.toggle-slider::before {
+      transform: translateX(18px);
+    }
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 10px var(--space-4);
+      border-bottom: 1px solid var(--surface-divider);
+    }
+
+    .user-row:last-child {
+      border-bottom: none;
+    }
+
+    .u-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
+
 <body>
-<div class="app-shell">
-<nav class="sidebar">
-  <div class="sidebar-logo"><div class="sidebar-logo-mark">E&M</div><div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div></div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Main</div>
-    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
-    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
-    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
-    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Operations</div>
-    <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
-    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
-    <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/></svg>Deal Register</a>
-    <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Settlement</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Analytics</div>
-    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
-    <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
-    <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">System</div>
-    <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Day End Close</a>
-    <a href="14-configuration.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
-  </div>
-  <div class="sidebar-footer"><div class="user-mini"><div class="user-avatar">JM</div><div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">System Admin · LE-001</div></div></div></div>
-</nav>
+  <div class="app-shell">
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-mark">E&M</div>
+        <div class="sidebar-logo-text">
+          <div class="brand">E&M TMS</div>
+          <div class="sub">Treasury Platform</div>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Main</div>
+        <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>Dashboard</a>
+        <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>Deal Capture<span class="nav-badge">3</span></a>
+        <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>Cash Position</a>
+        <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Operations</div>
+        <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>Auth Queue<span class="nav-badge">5</span></a>
+        <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="9 11 12 14 22 4" />
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+          </svg>Reconciliation<span class="nav-badge warning">4</span></a>
+        <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+          </svg>Deal Register</a>
+        <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>Settlement</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Analytics</div>
+        <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>Reports</a>
+        <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path d="M3 3v18h18" />
+            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
+          </svg>ALM / IRRBB</a>
+        <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>Reg. Reports</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">System</div>
+        <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>Day End Close</a>
+        <a href="14-configuration.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+          </svg>Configuration</a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-mini">
+          <div class="user-avatar">MA</div>
+          <div class="user-mini-info">
+            <div class="name">Mike Agola</div>
+            <div class="role">System Admin · LE-001</div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-<div class="main-content">
-  <div class="fx-ticker-bar">
-    <div class="fx-tick"><span class="pair">System Version</span><span class="rate">E&M TMS v2.0</span><span class="delta" style="color:var(--status-success)">Active</span></div>
-    <div class="fx-tick"><span class="pair">Legal Entity</span><span class="rate">LE-001 Kenya</span></div>
-    <div class="fx-tick"><span class="pair">Environment</span><span class="rate">PRODUCTION</span><span class="delta" style="color:var(--status-success)">Live</span></div>
-  </div>
-  <div class="topbar">
-    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>System</span><span class="sep"> / </span><span class="current">Configuration</span></div>
-    <div class="topbar-spacer"></div>
-    <div style="background:var(--danger-bg);border:1px solid var(--danger-border);color:var(--status-danger);padding:5px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:700">Admin Access Only</div>
-    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">JM</div>
-      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">System Admin · 25 Aug 2026</div></div>
-    </div>
-  </div>
-
-  <div class="page-content">
-    <div class="page-header">
-      <div><h1 class="page-title">System Configuration</h1><p class="page-subtitle">Manage limits, users, calendars, instruments, and system parameters · Admin role required</p></div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:220px 1fr;gap:var(--space-4);align-items:start">
-
-      <!-- Left nav -->
-      <div class="card" style="padding:var(--space-3)">
-        <div class="config-nav">
-          <div class="config-nav-item active" onclick="cfgTab('limits')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limit Setup</div>
-          <div class="config-nav-item" onclick="cfgTab('users')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Users &amp; Roles</div>
-          <div class="config-nav-item" onclick="cfgTab('currencies')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Currencies</div>
-          <div class="config-nav-item" onclick="cfgTab('counterparties')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Counterparties</div>
-          <div class="config-nav-item" onclick="cfgTab('calendar')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Holiday Calendar</div>
-          <div class="config-nav-item" onclick="cfgTab('system')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>System Parameters</div>
-          <div class="config-nav-item" onclick="cfgTab('audit')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Audit Log</div>
+    <div class="main-content">
+      <div class="fx-ticker-bar">
+        <div class="fx-tick"><span class="pair">System Version</span><span class="rate">E&M TMS v2.0</span><span
+            class="delta" style="color:var(--status-success)">Active</span></div>
+        <div class="fx-tick"><span class="pair">Legal Entity</span><span class="rate">LE-001 Kenya</span></div>
+        <div class="fx-tick"><span class="pair">Environment</span><span class="rate">PRODUCTION</span><span
+            class="delta" style="color:var(--status-success)">Live</span></div>
+      </div>
+      <div class="topbar">
+        <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span
+            class="sep"> / </span><span>System</span><span class="sep"> / </span><span
+            class="current">Configuration</span></div>
+        <div class="topbar-spacer"></div>
+        <div
+          style="background:var(--danger-bg);border:1px solid var(--danger-border);color:var(--status-danger);padding:5px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:700">
+          Admin Access Only</div>
+        <div
+          style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+          <div
+            style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">
+            MA</div>
+          <div>
+            <div style="font-size:12px;font-weight:600">Mike Agola</div>
+            <div style="font-size:10px;color:var(--text-muted)">System Admin · 25 Aug 2026</div>
+          </div>
         </div>
       </div>
 
-      <!-- Right content -->
-      <div>
-
-        <!-- LIMITS SECTION -->
-        <div class="config-section active" id="cfg-limits">
-          <div class="card">
-            <div class="card-header"><div><div class="card-title">Counterparty &amp; NOP Limit Setup</div><div class="card-subtitle">Define and edit all trading limits (requires dual authorisation to activate)</div></div><button class="btn btn-primary btn-sm">+ Add Limit</button></div>
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>Counterparty / Dimension</th><th>Limit Type</th><th>Currency</th><th style="text-align:right">Amount</th><th>Warning %</th><th>Hard %</th><th>Status</th><th></th></tr></thead>
-                <tbody>
-                  <tr><td style="font-weight:600">Citi N.A. Nairobi</td><td><span class="badge badge-info">SETTLEMENT</span></td><td>KES</td><td class="text-right mono">800,000,000</td><td class="mono">80%</td><td class="mono">100%</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="font-weight:600">Standard Bank Kenya</td><td><span class="badge badge-info">SETTLEMENT</span></td><td>KES</td><td class="text-right mono">800,000,000</td><td class="mono">80%</td><td class="mono">100%</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="font-weight:600">USD NOP</td><td><span class="badge badge-warning">NOP</span></td><td>USD</td><td class="text-right mono">200,000,000</td><td class="mono">75%</td><td class="mono">100%</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="font-weight:600">EUR NOP</td><td><span class="badge badge-warning">NOP</span></td><td>EUR</td><td class="text-right mono">50,000,000</td><td class="mono">80%</td><td class="mono">100%</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="font-weight:600">ZAR NOP</td><td><span class="badge badge-warning">NOP</span></td><td>ZAR</td><td class="text-right mono">25,000,000</td><td class="mono">80%</td><td class="mono">100%</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="font-weight:600">Aggregate NOP (KES Equiv.)</td><td><span class="badge badge-danger">AGGREGATE</span></td><td>KES</td><td class="text-right mono">1,000,000,000</td><td class="mono">70%</td><td class="mono">100%</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                </tbody>
-              </table>
-            </div>
+      <div class="page-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">System Configuration</h1>
+            <p class="page-subtitle">Manage limits, users, calendars, instruments, and system parameters · Admin role
+              required</p>
           </div>
         </div>
 
-        <!-- USERS SECTION -->
-        <div class="config-section" id="cfg-users">
-          <div class="card">
-            <div class="card-header"><div><div class="card-title">Users &amp; Role Management</div><div class="card-subtitle">Assign roles, deal mandates and approval levels</div></div><button class="btn btn-primary btn-sm">+ Add User</button></div>
-            <div>
-              <div class="user-row"><div class="u-avatar" style="background:var(--brand-primary)">JM</div><div style="flex:1"><div style="font-size:13px;font-weight:700">James Mwangi</div><div style="font-size:11px;color:var(--text-muted)">j.mwangi@emtechhouse.com</div></div><span class="badge badge-info">TREASURER</span><span style="font-size:11px;color:var(--text-muted);margin:0 8px">Mandate: FX+MM</span><button class="btn btn-ghost btn-sm">Edit</button></div>
-              <div class="user-row"><div class="u-avatar" style="background:#7C3AED">MN</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Mary Njoki</div><div style="font-size:11px;color:var(--text-muted)">m.njoki@emtechhouse.com</div></div><span class="badge badge-primary">AUTHORISER L2</span><span style="font-size:11px;color:var(--text-muted);margin:0 8px">Mandate: All</span><button class="btn btn-ghost btn-sm">Edit</button></div>
-              <div class="user-row"><div class="u-avatar" style="background:#0D7377">KO</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Kevin Omondi</div><div style="font-size:11px;color:var(--text-muted)">k.omondi@emtechhouse.com</div></div><span class="badge badge-warning">MIDDLE OFFICE</span><span style="font-size:11px;color:var(--text-muted);margin:0 8px">View + Limits</span><button class="btn btn-ghost btn-sm">Edit</button></div>
-              <div class="user-row"><div class="u-avatar" style="background:#2563EB">WK</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Wanjiru Kamau</div><div style="font-size:11px;color:var(--text-muted)">w.kamau@emtechhouse.com</div></div><span class="badge badge-success">DEALER</span><span style="font-size:11px;color:var(--text-muted);margin:0 8px">Mandate: MM</span><button class="btn btn-ghost btn-sm">Edit</button></div>
-              <div class="user-row"><div class="u-avatar" style="background:#D97706">SO</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Susan Otieno</div><div style="font-size:11px;color:var(--text-muted)">s.otieno@emtechhouse.com</div></div><span class="badge badge-neutral">BACK OFFICE</span><span style="font-size:11px;color:var(--text-muted);margin:0 8px">Recon + Settlement</span><button class="btn btn-ghost btn-sm">Edit</button></div>
+        <div style="display:grid;grid-template-columns:220px 1fr;gap:var(--space-4);align-items:start">
+
+          <!-- Left nav -->
+          <div class="card" style="padding:var(--space-3)">
+            <div class="config-nav">
+              <div class="config-nav-item active" onclick="cfgTab('limits')"><svg fill="none" stroke="currentColor"
+                  stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>Limit Setup</div>
+              <div class="config-nav-item" onclick="cfgTab('users')"><svg fill="none" stroke="currentColor"
+                  stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                </svg>Users &amp; Roles</div>
+              <div class="config-nav-item" onclick="cfgTab('currencies')"><svg fill="none" stroke="currentColor"
+                  stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="16" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
+                </svg>Currencies</div>
+              <div class="config-nav-item" onclick="cfgTab('counterparties')"><svg fill="none" stroke="currentColor"
+                  stroke-width="2" viewBox="0 0 24 24">
+                  <rect x="2" y="7" width="20" height="14" rx="2" />
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                </svg>Counterparties</div>
+              <div class="config-nav-item" onclick="cfgTab('calendar')"><svg fill="none" stroke="currentColor"
+                  stroke-width="2" viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>Holiday Calendar</div>
+              <div class="config-nav-item" onclick="cfgTab('system')"><svg fill="none" stroke="currentColor"
+                  stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+                </svg>System Parameters</div>
+              <div class="config-nav-item" onclick="cfgTab('audit')"><svg fill="none" stroke="currentColor"
+                  stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>Audit Log</div>
             </div>
           </div>
-        </div>
 
-        <!-- SYSTEM PARAMS -->
-        <div class="config-section" id="cfg-system">
-          <div class="card">
-            <div class="card-header"><div class="card-title">System Parameters</div><div class="card-subtitle">Core system settings · Changes require Treasurer + Admin authorisation</div></div>
-            <div style="padding:var(--space-4)">
-              <div class="toggle-wrap"><div class="toggle-info"><div class="ti">Four-Eyes Authorisation (Mandatory)</div><div class="td">All deals above KES 1M require a second authoriser who is not the capturer.</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
-              <div class="toggle-wrap"><div class="toggle-info"><div class="ti">Off-Market Rate Challenge</div><div class="td">Block deals where rate deviates more than 10bp from live market data without justification.</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
-              <div class="toggle-wrap"><div class="toggle-info"><div class="ti">Real-time Limit Checking</div><div class="td">Check all limits (CTY, NOP, dealer) before allowing deal submission. Block if hard limit hit.</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
-              <div class="toggle-wrap"><div class="toggle-info"><div class="ti">MFA Enforcement</div><div class="td">Require TOTP authenticator code for all users at login and for sensitive operations.</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
-              <div class="toggle-wrap"><div class="toggle-info"><div class="ti">Audit Trail (7-Year Retention)</div><div class="td">Immutable audit log for all deal events, amendments, logins, and config changes.</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
-              <div class="toggle-wrap"><div class="toggle-info"><div class="ti">Auto Day End (Scheduled)</div><div class="td">Automatically initiate EOD checklist at 17:30 if Treasurer has not started it manually.</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
-              <div class="toggle-wrap"><div class="toggle-info"><div class="ti">SWIFT STP Auto-Match</div><div class="td">Automatically match incoming SWIFT messages to open deals in the reconciliation engine.</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <!-- Right content -->
+          <div>
+
+            <!-- LIMITS SECTION -->
+            <div class="config-section active" id="cfg-limits">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Counterparty &amp; NOP Limit Setup</div>
+                    <div class="card-subtitle">Define and edit all trading limits (requires dual authorisation to
+                      activate)</div>
+                  </div><button class="btn btn-primary btn-sm">+ Add Limit</button>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Counterparty / Dimension</th>
+                        <th>Limit Type</th>
+                        <th>Currency</th>
+                        <th style="text-align:right">Amount</th>
+                        <th>Warning %</th>
+                        <th>Hard %</th>
+                        <th>Status</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="font-weight:600">Citi N.A. Nairobi</td>
+                        <td><span class="badge badge-info">SETTLEMENT</span></td>
+                        <td>KES</td>
+                        <td class="text-right mono">800,000,000</td>
+                        <td class="mono">80%</td>
+                        <td class="mono">100%</td>
+                        <td><span class="badge badge-success">ACTIVE</span></td>
+                        <td><button class="btn btn-ghost btn-sm">Edit</button></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight:600">Standard Bank Kenya</td>
+                        <td><span class="badge badge-info">SETTLEMENT</span></td>
+                        <td>KES</td>
+                        <td class="text-right mono">800,000,000</td>
+                        <td class="mono">80%</td>
+                        <td class="mono">100%</td>
+                        <td><span class="badge badge-success">ACTIVE</span></td>
+                        <td><button class="btn btn-ghost btn-sm">Edit</button></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight:600">USD NOP</td>
+                        <td><span class="badge badge-warning">NOP</span></td>
+                        <td>USD</td>
+                        <td class="text-right mono">200,000,000</td>
+                        <td class="mono">75%</td>
+                        <td class="mono">100%</td>
+                        <td><span class="badge badge-success">ACTIVE</span></td>
+                        <td><button class="btn btn-ghost btn-sm">Edit</button></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight:600">EUR NOP</td>
+                        <td><span class="badge badge-warning">NOP</span></td>
+                        <td>EUR</td>
+                        <td class="text-right mono">50,000,000</td>
+                        <td class="mono">80%</td>
+                        <td class="mono">100%</td>
+                        <td><span class="badge badge-success">ACTIVE</span></td>
+                        <td><button class="btn btn-ghost btn-sm">Edit</button></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight:600">ZAR NOP</td>
+                        <td><span class="badge badge-warning">NOP</span></td>
+                        <td>ZAR</td>
+                        <td class="text-right mono">25,000,000</td>
+                        <td class="mono">80%</td>
+                        <td class="mono">100%</td>
+                        <td><span class="badge badge-success">ACTIVE</span></td>
+                        <td><button class="btn btn-ghost btn-sm">Edit</button></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight:600">Aggregate NOP (KES Equiv.)</td>
+                        <td><span class="badge badge-danger">AGGREGATE</span></td>
+                        <td>KES</td>
+                        <td class="text-right mono">1,000,000,000</td>
+                        <td class="mono">70%</td>
+                        <td class="mono">100%</td>
+                        <td><span class="badge badge-success">ACTIVE</span></td>
+                        <td><button class="btn btn-ghost btn-sm">Edit</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-            <div class="card-footer" style="display:flex;justify-content:flex-end;gap:8px">
-              <button class="btn btn-outline btn-sm">Cancel</button>
-              <button class="btn btn-primary btn-sm">Save &amp; Request Authorisation</button>
+
+            <!-- USERS SECTION -->
+            <div class="config-section" id="cfg-users">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Users &amp; Role Management</div>
+                    <div class="card-subtitle">Assign roles, deal mandates and approval levels</div>
+                  </div><button class="btn btn-primary btn-sm">+ Add User</button>
+                </div>
+                <div>
+                  <div class="user-row">
+                    <div class="u-avatar" style="background:var(--brand-primary)">MA</div>
+                    <div style="flex:1">
+                      <div style="font-size:13px;font-weight:700">Mike Agola</div>
+                      <div style="font-size:11px;color:var(--text-muted)">j.mwangi@emtechhouse.com</div>
+                    </div><span class="badge badge-info">TREASURER</span><span
+                      style="font-size:11px;color:var(--text-muted);margin:0 8px">Mandate: FX+MM</span><button
+                      class="btn btn-ghost btn-sm">Edit</button>
+                  </div>
+                  <div class="user-row">
+                    <div class="u-avatar" style="background:#7C3AED">MN</div>
+                    <div style="flex:1">
+                      <div style="font-size:13px;font-weight:700">Mary Njoki</div>
+                      <div style="font-size:11px;color:var(--text-muted)">m.njoki@emtechhouse.com</div>
+                    </div><span class="badge badge-primary">AUTHORISER L2</span><span
+                      style="font-size:11px;color:var(--text-muted);margin:0 8px">Mandate: All</span><button
+                      class="btn btn-ghost btn-sm">Edit</button>
+                  </div>
+                  <div class="user-row">
+                    <div class="u-avatar" style="background:#0D7377">KO</div>
+                    <div style="flex:1">
+                      <div style="font-size:13px;font-weight:700">Kevin Omondi</div>
+                      <div style="font-size:11px;color:var(--text-muted)">k.omondi@emtechhouse.com</div>
+                    </div><span class="badge badge-warning">MIDDLE OFFICE</span><span
+                      style="font-size:11px;color:var(--text-muted);margin:0 8px">View + Limits</span><button
+                      class="btn btn-ghost btn-sm">Edit</button>
+                  </div>
+                  <div class="user-row">
+                    <div class="u-avatar" style="background:#2563EB">WK</div>
+                    <div style="flex:1">
+                      <div style="font-size:13px;font-weight:700">Wanjiru Kamau</div>
+                      <div style="font-size:11px;color:var(--text-muted)">w.kamau@emtechhouse.com</div>
+                    </div><span class="badge badge-success">DEALER</span><span
+                      style="font-size:11px;color:var(--text-muted);margin:0 8px">Mandate: MM</span><button
+                      class="btn btn-ghost btn-sm">Edit</button>
+                  </div>
+                  <div class="user-row">
+                    <div class="u-avatar" style="background:#D97706">SO</div>
+                    <div style="flex:1">
+                      <div style="font-size:13px;font-weight:700">Susan Otieno</div>
+                      <div style="font-size:11px;color:var(--text-muted)">s.otieno@emtechhouse.com</div>
+                    </div><span class="badge badge-neutral">BACK OFFICE</span><span
+                      style="font-size:11px;color:var(--text-muted);margin:0 8px">Recon + Settlement</span><button
+                      class="btn btn-ghost btn-sm">Edit</button>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <!-- SYSTEM PARAMS -->
+            <div class="config-section" id="cfg-system">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">System Parameters</div>
+                  <div class="card-subtitle">Core system settings · Changes require Treasurer + Admin authorisation
+                  </div>
+                </div>
+                <div style="padding:var(--space-4)">
+                  <div class="toggle-wrap">
+                    <div class="toggle-info">
+                      <div class="ti">Four-Eyes Authorisation (Mandatory)</div>
+                      <div class="td">All deals above KES 1M require a second authoriser who is not the capturer.</div>
+                    </div><label class="toggle"><input type="checkbox" checked><span
+                        class="toggle-slider"></span></label>
+                  </div>
+                  <div class="toggle-wrap">
+                    <div class="toggle-info">
+                      <div class="ti">Off-Market Rate Challenge</div>
+                      <div class="td">Block deals where rate deviates more than 10bp from live market data without
+                        justification.</div>
+                    </div><label class="toggle"><input type="checkbox" checked><span
+                        class="toggle-slider"></span></label>
+                  </div>
+                  <div class="toggle-wrap">
+                    <div class="toggle-info">
+                      <div class="ti">Real-time Limit Checking</div>
+                      <div class="td">Check all limits (CTY, NOP, dealer) before allowing deal submission. Block if hard
+                        limit hit.</div>
+                    </div><label class="toggle"><input type="checkbox" checked><span
+                        class="toggle-slider"></span></label>
+                  </div>
+                  <div class="toggle-wrap">
+                    <div class="toggle-info">
+                      <div class="ti">MFA Enforcement</div>
+                      <div class="td">Require TOTP authenticator code for all users at login and for sensitive
+                        operations.</div>
+                    </div><label class="toggle"><input type="checkbox" checked><span
+                        class="toggle-slider"></span></label>
+                  </div>
+                  <div class="toggle-wrap">
+                    <div class="toggle-info">
+                      <div class="ti">Audit Trail (7-Year Retention)</div>
+                      <div class="td">Immutable audit log for all deal events, amendments, logins, and config changes.
+                      </div>
+                    </div><label class="toggle"><input type="checkbox" checked><span
+                        class="toggle-slider"></span></label>
+                  </div>
+                  <div class="toggle-wrap">
+                    <div class="toggle-info">
+                      <div class="ti">Auto Day End (Scheduled)</div>
+                      <div class="td">Automatically initiate EOD checklist at 17:30 if Treasurer has not started it
+                        manually.</div>
+                    </div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                  </div>
+                  <div class="toggle-wrap">
+                    <div class="toggle-info">
+                      <div class="ti">SWIFT STP Auto-Match</div>
+                      <div class="td">Automatically match incoming SWIFT messages to open deals in the reconciliation
+                        engine.</div>
+                    </div><label class="toggle"><input type="checkbox" checked><span
+                        class="toggle-slider"></span></label>
+                  </div>
+                </div>
+                <div class="card-footer" style="display:flex;justify-content:flex-end;gap:8px">
+                  <button class="btn btn-outline btn-sm">Cancel</button>
+                  <button class="btn btn-primary btn-sm">Save &amp; Request Authorisation</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Other sections (currencies, counterparties, calendar, audit) show placeholder -->
+            <div class="config-section" id="cfg-currencies">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">Currency Setup</div>
+                </div>
+                <div class="card-body" style="text-align:center;padding:var(--space-12);color:var(--text-muted)"><svg
+                    width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                    style="margin:0 auto var(--space-3)">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="16" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                  </svg>
+                  <div style="font-size:14px;font-weight:600">Currency Configuration</div>
+                  <div style="font-size:12px;margin-top:4px">Configure active currencies, rounding rules, and CBK market
+                    data feeds.</div>
+                </div>
+              </div>
+            </div>
+            <div class="config-section" id="cfg-counterparties">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">Counterparty Master</div>
+                </div>
+                <div class="card-body" style="text-align:center;padding:var(--space-12);color:var(--text-muted)"><svg
+                    width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                    style="margin:0 auto var(--space-3)">
+                    <rect x="2" y="7" width="20" height="14" rx="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                  <div style="font-size:14px;font-weight:600">Counterparty Master Data</div>
+                  <div style="font-size:12px;margin-top:4px">Manage bank details, SWIFT codes, account numbers, and
+                    settlement instructions.</div>
+                </div>
+              </div>
+            </div>
+            <div class="config-section" id="cfg-calendar">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">Holiday Calendar</div>
+                </div>
+                <div class="card-body" style="text-align:center;padding:var(--space-12);color:var(--text-muted)"><svg
+                    width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                    style="margin:0 auto var(--space-3)">
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  <div style="font-size:14px;font-weight:600">Banking Holiday Calendars</div>
+                  <div style="font-size:12px;margin-top:4px">Kenya, Uganda, Tanzania, South Africa, UK, USA calendar
+                    management for value date calculations.</div>
+                </div>
+              </div>
+            </div>
+            <div class="config-section" id="cfg-audit">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">System Audit Log</div>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Object</th>
+                        <th>Before</th>
+                        <th>After</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="mono text-xs">25/08/2026 09:14:02</td>
+                        <td style="font-size:12px">J. Mwangi</td>
+                        <td style="font-size:12px">DEAL_SUBMIT</td>
+                        <td class="mono text-xs">DEAL-00287</td>
+                        <td class="mono text-xs">DRAFT</td>
+                        <td class="mono text-xs">PENDING_AUTH</td>
+                      </tr>
+                      <tr>
+                        <td class="mono text-xs">25/08/2026 09:31:07</td>
+                        <td style="font-size:12px">M. Njoki</td>
+                        <td style="font-size:12px">DEAL_AUTH</td>
+                        <td class="mono text-xs">DEAL-00287</td>
+                        <td class="mono text-xs">PENDING_AUTH</td>
+                        <td class="mono text-xs">AUTHORISED</td>
+                      </tr>
+                      <tr>
+                        <td class="mono text-xs">25/08/2026 08:55:31</td>
+                        <td style="font-size:12px">J. Mwangi</td>
+                        <td style="font-size:12px">USER_LOGIN</td>
+                        <td class="mono text-xs">j.mwangi@...</td>
+                        <td class="mono text-xs">—</td>
+                        <td class="mono text-xs">SESSION_START</td>
+                      </tr>
+                      <tr>
+                        <td class="mono text-xs">24/08/2026 17:02:14</td>
+                        <td style="font-size:12px">System</td>
+                        <td style="font-size:12px">DATE_ADVANCE</td>
+                        <td class="mono text-xs">BIZ_DATE</td>
+                        <td class="mono text-xs">24/08/2026</td>
+                        <td class="mono text-xs">25/08/2026</td>
+                      </tr>
+                      <tr>
+                        <td class="mono text-xs">24/08/2026 16:45:11</td>
+                        <td style="font-size:12px">J. Mwangi</td>
+                        <td style="font-size:12px">REG_SUBMIT</td>
+                        <td class="mono text-xs">NOP_RETURN</td>
+                        <td class="mono text-xs">DRAFT</td>
+                        <td class="mono text-xs">SUBMITTED</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
-
-        <!-- Other sections (currencies, counterparties, calendar, audit) show placeholder -->
-        <div class="config-section" id="cfg-currencies"><div class="card"><div class="card-header"><div class="card-title">Currency Setup</div></div><div class="card-body" style="text-align:center;padding:var(--space-12);color:var(--text-muted)"><svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto var(--space-3)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><div style="font-size:14px;font-weight:600">Currency Configuration</div><div style="font-size:12px;margin-top:4px">Configure active currencies, rounding rules, and CBK market data feeds.</div></div></div></div>
-        <div class="config-section" id="cfg-counterparties"><div class="card"><div class="card-header"><div class="card-title">Counterparty Master</div></div><div class="card-body" style="text-align:center;padding:var(--space-12);color:var(--text-muted)"><svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto var(--space-3)"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><div style="font-size:14px;font-weight:600">Counterparty Master Data</div><div style="font-size:12px;margin-top:4px">Manage bank details, SWIFT codes, account numbers, and settlement instructions.</div></div></div></div>
-        <div class="config-section" id="cfg-calendar"><div class="card"><div class="card-header"><div class="card-title">Holiday Calendar</div></div><div class="card-body" style="text-align:center;padding:var(--space-12);color:var(--text-muted)"><svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto var(--space-3)"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div style="font-size:14px;font-weight:600">Banking Holiday Calendars</div><div style="font-size:12px;margin-top:4px">Kenya, Uganda, Tanzania, South Africa, UK, USA calendar management for value date calculations.</div></div></div></div>
-        <div class="config-section" id="cfg-audit"><div class="card"><div class="card-header"><div class="card-title">System Audit Log</div></div><div class="table-wrap"><table><thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Object</th><th>Before</th><th>After</th></tr></thead><tbody><tr><td class="mono text-xs">25/08/2026 09:14:02</td><td style="font-size:12px">J. Mwangi</td><td style="font-size:12px">DEAL_SUBMIT</td><td class="mono text-xs">DEAL-00287</td><td class="mono text-xs">DRAFT</td><td class="mono text-xs">PENDING_AUTH</td></tr><tr><td class="mono text-xs">25/08/2026 09:31:07</td><td style="font-size:12px">M. Njoki</td><td style="font-size:12px">DEAL_AUTH</td><td class="mono text-xs">DEAL-00287</td><td class="mono text-xs">PENDING_AUTH</td><td class="mono text-xs">AUTHORISED</td></tr><tr><td class="mono text-xs">25/08/2026 08:55:31</td><td style="font-size:12px">J. Mwangi</td><td style="font-size:12px">USER_LOGIN</td><td class="mono text-xs">j.mwangi@...</td><td class="mono text-xs">—</td><td class="mono text-xs">SESSION_START</td></tr><tr><td class="mono text-xs">24/08/2026 17:02:14</td><td style="font-size:12px">System</td><td style="font-size:12px">DATE_ADVANCE</td><td class="mono text-xs">BIZ_DATE</td><td class="mono text-xs">24/08/2026</td><td class="mono text-xs">25/08/2026</td></tr><tr><td class="mono text-xs">24/08/2026 16:45:11</td><td style="font-size:12px">J. Mwangi</td><td style="font-size:12px">REG_SUBMIT</td><td class="mono text-xs">NOP_RETURN</td><td class="mono text-xs">DRAFT</td><td class="mono text-xs">SUBMITTED</td></tr></tbody></table></div></div></div>
-
       </div>
     </div>
   </div>
-</div>
-</div>
-<script>
-function cfgTab(id){
-  document.querySelectorAll('.config-nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelectorAll('.config-section').forEach(s=>s.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  document.getElementById('cfg-'+id).classList.add('active');
-}
-</script>
+  <script>
+    function cfgTab(id) {
+      document.querySelectorAll('.config-nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.config-section').forEach(s => s.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.getElementById('cfg-' + id).classList.add('active');
+    }
+  </script>
 </body>
+
 </html>

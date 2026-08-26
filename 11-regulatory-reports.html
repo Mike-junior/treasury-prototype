@@ -1,206 +1,438 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Regulatory Reports — E&M Treasury Management System</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="treasury-design-system.css">
-<style>
-.reg-card{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);overflow:hidden;transition:box-shadow .15s;}
-.reg-card:hover{box-shadow:var(--shadow-md);}
-.reg-card-head{padding:var(--space-4);border-bottom:1px solid var(--surface-divider);display:flex;justify-content:space-between;align-items:flex-start;}
-.reg-card-body{padding:var(--space-4);}
-.reg-card-foot{padding:var(--space-3) var(--space-4);background:var(--surface-bg);border-top:1px solid var(--surface-divider);display:flex;justify-content:space-between;align-items:center;}
-.deadline-bar{height:5px;border-radius:3px;background:var(--surface-divider);overflow:hidden;margin-top:6px;}
-.deadline-fill{height:100%;border-radius:3px;}
-.field-pair{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
-.field-pair:last-child{border-bottom:none;}
-.field-pair .fk{color:var(--text-muted);}
-.field-pair .fv{font-weight:700;font-family:var(--font-mono);}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regulatory Reports — E&M Treasury Management System</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="treasury-design-system.css">
+  <style>
+    .reg-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: box-shadow .15s;
+    }
+
+    .reg-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .reg-card-head {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--surface-divider);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .reg-card-body {
+      padding: var(--space-4);
+    }
+
+    .reg-card-foot {
+      padding: var(--space-3) var(--space-4);
+      background: var(--surface-bg);
+      border-top: 1px solid var(--surface-divider);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .deadline-bar {
+      height: 5px;
+      border-radius: 3px;
+      background: var(--surface-divider);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .deadline-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .field-pair {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--surface-divider);
+      font-size: 12px;
+    }
+
+    .field-pair:last-child {
+      border-bottom: none;
+    }
+
+    .field-pair .fk {
+      color: var(--text-muted);
+    }
+
+    .field-pair .fv {
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+  </style>
 </head>
+
 <body>
-<div class="app-shell">
-<nav class="sidebar">
-  <div class="sidebar-logo"><div class="sidebar-logo-mark">E&M</div><div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div></div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Main</div>
-    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
-    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
-    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
-    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Operations</div>
-    <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
-    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
-    <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/></svg>Deal Register</a>
-    <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Settlement</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Analytics</div>
-    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
-    <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
-    <a href="11-regulatory-reports.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">System</div>
-    <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Day End Close</a>
-    <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
-  </div>
-  <div class="sidebar-footer"><div class="user-mini"><div class="user-avatar">JM</div><div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">Treasurer · LE-001</div></div></div></div>
-</nav>
+  <div class="app-shell">
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-mark">E&M</div>
+        <div class="sidebar-logo-text">
+          <div class="brand">E&M TMS</div>
+          <div class="sub">Treasury Platform</div>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Main</div>
+        <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>Dashboard</a>
+        <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>Deal Capture<span class="nav-badge">3</span></a>
+        <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>Cash Position</a>
+        <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Operations</div>
+        <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>Auth Queue<span class="nav-badge">5</span></a>
+        <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="9 11 12 14 22 4" />
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+          </svg>Reconciliation<span class="nav-badge warning">4</span></a>
+        <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+          </svg>Deal Register</a>
+        <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>Settlement</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Analytics</div>
+        <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>Reports</a>
+        <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path d="M3 3v18h18" />
+            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
+          </svg>ALM / IRRBB</a>
+        <a href="11-regulatory-reports.html" class="nav-item active"><svg class="nav-icon" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>Reg. Reports</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">System</div>
+        <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>Day End Close</a>
+        <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+          </svg>Configuration</a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-mini">
+          <div class="user-avatar">MA</div>
+          <div class="user-mini-info">
+            <div class="name">Mike Agola</div>
+            <div class="role">Treasurer · LE-001</div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-<div class="main-content">
-  <div class="fx-ticker-bar">
-    <div class="fx-tick"><span class="pair">NOP Due</span><span class="rate">17:00 Today</span><span class="delta" style="color:var(--status-warning)">Pending</span></div>
-    <div class="fx-tick"><span class="pair">Prudential Return</span><span class="rate">31 Aug 2026</span><span class="delta" style="color:#94A3B8">6 days</span></div>
-    <div class="fx-tick"><span class="pair">LCR</span><span class="rate">118%</span><span class="delta up">✓</span></div>
-  </div>
-  <div class="topbar">
-    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>Analytics</span><span class="sep"> / </span><span class="current">Regulatory Reports</span></div>
-    <div class="topbar-spacer"></div>
-    <div class="live-badge">Live</div>
-    <div class="topbar-actions">
-      <button class="btn btn-outline btn-sm">Submission Log</button>
-      <button class="btn btn-primary btn-sm">Generate All Due Today</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">JM</div>
-      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">Treasurer · 25 Aug 2026</div></div>
-    </div>
-  </div>
-
-  <div class="page-content">
-    <div class="page-header">
-      <div><h1 class="page-title">Regulatory Reports</h1><p class="page-subtitle">CBK Prudential Returns &amp; regulatory filings · LE-001 Kenya (FR-21)</p></div>
-    </div>
-
-    <!-- Compliance summary -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-4)">
-      <div class="kpi-card" style="--kpi-accent:var(--status-success)"><div class="kpi-label">Reports Due Today</div><div class="kpi-value" style="color:var(--status-warning)">2</div><div class="kpi-meta">NOP Return · LCR Daily</div></div>
-      <div class="kpi-card" style="--kpi-accent:var(--status-success)"><div class="kpi-label">Submitted This Month</div><div class="kpi-value" style="color:var(--status-success)">18</div><div class="kpi-meta">All on-time</div></div>
-      <div class="kpi-card" style="--kpi-accent:var(--status-danger)"><div class="kpi-label">Overdue Reports</div><div class="kpi-value">0</div><div class="kpi-meta">All clear ✓</div></div>
-      <div class="kpi-card" style="--kpi-accent:#0D7377"><div class="kpi-label">Next CBK Deadline</div><div class="kpi-value" style="font-size:18px">31 Aug</div><div class="kpi-meta">Prudential Return</div></div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
-
-      <!-- NOP Daily Return -->
-      <div class="reg-card">
-        <div class="reg-card-head">
+    <div class="main-content">
+      <div class="fx-ticker-bar">
+        <div class="fx-tick"><span class="pair">NOP Due</span><span class="rate">17:00 Today</span><span class="delta"
+            style="color:var(--status-warning)">Pending</span></div>
+        <div class="fx-tick"><span class="pair">Prudential Return</span><span class="rate">31 Aug 2026</span><span
+            class="delta" style="color:#94A3B8">6 days</span></div>
+        <div class="fx-tick"><span class="pair">LCR</span><span class="rate">118%</span><span class="delta up">✓</span>
+        </div>
+      </div>
+      <div class="topbar">
+        <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span
+            class="sep"> / </span><span>Analytics</span><span class="sep"> / </span><span class="current">Regulatory
+            Reports</span></div>
+        <div class="topbar-spacer"></div>
+        <div class="live-badge">Live</div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm">Submission Log</button>
+          <button class="btn btn-primary btn-sm">Generate All Due Today</button>
+        </div>
+        <div
+          style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+          <div
+            style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">
+            MA</div>
           <div>
-            <div style="font-size:14px;font-weight:800">NOP Daily Return</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Central Bank of Kenya · FX Supervision</div>
-          </div>
-          <span class="badge badge-warning">DUE TODAY 17:00</span>
-        </div>
-        <div class="reg-card-body">
-          <div style="margin-bottom:var(--space-3)">
-            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Submission deadline progress</div>
-            <div class="deadline-bar"><div class="deadline-fill" style="width:65%;background:var(--status-warning)"></div></div>
-            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:3px"><span>09:00 Open</span><span style="color:var(--status-warning);font-weight:700">10:42 Now</span><span>17:00 Deadline</span></div>
-          </div>
-          <div class="field-pair"><span class="fk">USD NOP</span><span class="fv" style="color:var(--status-success)">+128.4M (64%)</span></div>
-          <div class="field-pair"><span class="fk">EUR NOP</span><span class="fv" style="color:var(--status-warning)">+42.1M (84%) ⚠</span></div>
-          <div class="field-pair"><span class="fk">GBP NOP</span><span class="fv">−8.3M (28%)</span></div>
-          <div class="field-pair"><span class="fk">ZAR NOP</span><span class="fv" style="color:var(--status-danger)">+24.7M (99%) !</span></div>
-          <div class="field-pair"><span class="fk">Aggregate NOP</span><span class="fv">KES 725M (72%)</span></div>
-          <div class="field-pair"><span class="fk">Aggregate Limit</span><span class="fv">KES 1,000M</span></div>
-        </div>
-        <div class="reg-card-foot">
-          <span style="font-size:11px;color:var(--text-muted)">Auto-populated from live positions</span>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-outline btn-sm">Preview</button>
-            <button class="btn btn-primary btn-sm">Generate &amp; Submit</button>
+            <div style="font-size:12px;font-weight:600">Mike Agola</div>
+            <div style="font-size:10px;color:var(--text-muted)">Treasurer · 25 Aug 2026</div>
           </div>
         </div>
       </div>
 
-      <!-- LCR Daily -->
-      <div class="reg-card">
-        <div class="reg-card-head">
+      <div class="page-content">
+        <div class="page-header">
           <div>
-            <div style="font-size:14px;font-weight:800">LCR Daily Report</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Liquidity Coverage Ratio · CBK Submission</div>
+            <h1 class="page-title">Regulatory Reports</h1>
+            <p class="page-subtitle">CBK Prudential Returns &amp; regulatory filings · LE-001 Kenya (FR-21)</p>
           </div>
-          <span class="badge badge-warning">DUE TODAY 17:00</span>
         </div>
-        <div class="reg-card-body">
-          <div style="margin-bottom:var(--space-3)">
-            <div style="text-align:center;padding:var(--space-3);background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md)">
-              <div style="font-size:36px;font-weight:900;font-family:var(--font-mono);color:var(--status-success)">118%</div>
-              <div style="font-size:11px;color:var(--status-success);font-weight:600">COMPLIANT — Min required: 100%</div>
+
+        <!-- Compliance summary -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-4)">
+          <div class="kpi-card" style="--kpi-accent:var(--status-success)">
+            <div class="kpi-label">Reports Due Today</div>
+            <div class="kpi-value" style="color:var(--status-warning)">2</div>
+            <div class="kpi-meta">NOP Return · LCR Daily</div>
+          </div>
+          <div class="kpi-card" style="--kpi-accent:var(--status-success)">
+            <div class="kpi-label">Submitted This Month</div>
+            <div class="kpi-value" style="color:var(--status-success)">18</div>
+            <div class="kpi-meta">All on-time</div>
+          </div>
+          <div class="kpi-card" style="--kpi-accent:var(--status-danger)">
+            <div class="kpi-label">Overdue Reports</div>
+            <div class="kpi-value">0</div>
+            <div class="kpi-meta">All clear ✓</div>
+          </div>
+          <div class="kpi-card" style="--kpi-accent:#0D7377">
+            <div class="kpi-label">Next CBK Deadline</div>
+            <div class="kpi-value" style="font-size:18px">31 Aug</div>
+            <div class="kpi-meta">Prudential Return</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
+
+          <!-- NOP Daily Return -->
+          <div class="reg-card">
+            <div class="reg-card-head">
+              <div>
+                <div style="font-size:14px;font-weight:800">NOP Daily Return</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Central Bank of Kenya · FX
+                  Supervision</div>
+              </div>
+              <span class="badge badge-warning">DUE TODAY 17:00</span>
+            </div>
+            <div class="reg-card-body">
+              <div style="margin-bottom:var(--space-3)">
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Submission deadline progress</div>
+                <div class="deadline-bar">
+                  <div class="deadline-fill" style="width:65%;background:var(--status-warning)"></div>
+                </div>
+                <div
+                  style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:3px">
+                  <span>09:00 Open</span><span style="color:var(--status-warning);font-weight:700">10:42
+                    Now</span><span>17:00 Deadline</span></div>
+              </div>
+              <div class="field-pair"><span class="fk">USD NOP</span><span class="fv"
+                  style="color:var(--status-success)">+128.4M (64%)</span></div>
+              <div class="field-pair"><span class="fk">EUR NOP</span><span class="fv"
+                  style="color:var(--status-warning)">+42.1M (84%) ⚠</span></div>
+              <div class="field-pair"><span class="fk">GBP NOP</span><span class="fv">−8.3M (28%)</span></div>
+              <div class="field-pair"><span class="fk">ZAR NOP</span><span class="fv"
+                  style="color:var(--status-danger)">+24.7M (99%) !</span></div>
+              <div class="field-pair"><span class="fk">Aggregate NOP</span><span class="fv">KES 725M (72%)</span></div>
+              <div class="field-pair"><span class="fk">Aggregate Limit</span><span class="fv">KES 1,000M</span></div>
+            </div>
+            <div class="reg-card-foot">
+              <span style="font-size:11px;color:var(--text-muted)">Auto-populated from live positions</span>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-outline btn-sm">Preview</button>
+                <button class="btn btn-primary btn-sm">Generate &amp; Submit</button>
+              </div>
             </div>
           </div>
-          <div class="field-pair"><span class="fk">HQLA (Level 1 + 2A)</span><span class="fv" style="color:var(--status-success)">KES 8,240M</span></div>
-          <div class="field-pair"><span class="fk">Net Cash Outflows (30-day)</span><span class="fv">KES 6,983M</span></div>
-          <div class="field-pair"><span class="fk">LCR Ratio</span><span class="fv" style="color:var(--status-success)">118% ✓</span></div>
-          <div class="field-pair"><span class="fk">CBK Minimum</span><span class="fv">100%</span></div>
-          <div class="field-pair"><span class="fk">Internal Buffer</span><span class="fv" style="color:var(--status-warning)">125% (below buffer)</span></div>
-        </div>
-        <div class="reg-card-foot">
-          <span style="font-size:11px;color:var(--text-muted)">Based on EOD positions</span>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-outline btn-sm">Preview</button>
-            <button class="btn btn-primary btn-sm">Generate &amp; Submit</button>
-          </div>
-        </div>
-      </div>
 
-      <!-- Monthly Prudential Return -->
-      <div class="reg-card">
-        <div class="reg-card-head">
-          <div>
-            <div style="font-size:14px;font-weight:800">Monthly Prudential Return</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">CBK BSD Return · August 2026</div>
+          <!-- LCR Daily -->
+          <div class="reg-card">
+            <div class="reg-card-head">
+              <div>
+                <div style="font-size:14px;font-weight:800">LCR Daily Report</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Liquidity Coverage Ratio · CBK
+                  Submission</div>
+              </div>
+              <span class="badge badge-warning">DUE TODAY 17:00</span>
+            </div>
+            <div class="reg-card-body">
+              <div style="margin-bottom:var(--space-3)">
+                <div
+                  style="text-align:center;padding:var(--space-3);background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md)">
+                  <div style="font-size:36px;font-weight:900;font-family:var(--font-mono);color:var(--status-success)">
+                    118%</div>
+                  <div style="font-size:11px;color:var(--status-success);font-weight:600">COMPLIANT — Min required: 100%
+                  </div>
+                </div>
+              </div>
+              <div class="field-pair"><span class="fk">HQLA (Level 1 + 2A)</span><span class="fv"
+                  style="color:var(--status-success)">KES 8,240M</span></div>
+              <div class="field-pair"><span class="fk">Net Cash Outflows (30-day)</span><span class="fv">KES
+                  6,983M</span></div>
+              <div class="field-pair"><span class="fk">LCR Ratio</span><span class="fv"
+                  style="color:var(--status-success)">118% ✓</span></div>
+              <div class="field-pair"><span class="fk">CBK Minimum</span><span class="fv">100%</span></div>
+              <div class="field-pair"><span class="fk">Internal Buffer</span><span class="fv"
+                  style="color:var(--status-warning)">125% (below buffer)</span></div>
+            </div>
+            <div class="reg-card-foot">
+              <span style="font-size:11px;color:var(--text-muted)">Based on EOD positions</span>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-outline btn-sm">Preview</button>
+                <button class="btn btn-primary btn-sm">Generate &amp; Submit</button>
+              </div>
+            </div>
           </div>
-          <span class="badge badge-info">DUE 31 AUG · 6 DAYS</span>
-        </div>
-        <div class="reg-card-body">
-          <div style="margin-bottom:var(--space-3)">
-            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Completion progress</div>
-            <div class="deadline-bar"><div class="deadline-fill" style="width:70%;background:var(--status-info)"></div></div>
-            <div style="font-size:10px;color:var(--status-info);font-weight:600;margin-top:3px">7 of 10 sections complete</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:5px">
-            <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--surface-divider)"><span>Capital Adequacy Ratio</span><span class="badge badge-success">Done</span></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--surface-divider)"><span>Large Exposures</span><span class="badge badge-success">Done</span></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--surface-divider)"><span>NOP / FX Positions</span><span class="badge badge-success">Done</span></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--surface-divider)"><span>Liquidity (LCR/NSFR)</span><span class="badge badge-success">Done</span></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--surface-divider)"><span>Interest Rate Risk</span><span class="badge badge-warning">In Progress</span></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0"><span>Nostro Reconciliation Summary</span><span class="badge badge-neutral">Pending</span></div>
-          </div>
-        </div>
-        <div class="reg-card-foot">
-          <span style="font-size:11px;color:var(--text-muted)">Submitted by: J. Mwangi</span>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-outline btn-sm">Continue Filling</button>
-            <button class="btn btn-secondary btn-sm" disabled style="opacity:.5">Submit (incomplete)</button>
-          </div>
-        </div>
-      </div>
 
-      <!-- Submission history -->
-      <div class="card">
-        <div class="card-header"><div class="card-title">Submission History</div><div class="card-subtitle">Last 10 regulatory filings</div></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Report</th><th>Period</th><th>Submitted</th><th>By</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td style="font-size:12px;font-weight:600">NOP Daily Return</td><td class="mono text-xs">24/08/2026</td><td class="mono text-xs">24/08/2026 16:45</td><td style="font-size:11px">J. Mwangi</td><td><span class="badge badge-success">ACCEPTED</span></td></tr>
-              <tr><td style="font-size:12px;font-weight:600">LCR Daily</td><td class="mono text-xs">24/08/2026</td><td class="mono text-xs">24/08/2026 16:48</td><td style="font-size:11px">J. Mwangi</td><td><span class="badge badge-success">ACCEPTED</span></td></tr>
-              <tr><td style="font-size:12px;font-weight:600">NOP Daily Return</td><td class="mono text-xs">22/08/2026</td><td class="mono text-xs">22/08/2026 16:30</td><td style="font-size:11px">J. Mwangi</td><td><span class="badge badge-success">ACCEPTED</span></td></tr>
-              <tr><td style="font-size:12px;font-weight:600">Monthly Prudential</td><td class="mono text-xs">Jul 2026</td><td class="mono text-xs">31/07/2026 14:22</td><td style="font-size:11px">J. Mwangi</td><td><span class="badge badge-success">ACCEPTED</span></td></tr>
-              <tr><td style="font-size:12px;font-weight:600">LCR Daily</td><td class="mono text-xs">21/08/2026</td><td class="mono text-xs">21/08/2026 17:01</td><td style="font-size:11px">System</td><td><span class="badge badge-warning">LATE (1min)</span></td></tr>
-            </tbody>
-          </table>
+          <!-- Monthly Prudential Return -->
+          <div class="reg-card">
+            <div class="reg-card-head">
+              <div>
+                <div style="font-size:14px;font-weight:800">Monthly Prudential Return</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px">CBK BSD Return · August 2026</div>
+              </div>
+              <span class="badge badge-info">DUE 31 AUG · 6 DAYS</span>
+            </div>
+            <div class="reg-card-body">
+              <div style="margin-bottom:var(--space-3)">
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Completion progress</div>
+                <div class="deadline-bar">
+                  <div class="deadline-fill" style="width:70%;background:var(--status-info)"></div>
+                </div>
+                <div style="font-size:10px;color:var(--status-info);font-weight:600;margin-top:3px">7 of 10 sections
+                  complete</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div
+                  style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--surface-divider)">
+                  <span>Capital Adequacy Ratio</span><span class="badge badge-success">Done</span></div>
+                <div
+                  style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--surface-divider)">
+                  <span>Large Exposures</span><span class="badge badge-success">Done</span></div>
+                <div
+                  style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--surface-divider)">
+                  <span>NOP / FX Positions</span><span class="badge badge-success">Done</span></div>
+                <div
+                  style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--surface-divider)">
+                  <span>Liquidity (LCR/NSFR)</span><span class="badge badge-success">Done</span></div>
+                <div
+                  style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--surface-divider)">
+                  <span>Interest Rate Risk</span><span class="badge badge-warning">In Progress</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0"><span>Nostro
+                    Reconciliation Summary</span><span class="badge badge-neutral">Pending</span></div>
+              </div>
+            </div>
+            <div class="reg-card-foot">
+              <span style="font-size:11px;color:var(--text-muted)">Submitted by: J. Mwangi</span>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-outline btn-sm">Continue Filling</button>
+                <button class="btn btn-secondary btn-sm" disabled style="opacity:.5">Submit (incomplete)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submission history -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Submission History</div>
+              <div class="card-subtitle">Last 10 regulatory filings</div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Report</th>
+                    <th>Period</th>
+                    <th>Submitted</th>
+                    <th>By</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-size:12px;font-weight:600">NOP Daily Return</td>
+                    <td class="mono text-xs">24/08/2026</td>
+                    <td class="mono text-xs">24/08/2026 16:45</td>
+                    <td style="font-size:11px">J. Mwangi</td>
+                    <td><span class="badge badge-success">ACCEPTED</span></td>
+                  </tr>
+                  <tr>
+                    <td style="font-size:12px;font-weight:600">LCR Daily</td>
+                    <td class="mono text-xs">24/08/2026</td>
+                    <td class="mono text-xs">24/08/2026 16:48</td>
+                    <td style="font-size:11px">J. Mwangi</td>
+                    <td><span class="badge badge-success">ACCEPTED</span></td>
+                  </tr>
+                  <tr>
+                    <td style="font-size:12px;font-weight:600">NOP Daily Return</td>
+                    <td class="mono text-xs">22/08/2026</td>
+                    <td class="mono text-xs">22/08/2026 16:30</td>
+                    <td style="font-size:11px">J. Mwangi</td>
+                    <td><span class="badge badge-success">ACCEPTED</span></td>
+                  </tr>
+                  <tr>
+                    <td style="font-size:12px;font-weight:600">Monthly Prudential</td>
+                    <td class="mono text-xs">Jul 2026</td>
+                    <td class="mono text-xs">31/07/2026 14:22</td>
+                    <td style="font-size:11px">J. Mwangi</td>
+                    <td><span class="badge badge-success">ACCEPTED</span></td>
+                  </tr>
+                  <tr>
+                    <td style="font-size:12px;font-weight:600">LCR Daily</td>
+                    <td class="mono text-xs">21/08/2026</td>
+                    <td class="mono text-xs">21/08/2026 17:01</td>
+                    <td style="font-size:11px">System</td>
+                    <td><span class="badge badge-warning">LATE (1min)</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-</div>
 </body>
+
 </html>

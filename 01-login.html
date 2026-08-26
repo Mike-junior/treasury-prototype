@@ -4,466 +4,387 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login — E&M Treasury Management System</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --brand-primary:  #C8102E;
-  --brand-secondary:#0A1628;
-  --brand-accent:   #D4A017;
-  --brand-teal:     #0D7377;
-  --surface-card:   #FFFFFF;
-  --surface-border: #E2E8F0;
-  --text-primary:   #0A1628;
-  --text-secondary: #4A5568;
-  --text-muted:     #718096;
-  --status-success: #16A34A;
-  --status-danger:  #DC2626;
-  --success-bg:     #F0FDF4;
-  --success-border: #BBF7D0;
-  --danger-bg:      #FEF2F2;
-  --danger-border:  #FECACA;
-  --font-body:      'Inter', sans-serif;
-}
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: var(--font-body);
-  min-height: 100vh;
+
+html, body { height: 100%; font-family: 'Inter', sans-serif; overflow: hidden; }
+
+/* ── Two-column page ── */
+.page {
   display: flex;
-  background: var(--brand-secondary);
+  height: 100vh;
+  width: 100vw;
   overflow: hidden;
 }
 
-/* ── Split Layout ── */
-.login-left {
-  flex: 1;
+/* ══════════════════════════════════
+   LEFT — 60% hero
+══════════════════════════════════ */
+.hero {
+  flex: 0 0 60%;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 48px;
+  padding: 40px 48px 36px;
   overflow: hidden;
 }
-.login-left::before {
+.hero::before {
   content: '';
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(200,16,46,.35) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(13,115,119,.25) 0%, transparent 50%),
-    linear-gradient(135deg, #0A1628 0%, #0F2040 50%, #0A1628 100%);
+    radial-gradient(ellipse at 20% 55%, rgba(200,16,46,.32) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 15%, rgba(13,115,119,.2) 0%, transparent 50%),
+    linear-gradient(135deg, #0A1628 0%, #0F2040 60%, #0A1628 100%);
+  z-index: 0;
 }
-/* Decorative grid lines */
-.login-left::after {
+.hero::after {
   content: '';
   position: absolute; inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 44px 44px;
+  z-index: 0;
 }
-.left-content { position: relative; z-index: 2; }
+.hero > * { position: relative; z-index: 1; }
 
-/* Logo */
-.brand-mark {
-  display: flex; align-items: center; gap: 12px;
-}
-.brand-logo {
-  width: 44px; height: 44px;
-  background: var(--brand-primary);
-  border-radius: 10px;
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-box {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: #C8102E;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 900; font-size: 18px; color: #fff;
-  flex-shrink: 0;
-  box-shadow: 0 4px 20px rgba(200,16,46,.4);
+  font-weight: 900; font-size: 13px; color: #fff;
+  box-shadow: 0 4px 16px rgba(200,16,46,.4); flex-shrink: 0;
 }
-.brand-text .name { font-size: 16px; font-weight: 800; color: #fff; line-height: 1.2; }
-.brand-text .tagline { font-size: 11px; color: rgba(255,255,255,.5); letter-spacing: .6px; text-transform: uppercase; margin-top: 2px; }
+.logo-name { font-size: 14px; font-weight: 800; color: #fff; line-height: 1.2; }
+.logo-sub  { font-size: 10px; color: rgba(255,255,255,.45); letter-spacing: .5px; text-transform: uppercase; }
 
-/* Hero text */
-.hero-section { margin-top: 64px; }
-.hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(212,160,23,.15);
-  border: 1px solid rgba(212,160,23,.3);
-  color: var(--brand-accent);
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase;
-  margin-bottom: 24px;
-}
-.hero-eyebrow::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--brand-accent); }
-.hero-title {
-  font-size: clamp(28px, 3.5vw, 44px);
-  font-weight: 800;
-  color: #fff;
-  line-height: 1.15;
-  margin-bottom: 20px;
-}
-.hero-title .accent { color: var(--brand-primary); }
-.hero-desc {
-  font-size: 15px; color: rgba(255,255,255,.55); line-height: 1.7;
-  max-width: 460px;
-}
-
-/* Feature pills */
-.feature-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
-.pill {
-  display: flex; align-items: center; gap: 8px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 12px; color: rgba(255,255,255,.7);
-}
-.pill svg { width: 14px; height: 14px; opacity: .6; }
-
-/* Stats row */
-.stats-row {
-  display: flex; gap: 32px;
-  position: relative; z-index: 2;
-  padding-top: 32px;
-  border-top: 1px solid rgba(255,255,255,.08);
-}
-.stat-item .val { font-size: 22px; font-weight: 800; color: #fff; }
-.stat-item .lbl { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 2px; letter-spacing: .4px; }
-
-/* ── Right Panel ── */
-.login-right {
-  width: 460px;
-  min-height: 100vh;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 48px 48px;
-  box-shadow: -20px 0 60px rgba(0,0,0,.3);
-  position: relative;
-  z-index: 5;
-}
-
-.login-header { margin-bottom: 36px; }
-.login-header .title { font-size: 24px; font-weight: 800; color: var(--text-primary); }
-.login-header .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
-
-/* Environment badge */
-.env-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--success-bg);
-  border: 1px solid var(--success-border);
-  color: var(--status-success);
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 11px; font-weight: 600;
-  margin-bottom: 20px;
-}
-.env-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--status-success); animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-/* Form */
-.form-group { margin-bottom: 18px; }
-.form-label {
-  display: block;
-  font-size: 11px; font-weight: 700;
-  color: var(--text-secondary);
-  text-transform: uppercase; letter-spacing: .6px;
-  margin-bottom: 6px;
-}
-.input-wrap { position: relative; }
-.input-wrap svg.input-icon {
-  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  width: 16px; height: 16px; color: var(--text-muted);
-  pointer-events: none;
-}
-.form-input {
-  width: 100%;
-  padding: 11px 12px 11px 38px;
-  font-family: inherit; font-size: 13px;
-  color: var(--text-primary);
-  background: #F8FAFC;
-  border: 1.5px solid var(--surface-border);
-  border-radius: 8px;
-  outline: none;
-  transition: border-color .15s, box-shadow .15s, background .15s;
-}
-.form-input:focus {
-  border-color: var(--brand-secondary);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(10,22,40,.08);
-}
-.form-input::placeholder { color: #A0AEC0; }
-
-.password-toggle {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  background: none; border: none; cursor: pointer;
-  color: var(--text-muted); padding: 4px;
-  display: flex; align-items: center; justify-content: center;
-}
-.password-toggle:hover { color: var(--text-primary); }
-.password-toggle svg { width: 16px; height: 16px; }
-
-.form-row {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 24px;
-}
-.checkbox-label {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 12px; color: var(--text-secondary); cursor: pointer;
-}
-.checkbox-label input[type=checkbox] { accent-color: var(--brand-primary); }
-.forgot-link { font-size: 12px; color: var(--brand-primary); font-weight: 600; text-decoration: none; }
-.forgot-link:hover { text-decoration: underline; }
-
-/* MFA section */
-.mfa-section {
-  background: #F8FAFC;
-  border: 1px solid var(--surface-border);
-  border-radius: 8px;
-  padding: 16px;
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(212,160,23,.12); border: 1px solid rgba(212,160,23,.28);
+  color: #D4A017; padding: 4px 12px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
   margin-bottom: 18px;
 }
-.mfa-title { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
-.mfa-desc  { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
-.otp-inputs { display: flex; gap: 8px; }
-.otp-input {
-  flex: 1; text-align: center;
-  padding: 12px 4px;
-  font-size: 18px; font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
-  background: #fff; border: 1.5px solid var(--surface-border);
-  border-radius: 8px; outline: none;
-  transition: border-color .15s, box-shadow .15s;
-}
-.otp-input:focus { border-color: var(--brand-secondary); box-shadow: 0 0 0 3px rgba(10,22,40,.08); }
-.otp-input.filled { border-color: var(--status-success); background: var(--success-bg); color: var(--status-success); }
+.eyebrow::before { content:''; width:5px; height:5px; border-radius:50%; background:#D4A017; }
 
-/* Login button */
-.btn-login {
-  width: 100%;
-  padding: 13px;
-  background: var(--brand-primary);
-  color: #fff;
-  border: none; border-radius: 8px;
-  font-family: inherit; font-size: 14px; font-weight: 700;
-  cursor: pointer;
-  transition: background .15s, transform .1s, box-shadow .15s;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  box-shadow: 0 4px 14px rgba(200,16,46,.35);
-  margin-bottom: 20px;
+.hero-title {
+  font-size: clamp(24px, 2.8vw, 38px);
+  font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 14px;
 }
-.btn-login:hover { background: #a50d24; box-shadow: 0 6px 20px rgba(200,16,46,.45); transform: translateY(-1px); }
-.btn-login:active { transform: translateY(0); }
-.btn-login svg { width: 18px; height: 18px; }
+.hero-title .accent { color: #C8102E; }
+.hero-desc { font-size: 13px; color: rgba(255,255,255,.5); line-height: 1.7; max-width: 420px; }
 
-/* SSO divider */
-.sso-divider { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
-.sso-divider::before, .sso-divider::after { content:''; flex:1; height:1px; background:var(--surface-border); }
-.sso-divider span { font-size:11px; color:var(--text-muted); white-space:nowrap; }
-.btn-sso {
-  width: 100%;
-  padding: 11px;
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.pill {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+  padding: 6px 12px; border-radius: 7px;
+  font-size: 11px; color: rgba(255,255,255,.6);
+}
+.pill svg { width: 12px; height: 12px; opacity: .6; }
+
+.stats { display: flex; gap: 28px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08); }
+.stat .val { font-size: 18px; font-weight: 800; color: #fff; }
+.stat .lbl { font-size: 10px; color: rgba(255,255,255,.38); margin-top: 1px; }
+
+.sec-note {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 14px;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+  padding: 6px 12px; border-radius: 7px;
+  font-size: 10px; color: rgba(255,255,255,.45);
+}
+.sec-note svg { width: 12px; height: 12px; color: #D4A017; }
+
+/* ══════════════════════════════════
+   RIGHT — 40% form
+══════════════════════════════════ */
+.panel {
+  flex: 0 0 40%;
+  height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   background: #fff;
-  border: 1.5px solid var(--surface-border);
-  border-radius: 8px;
-  font-family: inherit; font-size: 13px; font-weight: 600;
-  color: var(--text-primary);
+  box-shadow: -14px 0 40px rgba(0,0,0,.25);
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.panel::-webkit-scrollbar { display: none; }
+
+/* env badge */
+.env-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #F0FDF4; border: 1px solid #BBF7D0; color: #16A34A;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; margin-bottom: 14px; align-self: flex-start;
+}
+.env-badge::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%; background: #16A34A;
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.panel-title { font-size: 20px; font-weight: 800; color: #0A1628; }
+.panel-sub   { font-size: 11px; color: #718096; margin-top: 4px; line-height: 1.55; }
+
+/* form groups */
+.fg { margin-top: 14px; }
+.fl {
+  display: block; font-size: 10px; font-weight: 700;
+  color: #4A5568; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px;
+}
+.fl .req { color: #C8102E; margin-left: 2px; }
+
+.iw { position: relative; }
+.iw .ic {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; color: #A0AEC0; pointer-events: none;
+}
+.fi {
+  width: 100%; padding: 9px 12px 9px 32px;
+  font-family: inherit; font-size: 12px;
+  color: #0A1628; background: #F8FAFC;
+  border: 1.5px solid #E2E8F0; border-radius: 7px;
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+.fi:focus { border-color: #0A1628; background: #fff; box-shadow: 0 0 0 3px rgba(10,22,40,.07); }
+.fi::placeholder { color: #B0BAC9; }
+.eye {
+  position: absolute; right: 9px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; padding: 3px;
+  color: #A0AEC0; display: flex;
+}
+.eye:hover { color: #0A1628; }
+.eye svg { width: 14px; height: 14px; }
+
+/* MFA box */
+.mfa {
+  margin-top: 14px;
+  background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 9px;
+  padding: 12px 14px;
+}
+.mfa-t { font-size: 11px; font-weight: 700; color: #0A1628; }
+.mfa-d { font-size: 10px; color: #718096; margin-top: 2px; margin-bottom: 10px; }
+
+/* OTP inputs — fixed small size, centred */
+.otp-row {
+  display: flex;
+  justify-content: center;   /* centre the 6 boxes in the available space */
+  gap: 6px;
+}
+.otp-inp {
+  width: 38px;               /* fixed width — never stretches */
+  height: 38px;              /* fixed height */
+  flex: 0 0 38px;            /* no grow, no shrink */
+  text-align: center;
+  font-size: 15px; font-weight: 700;
+  font-family: 'Courier New', monospace;
+  background: #fff; border: 1.5px solid #E2E8F0;
+  border-radius: 7px; outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  padding: 0;
+}
+.otp-inp:focus  { border-color: #0A1628; box-shadow: 0 0 0 3px rgba(10,22,40,.07); }
+.otp-inp.filled { border-color: #16A34A; background: #F0FDF4; color: #16A34A; }
+
+/* aux row */
+.aux {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 12px;
+}
+.chk { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #4A5568; cursor: pointer; }
+.chk input { accent-color: #C8102E; cursor: pointer; }
+.fgt { font-size: 11px; color: #C8102E; font-weight: 600; text-decoration: none; }
+.fgt:hover { text-decoration: underline; }
+
+/* sign-in btn */
+.btn-in {
+  width: 100%; margin-top: 16px;
+  padding: 12px;
+  background: #C8102E; color: #fff; border: none; border-radius: 8px;
+  font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  box-shadow: 0 4px 14px rgba(200,16,46,.3);
+  transition: background .15s, box-shadow .15s, transform .1s;
+}
+.btn-in:hover  { background: #a50d24; box-shadow: 0 6px 18px rgba(200,16,46,.4); transform: translateY(-1px); }
+.btn-in:active { transform: translateY(0); }
+.btn-in svg    { width: 16px; height: 16px; }
+
+/* divider */
+.div-row { display: flex; align-items: center; gap: 10px; margin: 14px 0 10px; }
+.div-row::before, .div-row::after { content:''; flex:1; height:1px; background:#E2E8F0; }
+.div-row span { font-size: 10px; color: #A0AEC0; white-space: nowrap; }
+
+/* SSO btn */
+.btn-sso {
+  width: 100%; padding: 9px;
+  background: #fff; border: 1.5px solid #E2E8F0; border-radius: 7px;
+  font-family: inherit; font-size: 12px; font-weight: 600; color: #0A1628;
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: background .15s, border-color .15s;
+  transition: background .12s, border-color .12s;
 }
 .btn-sso:hover { background: #F8FAFC; border-color: #CBD5E0; }
-.btn-sso svg { width: 18px; height: 18px; }
+.btn-sso svg { width: 16px; height: 16px; }
 
-/* Error state */
-.form-error {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--danger-bg);
-  border: 1px solid var(--danger-border);
-  color: var(--status-danger);
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 12px; font-weight: 500;
-  margin-bottom: 16px;
+/* footer */
+.pf {
+  margin-top: 16px; padding-top: 14px;
+  border-top: 1px solid #E2E8F0; text-align: center;
 }
-.form-error svg { width: 14px; height: 14px; flex-shrink: 0; }
+.pf p { font-size: 10px; color: #A0AEC0; line-height: 1.7; }
+.pf a { color: #C8102E; text-decoration: none; font-weight: 600; }
+.pf a:hover { text-decoration: underline; }
 
-/* Footer */
-.login-footer {
-  margin-top: auto;
-  padding-top: 24px;
-  border-top: 1px solid var(--surface-border);
-  text-align: center;
-}
-.login-footer p { font-size: 11px; color: var(--text-muted); line-height: 1.6; }
-.login-footer strong { color: var(--text-secondary); }
-
-/* Floating security badge */
-.security-badge {
-  display: flex; align-items: center; gap: 8px;
-  position: absolute; bottom: 24px; left: 48px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  padding: 8px 14px;
-  border-radius: 8px;
-  z-index: 2;
-}
-.security-badge svg { width: 14px; height: 14px; color: var(--brand-accent); }
-.security-badge span { font-size: 11px; color: rgba(255,255,255,.6); }
-
-@media (max-width: 900px) {
-  .login-left { display: none; }
-  .login-right { width: 100%; padding: 40px 24px; }
+/* responsive */
+@media (max-width: 820px) {
+  .hero  { display: none; }
+  .panel { flex: 1; height: 100vh; box-shadow: none; padding: 40px 24px; }
 }
 </style>
 </head>
 <body>
+<div class="page">
 
-<!-- Left Panel -->
-<div class="login-left">
-  <div class="left-content">
-    <div class="brand-mark">
-      <div class="brand-logo">E&M</div>
-      <div class="brand-text">
-        <div class="name">E&M Technology House</div>
-        <div class="tagline">Treasury Management System</div>
+  <!-- ── LEFT: Hero ── -->
+  <div class="hero">
+    <!-- logo -->
+    <div class="logo">
+      <div class="logo-box">E&M</div>
+      <div>
+        <div class="logo-name">E&M Technology House</div>
+        <div class="logo-sub">Treasury Management System</div>
       </div>
     </div>
 
-    <div class="hero-section">
-      <div class="hero-eyebrow">Enterprise · Version 2.0 · August 2026</div>
-      <h1 class="hero-title">
-        Intelligent Treasury.<br>
-        <span class="accent">Total Control.</span>
-      </h1>
-      <p class="hero-desc">
-        A purpose-built treasury management platform delivering real-time deal capture,
-        position management, limit control and regulatory compliance — built for East Africa's
-        leading financial institutions.
+    <!-- hero copy -->
+    <div>
+      <div class="eyebrow">Enterprise · Version 2.0 · August 2026</div>
+      <h1 class="hero-title">Intelligent Treasury.<br><span class="accent">Total Control.</span></h1>
+      <p class="hero-desc">A purpose-built treasury management platform delivering real-time deal capture, position management, limit control and regulatory compliance — built for East Africa's leading financial institutions.</p>
+      <div class="pills">
+        <div class="pill"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Real-time Positions</div>
+        <div class="pill"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Four-Eyes Control</div>
+        <div class="pill"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>SOC 2 Compliant</div>
+        <div class="pill"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Live NOP Monitoring</div>
+        <div class="pill"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>CBK Regulatory Packs</div>
+        <div class="pill"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Multi-Tenant SaaS</div>
+      </div>
+    </div>
+
+    <!-- bottom -->
+    <div>
+      <div class="stats">
+        <div class="stat"><div class="val">24+</div><div class="lbl">Modules</div></div>
+        <div class="stat"><div class="val">Sub-3s</div><div class="lbl">Blotter Refresh</div></div>
+        <div class="stat"><div class="val">7yr</div><div class="lbl">Audit Retention</div></div>
+        <div class="stat"><div class="val">99.9%</div><div class="lbl">Uptime SLA</div></div>
+      </div>
+      <div class="sec-note">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        256-bit TLS &nbsp;·&nbsp; OAuth2/OIDC &nbsp;·&nbsp; MFA Enforced
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT: Form ── -->
+  <div class="panel">
+
+    <div class="env-badge">Production Environment</div>
+
+    <h2 class="panel-title">Welcome back</h2>
+    <p class="panel-sub">Sign in to access the E&amp;M Treasury Management System.<br>MFA is required for Authoriser and above roles.</p>
+
+    <form autocomplete="off">
+
+      <!-- Username -->
+      <div class="fg">
+        <label class="fl">Username / Staff Email <span class="req">*</span></label>
+        <div class="iw">
+          <svg class="ic" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" class="fi" placeholder="j.mwangi@emtechhouse.com" value="j.mwangi@emtechhouse.com">
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="fg">
+        <label class="fl">Password <span class="req">*</span></label>
+        <div class="iw">
+          <svg class="ic" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" class="fi" placeholder="Enter your password" value="password123" id="pwdInput">
+          <button type="button" class="eye" onclick="document.getElementById('pwdInput').type = document.getElementById('pwdInput').type==='password'?'text':'password'">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- MFA -->
+      <div class="mfa">
+        <div class="mfa-t">Two-Factor Authentication</div>
+        <div class="mfa-d">Enter the 6-digit code from your authenticator app</div>
+        <div class="otp-row">
+          <input class="otp-inp filled" maxlength="1" value="4"  oninput="otpNext(this,1)">
+          <input class="otp-inp filled" maxlength="1" value="8"  oninput="otpNext(this,2)">
+          <input class="otp-inp filled" maxlength="1" value="2"  oninput="otpNext(this,3)">
+          <input class="otp-inp" id="o4" maxlength="1" placeholder="·" oninput="otpNext(this,4)">
+          <input class="otp-inp" id="o5" maxlength="1" placeholder="·" oninput="otpNext(this,5)">
+          <input class="otp-inp" id="o6" maxlength="1" placeholder="·" oninput="otpNext(this,6)">
+        </div>
+      </div>
+
+      <!-- Aux -->
+      <div class="aux">
+        <label class="chk"><input type="checkbox" checked> Remember device 30 days</label>
+        <a href="#" class="fgt">Forgot password?</a>
+      </div>
+
+      <!-- Sign in -->
+      <button type="submit" class="btn-in">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In Securely
+      </button>
+
+      <!-- SSO -->
+      <div class="div-row"><span>or continue with</span></div>
+      <button type="button" class="btn-sso">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google Workspace
+      </button>
+
+    </form>
+
+    <div class="pf">
+      <p>
+        <strong>E&amp;M Technology House Ltd</strong> · TMS v2.0<br>
+        By signing in you agree to the <a href="#">Acceptable Use Policy</a> and <a href="#">Privacy Notice</a>.<br>
+        Unauthorised access is prohibited and may be subject to criminal prosecution.<br><br>
+        <strong>Support:</strong> tms-support@emtechhouse.com · +254 700 000 000
       </p>
-
-      <div class="feature-pills">
-        <div class="pill">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          Real-time Positions
-        </div>
-        <div class="pill">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-          Four-Eyes Control
-        </div>
-        <div class="pill">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          SOC 2 Compliant
-        </div>
-        <div class="pill">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Live NOP Monitoring
-        </div>
-        <div class="pill">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          CBK Regulatory Packs
-        </div>
-        <div class="pill">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Multi-Tenant SaaS
-        </div>
-      </div>
     </div>
-  </div>
 
-  <div class="stats-row">
-    <div class="stat-item"><div class="val">24+</div><div class="lbl">Functional Modules</div></div>
-    <div class="stat-item"><div class="val">Sub-3s</div><div class="lbl">Blotter Refresh</div></div>
-    <div class="stat-item"><div class="val">7yr</div><div class="lbl">Audit Retention</div></div>
-    <div class="stat-item"><div class="val">99.9%</div><div class="lbl">Uptime SLA</div></div>
-  </div>
-
-  <div class="security-badge">
-    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    <span>256-bit TLS · OAuth2/OIDC · MFA Enforced</span>
   </div>
 </div>
 
-<!-- Right Panel — Login Form -->
-<div class="login-right">
-
-  <div class="env-badge">Production Environment</div>
-
-  <div class="login-header">
-    <h2 class="title">Welcome back</h2>
-    <p class="subtitle">Sign in to access the E&M Treasury Management System.<br>MFA is required for Authoriser and above roles.</p>
-  </div>
-
-  <!-- Error example (hidden by default) -->
-  <!-- <div class="form-error">
-    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    Invalid credentials. Please check your username and password.
-  </div> -->
-
-  <form>
-    <div class="form-group">
-      <label class="form-label">Username / Staff Email</label>
-      <div class="input-wrap">
-        <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <input type="text" class="form-input" placeholder="j.mwangi@emtechhouse.com" value="j.mwangi@emtechhouse.com">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Password</label>
-      <div class="input-wrap">
-        <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <input type="password" class="form-input" placeholder="Enter your password" value="••••••••••••">
-        <button type="button" class="password-toggle">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- MFA -->
-    <div class="mfa-section">
-      <div class="mfa-title">Two-Factor Authentication</div>
-      <div class="mfa-desc">Enter the 6-digit code from your authenticator app</div>
-      <div class="otp-inputs">
-        <input type="text" class="otp-input filled" maxlength="1" value="4">
-        <input type="text" class="otp-input filled" maxlength="1" value="8">
-        <input type="text" class="otp-input filled" maxlength="1" value="2">
-        <input type="text" class="otp-input" maxlength="1" placeholder="·">
-        <input type="text" class="otp-input" maxlength="1" placeholder="·">
-        <input type="text" class="otp-input" maxlength="1" placeholder="·">
-      </div>
-    </div>
-
-    <div class="form-row">
-      <label class="checkbox-label">
-        <input type="checkbox" checked>
-        Remember this device for 30 days
-      </label>
-      <a href="#" class="forgot-link">Forgot password?</a>
-    </div>
-
-    <button type="submit" class="btn-login">
-      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-      Sign In Securely
-    </button>
-  </form>
-
-  <div class="sso-divider"><span>or continue with</span></div>
-
-  <button class="btn-sso">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-    Continue with Google Workspace
-  </button>
-
-  <div class="login-footer">
-    <p>
-      <strong>E&M Technology House Ltd</strong> · Treasury Management System v2.0<br>
-      By signing in you agree to the
-      <a href="#" style="color:var(--brand-primary)">Acceptable Use Policy</a> and
-      <a href="#" style="color:var(--brand-primary)">Privacy Notice</a>.<br>
-      Unauthorised access is prohibited and may be subject to criminal prosecution.<br>
-      <br>
-      <strong>Support:</strong> tms-support@emtechhouse.com · +254 700 000 000
-    </p>
-  </div>
-</div>
-
+<script>
+function otpNext(el, idx) {
+  el.classList.toggle('filled', el.value.length === 1);
+  if (el.value && idx < 6) document.getElementById('o' + (idx + 1))?.focus();
+}
+document.querySelectorAll('.otp-inp').forEach((el, i, arr) => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Backspace' && !el.value && i > 0) arr[i - 1].focus();
+  });
+});
+</script>
 </body>
 </html>

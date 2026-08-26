@@ -1,450 +1,1096 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — E&M Treasury Management System</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="treasury-design-system.css">
-<style>
-.dashboard-row { display:grid; gap:var(--space-4); margin-bottom:var(--space-4); }
-.dashboard-row.c4 { grid-template-columns:repeat(4,1fr); }
-.dashboard-row.c3 { grid-template-columns:repeat(3,1fr); }
-.dashboard-row.c75 { grid-template-columns:7fr 5fr; }
-.dashboard-row.c633 { grid-template-columns:6fr 3fr 3fr; }
-@media(max-width:1200px){
-  .dashboard-row.c4{grid-template-columns:repeat(2,1fr);}
-  .dashboard-row.c3{grid-template-columns:1fr 1fr;}
-  .dashboard-row.c75,.dashboard-row.c633{grid-template-columns:1fr;}
-}
-@media(max-width:768px){ .dashboard-row.c4,.dashboard-row.c3{grid-template-columns:1fr;} }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — E&M Treasury Management System</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="treasury-design-system.css">
+  <style>
+    .dashboard-row {
+      display: grid;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
 
-/* Bar chart */
-.bar-chart { display:flex; align-items:flex-end; gap:5px; height:120px; }
-.bar-group { display:flex; flex-direction:column; align-items:center; flex:1; height:100%; justify-content:flex-end; }
-.bar-wrap  { width:100%; display:flex; gap:2px; align-items:flex-end; flex:1; }
-.bar { flex:1; border-radius:3px 3px 0 0; cursor:pointer; transition:opacity .15s; }
-.bar:hover { opacity:.75; }
-.bar-in  { background:#0D7377; }
-.bar-out { background:var(--brand-primary); }
-.bar-lbl { font-size:9px; color:var(--text-muted); margin-top:4px; white-space:nowrap; }
+    .dashboard-row.c4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
 
-/* NOP cells */
-.nop-grid { display:grid; grid-template-columns:1fr 1fr; gap:var(--space-2); }
-.nop-cell { padding:10px; border:1px solid var(--surface-border); border-radius:var(--radius-md); position:relative; overflow:hidden; }
-.nop-cell::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--nc,#16A34A); }
-.nop-ccy { font-size:13px; font-weight:800; }
-.nop-amt { font-size:11px; font-weight:700; font-family:var(--font-mono); margin-top:1px; }
-.nop-lim { font-size:10px; color:var(--text-muted); }
-.nop-bar { height:3px; background:var(--surface-divider); border-radius:2px; margin-top:6px; overflow:hidden; }
-.nop-fill { height:100%; border-radius:2px; background:var(--nc,#16A34A); }
+    .dashboard-row.c3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
 
-/* Maturity list */
-.mat-row { display:flex; align-items:center; gap:8px; padding:9px 0; border-bottom:1px solid var(--surface-divider); }
-.mat-row:last-child { border-bottom:none; }
-.mat-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-.mat-info { flex:1; }
-.mat-info .i { font-size:12px; font-weight:600; color:var(--text-primary); }
-.mat-info .c { font-size:10px; color:var(--text-muted); }
-.mat-right { text-align:right; }
-.mat-right .a { font-size:12px; font-weight:700; font-family:var(--font-mono); }
-.mat-right .d { font-size:10px; color:var(--text-muted); }
+    .dashboard-row.c75 {
+      grid-template-columns: 7fr 5fr;
+    }
 
-/* Alert feed */
-.al-row { display:flex; gap:10px; padding:10px 16px; border-bottom:1px solid var(--surface-divider); cursor:pointer; transition:background .12s; }
-.al-row:hover { background:var(--surface-bg); }
-.al-row:last-child { border-bottom:none; }
-.al-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.al-icon svg { width:14px; height:14px; }
-.al-body .t { font-size:12px; font-weight:600; color:var(--text-primary); }
-.al-body .d { font-size:11px; color:var(--text-muted); margin-top:2px; line-height:1.4; }
-.al-body .ts { font-size:10px; color:var(--text-muted); margin-top:3px; }
-</style>
+    .dashboard-row.c633 {
+      grid-template-columns: 6fr 3fr 3fr;
+    }
+
+    @media(max-width:1200px) {
+      .dashboard-row.c4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dashboard-row.c3 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .dashboard-row.c75,
+      .dashboard-row.c633 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media(max-width:768px) {
+
+      .dashboard-row.c4,
+      .dashboard-row.c3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Bar chart */
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 120px;
+    }
+
+    .bar-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .bar-wrap {
+      width: 100%;
+      display: flex;
+      gap: 2px;
+      align-items: flex-end;
+      flex: 1;
+    }
+
+    .bar {
+      flex: 1;
+      border-radius: 3px 3px 0 0;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+
+    .bar:hover {
+      opacity: .75;
+    }
+
+    .bar-in {
+      background: #0D7377;
+    }
+
+    .bar-out {
+      background: var(--brand-primary);
+    }
+
+    .bar-lbl {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      white-space: nowrap;
+    }
+
+    /* NOP cells */
+    .nop-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+    }
+
+    .nop-cell {
+      padding: 10px;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nop-cell::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--nc, #16A34A);
+    }
+
+    .nop-ccy {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .nop-amt {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      margin-top: 1px;
+    }
+
+    .nop-lim {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .nop-bar {
+      height: 3px;
+      background: var(--surface-divider);
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .nop-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--nc, #16A34A);
+    }
+
+    /* Maturity list */
+    .mat-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--surface-divider);
+    }
+
+    .mat-row:last-child {
+      border-bottom: none;
+    }
+
+    .mat-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .mat-info {
+      flex: 1;
+    }
+
+    .mat-info .i {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .mat-info .c {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .mat-right {
+      text-align: right;
+    }
+
+    .mat-right .a {
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+
+    .mat-right .d {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Alert feed */
+    .al-row {
+      display: flex;
+      gap: 10px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--surface-divider);
+      cursor: pointer;
+      transition: background .12s;
+    }
+
+    .al-row:hover {
+      background: var(--surface-bg);
+    }
+
+    .al-row:last-child {
+      border-bottom: none;
+    }
+
+    .al-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .al-icon svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .al-body .t {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .al-body .d {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .al-body .ts {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+  </style>
 </head>
+
 <body>
-<div class="app-shell">
+  <div class="app-shell">
 
-<!-- Sidebar -->
-<nav class="sidebar">
-  <div class="sidebar-logo">
-    <div class="sidebar-logo-mark">E&M</div>
-    <div class="sidebar-logo-text">
-      <div class="brand">E&M TMS</div>
-      <div class="sub">Treasury Platform</div>
-    </div>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Main</div>
-    <a href="02-dashboard.html" class="nav-item active">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Dashboard
-    </a>
-    <a href="03-deal-capture.html" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Deal Capture
-      <span class="nav-badge">3</span>
-    </a>
-    <a href="04-cash-position.html" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      Cash Position
-    </a>
-    <a href="05-limits-exposure.html" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      Limits &amp; Exposure
-      <span class="nav-badge warning">2</span>
-    </a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Operations</div>
-    <a href="#" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Auth Queue
-      <span class="nav-badge">5</span>
-    </a>
-    <a href="06-reconciliation.html" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      Reconciliation
-      <span class="nav-badge warning">4</span>
-    </a>
-    <a href="#" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-      Settlement
-    </a>
-    <a href="#" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/></svg>
-      Deal Register
-    </a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Analytics</div>
-    <a href="07-reports.html" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Reports
-    </a>
-    <a href="#" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
-      ALM / IRRBB
-    </a>
-    <a href="#" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Reg. Reports
-    </a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">System</div>
-    <a href="#" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      Day End Close
-    </a>
-    <a href="#" class="nav-item">
-      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-      Configuration
-    </a>
-  </div>
-  <div class="sidebar-footer">
-    <div class="user-mini">
-      <div class="user-avatar">JM</div>
-      <div class="user-mini-info">
-        <div class="name">James Mwangi</div>
-        <div class="role">Treasurer · LE-001</div>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<!-- Main -->
-<div class="main-content">
-
-  <!-- FX Ticker -->
-  <div class="fx-ticker-bar">
-    <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲ +0.23</span></div>
-    <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span class="delta down">▼ −0.41</span></div>
-    <div class="fx-tick"><span class="pair">GBP/KES</span><span class="rate">163.78</span><span class="delta up">▲ +0.67</span></div>
-    <div class="fx-tick"><span class="pair">TZS/KES</span><span class="rate">0.0507</span><span class="delta down">▼ −0.0002</span></div>
-    <div class="fx-tick"><span class="pair">UGX/KES</span><span class="rate">0.0344</span><span class="delta up">▲ +0.0001</span></div>
-    <div class="fx-tick"><span class="pair">ZAR/KES</span><span class="rate">7.023</span><span class="delta down">▼ −0.051</span></div>
-    <div class="fx-tick"><span class="pair">CBR</span><span class="rate">13.00%</span><span class="delta" style="color:#94A3B8">unch</span></div>
-    <div class="fx-tick"><span class="pair">91-TB</span><span class="rate">14.87%</span><span class="delta up">▲ +5bp</span></div>
-    <div class="fx-tick"><span class="pair">182-TB</span><span class="rate">15.23%</span><span class="delta up">▲ +3bp</span></div>
-    <div class="fx-tick"><span class="pair">364-TB</span><span class="rate">16.10%</span><span class="delta" style="color:#94A3B8">unch</span></div>
-  </div>
-
-  <!-- Topbar -->
-  <div class="topbar">
-    <div class="topbar-breadcrumb">
-      <span>E&amp;M TMS</span><span class="sep"> / </span><span class="current">Dashboard</span>
-    </div>
-    <div class="topbar-spacer"></div>
-    <div class="live-badge">Live</div>
-    <div class="topbar-actions">
-      <button class="topbar-icon-btn" title="Notifications">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span class="dot"></span>
-      </button>
-      <a href="03-deal-capture.html" class="btn btn-primary btn-sm">+ New Deal</a>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">JM</div>
-      <div style="line-height:1.2">
-        <div style="font-size:12px;font-weight:600">James Mwangi</div>
-        <div style="font-size:10px;color:var(--text-muted)">Treasurer · Tue 25 Aug 2026 · 10:42</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Page -->
-  <div class="page-content">
-
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">Good morning, James</h1>
-        <p class="page-subtitle">Tuesday, 25 August 2026 &nbsp;·&nbsp; LE-001 Kenya &nbsp;·&nbsp; ENTERPRISE Edition</p>
-      </div>
-      <div class="page-actions">
-        <button class="btn btn-outline btn-sm">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-          Refresh
-        </button>
-        <button class="btn btn-outline btn-sm">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          ALCO Pack
-        </button>
-        <button class="btn btn-secondary btn-sm">Initiate Day End</button>
-      </div>
-    </div>
-
-    <!-- KPI Row -->
-    <div class="dashboard-row c4">
-      <div class="kpi-card" style="--kpi-accent:#C8102E;--kpi-icon-bg:rgba(200,16,46,.08)">
-        <div class="kpi-icon">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-mark">E&M</div>
+        <div class="sidebar-logo-text">
+          <div class="brand">E&M TMS</div>
+          <div class="sub">Treasury Platform</div>
         </div>
-        <div class="kpi-label">Portfolio AUM</div>
-        <div class="kpi-value mono">42.7B</div>
-        <div class="kpi-meta"><span class="kpi-delta up">▲ 3.2%</span>&nbsp;vs last month · KES</div>
       </div>
-      <div class="kpi-card" style="--kpi-accent:#0D7377;--kpi-icon-bg:rgba(13,115,119,.08)">
-        <div class="kpi-icon">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Main</div>
+        <a href="02-dashboard.html" class="nav-item active">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+          Dashboard
+        </a>
+        <a href="03-deal-capture.html" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Deal Capture
+          <span class="nav-badge">3</span>
+        </a>
+        <a href="04-cash-position.html" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+          Cash Position
+        </a>
+        <a href="05-limits-exposure.html" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          Limits &amp; Exposure
+          <span class="nav-badge warning">2</span>
+        </a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Operations</div>
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          Auth Queue
+          <span class="nav-badge">5</span>
+        </a>
+        <a href="06-reconciliation.html" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="9 11 12 14 22 4" />
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+          </svg>
+          Reconciliation
+          <span class="nav-badge warning">4</span>
+        </a>
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>
+          Settlement
+        </a>
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+          </svg>
+          Deal Register
+        </a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Analytics</div>
+        <a href="07-reports.html" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>
+          Reports
+        </a>
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 3v18h18" />
+            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
+          </svg>
+          ALM / IRRBB
+        </a>
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          Reg. Reports
+        </a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">System</div>
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          Day End Close
+        </a>
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+          </svg>
+          Configuration
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-mini">
+          <div class="user-avatar">MA</div>
+          <div class="user-mini-info">
+            <div class="name">Mike Agola</div>
+            <div class="role">Treasurer · LE-001</div>
+          </div>
         </div>
-        <div class="kpi-label">Net Open Position</div>
-        <div class="kpi-value mono" style="color:var(--status-success)">+128.4M</div>
-        <div class="kpi-meta"><span class="kpi-delta up">Long USD</span>&nbsp;· Limit 64%</div>
       </div>
-      <div class="kpi-card" style="--kpi-accent:#2563EB;--kpi-icon-bg:rgba(37,99,235,.08)">
-        <div class="kpi-icon">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-        </div>
-        <div class="kpi-label">Today's Deals</div>
-        <div class="kpi-value">24</div>
-        <div class="kpi-meta"><span class="kpi-delta" style="color:var(--status-warning)">5 Pending Auth</span>&nbsp;· 19 Settled</div>
-      </div>
-      <div class="kpi-card" style="--kpi-accent:#D97706;--kpi-icon-bg:rgba(217,119,6,.08)">
-        <div class="kpi-icon">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        <div class="kpi-label">Limit Breaches</div>
-        <div class="kpi-value" style="color:var(--status-warning)">2</div>
-        <div class="kpi-meta"><span class="kpi-delta down">Warning</span>&nbsp;· 0 Hard Breaches</div>
-      </div>
-    </div>
+    </nav>
 
-    <!-- Cashflow + NOP + Maturities -->
-    <div class="dashboard-row c633">
+    <!-- Main -->
+    <div class="main-content">
 
-      <!-- Cashflow Chart -->
-      <div class="card">
-        <div class="card-header">
+      <!-- FX Ticker -->
+      <div class="fx-ticker-bar">
+        <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲
+            +0.23</span></div>
+        <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span class="delta down">▼
+            −0.41</span></div>
+        <div class="fx-tick"><span class="pair">GBP/KES</span><span class="rate">163.78</span><span class="delta up">▲
+            +0.67</span></div>
+        <div class="fx-tick"><span class="pair">TZS/KES</span><span class="rate">0.0507</span><span class="delta down">▼
+            −0.0002</span></div>
+        <div class="fx-tick"><span class="pair">UGX/KES</span><span class="rate">0.0344</span><span class="delta up">▲
+            +0.0001</span></div>
+        <div class="fx-tick"><span class="pair">ZAR/KES</span><span class="rate">7.023</span><span class="delta down">▼
+            −0.051</span></div>
+        <div class="fx-tick"><span class="pair">CBR</span><span class="rate">13.00%</span><span class="delta"
+            style="color:#94A3B8">unch</span></div>
+        <div class="fx-tick"><span class="pair">91-TB</span><span class="rate">14.87%</span><span class="delta up">▲
+            +5bp</span></div>
+        <div class="fx-tick"><span class="pair">182-TB</span><span class="rate">15.23%</span><span class="delta up">▲
+            +3bp</span></div>
+        <div class="fx-tick"><span class="pair">364-TB</span><span class="rate">16.10%</span><span class="delta"
+            style="color:#94A3B8">unch</span></div>
+      </div>
+
+      <!-- Topbar -->
+      <div class="topbar">
+        <div class="topbar-breadcrumb">
+          <span>E&amp;M TMS</span><span class="sep"> / </span><span class="current">Dashboard</span>
+        </div>
+        <div class="topbar-spacer"></div>
+        <div class="live-badge">Live</div>
+        <div class="topbar-actions">
+          <button class="topbar-icon-btn" title="Notifications">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            <span class="dot"></span>
+          </button>
+          <a href="03-deal-capture.html" class="btn btn-primary btn-sm">+ New Deal</a>
+        </div>
+        <div
+          style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+          <div
+            style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">
+            MA</div>
+          <div style="line-height:1.2">
+            <div style="font-size:12px;font-weight:600">Mike Agola</div>
+            <div style="font-size:10px;color:var(--text-muted)">Treasurer · Tue 25 Aug 2026 · 10:42</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page -->
+      <div class="page-content">
+
+        <div class="page-header">
           <div>
-            <div class="card-title">Daily Cashflow — August 2026</div>
-            <div class="card-subtitle">Inflows vs Outflows (KES Millions)</div>
+            <h1 class="page-title">Good morning, James</h1>
+            <p class="page-subtitle">Tuesday, 25 August 2026 &nbsp;·&nbsp; LE-001 Kenya &nbsp;·&nbsp; ENTERPRISE Edition
+            </p>
           </div>
-          <div style="display:flex;gap:12px;align-items:center">
-            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:#0D7377;display:inline-block"></span>Inflows</span>
-            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:var(--brand-primary);display:inline-block"></span>Outflows</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="bar-chart">
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:55%"></div><div class="bar bar-out" style="height:40%"></div></div><div class="bar-lbl">11</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:70%"></div><div class="bar bar-out" style="height:60%"></div></div><div class="bar-lbl">12</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:45%"></div><div class="bar bar-out" style="height:80%"></div></div><div class="bar-lbl">13</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:90%"></div><div class="bar bar-out" style="height:55%"></div></div><div class="bar-lbl">14</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:65%"></div><div class="bar bar-out" style="height:70%"></div></div><div class="bar-lbl">15</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:80%"></div><div class="bar bar-out" style="height:45%"></div></div><div class="bar-lbl">18</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:55%"></div><div class="bar bar-out" style="height:65%"></div></div><div class="bar-lbl">19</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:100%"></div><div class="bar bar-out" style="height:50%"></div></div><div class="bar-lbl">20</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:60%"></div><div class="bar bar-out" style="height:90%"></div></div><div class="bar-lbl">21</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:75%"></div><div class="bar bar-out" style="height:60%"></div></div><div class="bar-lbl">22</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:85%"></div><div class="bar bar-out" style="height:42%"></div></div><div class="bar-lbl" style="font-weight:700;color:var(--brand-primary)">25★</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:40%;opacity:.35"></div><div class="bar bar-out" style="height:30%;opacity:.35"></div></div><div class="bar-lbl">26</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:50%;opacity:.35"></div><div class="bar bar-out" style="height:55%;opacity:.35"></div></div><div class="bar-lbl">27</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:65%;opacity:.35"></div><div class="bar bar-out" style="height:45%;opacity:.35"></div></div><div class="bar-lbl">28</div></div>
-            <div class="bar-group"><div class="bar-wrap"><div class="bar bar-in" style="height:70%;opacity:.35"></div><div class="bar bar-out" style="height:60%;opacity:.35"></div></div><div class="bar-lbl">29</div></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--surface-divider)">
-            <div style="text-align:center"><div style="font-size:11px;color:var(--text-muted)">Month Inflows</div><div style="font-size:16px;font-weight:800;font-family:var(--font-mono);color:#0D7377">KES 18.4B</div></div>
-            <div style="text-align:center"><div style="font-size:11px;color:var(--text-muted)">Month Outflows</div><div style="font-size:16px;font-weight:800;font-family:var(--font-mono);color:var(--brand-primary)">KES 16.1B</div></div>
-            <div style="text-align:center"><div style="font-size:11px;color:var(--text-muted)">Net Position</div><div style="font-size:16px;font-weight:800;font-family:var(--font-mono);color:var(--status-success)">+KES 2.3B</div></div>
+          <div class="page-actions">
+            <button class="btn btn-outline btn-sm">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
+              Refresh
+            </button>
+            <button class="btn btn-outline btn-sm">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              ALCO Pack
+            </button>
+            <button class="btn btn-secondary btn-sm">Initiate Day End</button>
           </div>
         </div>
-      </div>
 
-      <!-- NOP -->
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Net Open Position</div>
-            <div class="card-subtitle">By currency · Overnight</div>
+        <!-- KPI Row -->
+        <div class="dashboard-row c4">
+          <div class="kpi-card" style="--kpi-accent:#C8102E;--kpi-icon-bg:rgba(200,16,46,.08)">
+            <div class="kpi-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+            </div>
+            <div class="kpi-label">Portfolio AUM</div>
+            <div class="kpi-value mono">42.7B</div>
+            <div class="kpi-meta"><span class="kpi-delta up">▲ 3.2%</span>&nbsp;vs last month · KES</div>
           </div>
-          <span class="badge badge-warning">1 Warning</span>
+          <div class="kpi-card" style="--kpi-accent:#0D7377;--kpi-icon-bg:rgba(13,115,119,.08)">
+            <div class="kpi-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+            </div>
+            <div class="kpi-label">Net Open Position</div>
+            <div class="kpi-value mono" style="color:var(--status-success)">+128.4M</div>
+            <div class="kpi-meta"><span class="kpi-delta up">Long USD</span>&nbsp;· Limit 64%</div>
+          </div>
+          <div class="kpi-card" style="--kpi-accent:#2563EB;--kpi-icon-bg:rgba(37,99,235,.08)">
+            <div class="kpi-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="1" y="4" width="22" height="16" rx="2" />
+                <line x1="1" y1="10" x2="23" y2="10" />
+              </svg>
+            </div>
+            <div class="kpi-label">Today's Deals</div>
+            <div class="kpi-value">24</div>
+            <div class="kpi-meta"><span class="kpi-delta" style="color:var(--status-warning)">5 Pending
+                Auth</span>&nbsp;· 19 Settled</div>
+          </div>
+          <div class="kpi-card" style="--kpi-accent:#D97706;--kpi-icon-bg:rgba(217,119,6,.08)">
+            <div class="kpi-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </div>
+            <div class="kpi-label">Limit Breaches</div>
+            <div class="kpi-value" style="color:var(--status-warning)">2</div>
+            <div class="kpi-meta"><span class="kpi-delta down">Warning</span>&nbsp;· 0 Hard Breaches</div>
+          </div>
         </div>
-        <div class="card-body" style="padding:var(--space-3)">
-          <div class="nop-grid">
-            <div class="nop-cell" style="--nc:#16A34A"><div class="nop-ccy">USD</div><div class="nop-amt" style="color:#16A34A">+128.4M</div><div class="nop-lim">Limit: 200M</div><div class="nop-bar"><div class="nop-fill" style="width:64%"></div></div><div style="font-size:9px;text-align:right;color:var(--text-muted);margin-top:2px">64%</div></div>
-            <div class="nop-cell" style="--nc:#D97706"><div class="nop-ccy">EUR</div><div class="nop-amt" style="color:#D97706">+42.1M</div><div class="nop-lim">Limit: 50M</div><div class="nop-bar"><div class="nop-fill" style="width:84%"></div></div><div style="font-size:9px;text-align:right;color:#D97706;font-weight:700;margin-top:2px">84% ⚠</div></div>
-            <div class="nop-cell" style="--nc:#2563EB"><div class="nop-ccy">GBP</div><div class="nop-amt" style="color:#2563EB">−8.3M</div><div class="nop-lim">Limit: 30M</div><div class="nop-bar"><div class="nop-fill" style="width:28%"></div></div><div style="font-size:9px;text-align:right;color:var(--text-muted);margin-top:2px">28%</div></div>
-            <div class="nop-cell" style="--nc:#DC2626"><div class="nop-ccy">ZAR</div><div class="nop-amt" style="color:#DC2626">+24.7M</div><div class="nop-lim">Limit: 25M</div><div class="nop-bar"><div class="nop-fill" style="width:99%"></div></div><div style="font-size:9px;text-align:right;color:#DC2626;font-weight:700;margin-top:2px">99% !</div></div>
-            <div class="nop-cell" style="--nc:#0891B2"><div class="nop-ccy">TZS</div><div class="nop-amt" style="color:#0891B2">+15.0M</div><div class="nop-lim">Limit: 40M</div><div class="nop-bar"><div class="nop-fill" style="width:38%"></div></div><div style="font-size:9px;text-align:right;color:var(--text-muted);margin-top:2px">38%</div></div>
-            <div class="nop-cell" style="--nc:#7C3AED"><div class="nop-ccy">UGX</div><div class="nop-amt" style="color:#7C3AED">+6.2M</div><div class="nop-lim">Limit: 20M</div><div class="nop-bar"><div class="nop-fill" style="width:31%"></div></div><div style="font-size:9px;text-align:right;color:var(--text-muted);margin-top:2px">31%</div></div>
-          </div>
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--surface-divider)">
-            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Aggregate NOP Utilisation</div>
-            <div class="util-bar-track"><div class="util-bar-fill warn" style="width:72%"></div></div>
-            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:3px"><span>KES 725M / 1,000M</span><span style="color:#D97706;font-weight:700">72%</span></div>
-          </div>
-        </div>
-        <div class="card-footer"><a href="05-limits-exposure.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View Limits &amp; Exposure →</a></div>
-      </div>
 
-      <!-- Maturities -->
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Maturity Alerts</div>
-            <div class="card-subtitle">Next 7 days</div>
-          </div>
-          <span class="badge badge-warning">8</span>
-        </div>
-        <div class="card-body" style="padding:0 var(--space-4)">
-          <div class="mat-row"><div class="mat-dot" style="background:#DC2626"></div><div class="mat-info"><div class="i">T-Bill 91D</div><div class="c">CBK Direct</div></div><div class="mat-right"><div class="a">500.0M</div><div class="d" style="color:#DC2626;font-weight:600">TODAY</div></div></div>
-          <div class="mat-row"><div class="mat-dot" style="background:#DC2626"></div><div class="mat-info"><div class="i">Fixed Deposit</div><div class="c">StanChart Kenya</div></div><div class="mat-right"><div class="a">250.0M</div><div class="d" style="color:#DC2626;font-weight:600">TODAY</div></div></div>
-          <div class="mat-row"><div class="mat-dot" style="background:#D97706"></div><div class="mat-info"><div class="i">FX Forward USD</div><div class="c">Citi N.A.</div></div><div class="mat-right"><div class="a">$5.0M</div><div class="d">Tomorrow</div></div></div>
-          <div class="mat-row"><div class="mat-dot" style="background:#D97706"></div><div class="mat-info"><div class="i">Repo Placement</div><div class="c">DTBK</div></div><div class="mat-right"><div class="a">800.0M</div><div class="d">26 Aug</div></div></div>
-          <div class="mat-row"><div class="mat-dot" style="background:#2563EB"></div><div class="mat-info"><div class="i">T-Bond 5yr Coupon</div><div class="c">CBK</div></div><div class="mat-right"><div class="a">187.5M</div><div class="d">27 Aug</div></div></div>
-          <div class="mat-row"><div class="mat-dot" style="background:#16A34A"></div><div class="mat-info"><div class="i">Overnight Borrowing</div><div class="c">Equity Bank</div></div><div class="mat-right"><div class="a">1,200.0M</div><div class="d">29 Aug</div></div></div>
-          <div class="mat-row"><div class="mat-dot" style="background:#16A34A"></div><div class="mat-info"><div class="i">Fixed Deposit</div><div class="c">KCB Group</div></div><div class="mat-right"><div class="a">400.0M</div><div class="d">30 Aug</div></div></div>
-          <div class="mat-row"><div class="mat-dot" style="background:#16A34A"></div><div class="mat-info"><div class="i">Commercial Paper</div><div class="c">Safaricom PLC</div></div><div class="mat-right"><div class="a">200.0M</div><div class="d">31 Aug</div></div></div>
-        </div>
-        <div class="card-footer"><a href="04-cash-position.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View maturity ladder →</a></div>
-      </div>
-    </div>
+        <!-- Cashflow + NOP + Maturities -->
+        <div class="dashboard-row c633">
 
-    <!-- Deal Blotter + Alerts -->
-    <div class="dashboard-row c75">
+          <!-- Cashflow Chart -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Daily Cashflow — August 2026</div>
+                <div class="card-subtitle">Inflows vs Outflows (KES Millions)</div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:center">
+                <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)"><span
+                    style="width:10px;height:10px;border-radius:2px;background:#0D7377;display:inline-block"></span>Inflows</span>
+                <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)"><span
+                    style="width:10px;height:10px;border-radius:2px;background:var(--brand-primary);display:inline-block"></span>Outflows</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="bar-chart">
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:55%"></div>
+                    <div class="bar bar-out" style="height:40%"></div>
+                  </div>
+                  <div class="bar-lbl">11</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:70%"></div>
+                    <div class="bar bar-out" style="height:60%"></div>
+                  </div>
+                  <div class="bar-lbl">12</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:45%"></div>
+                    <div class="bar bar-out" style="height:80%"></div>
+                  </div>
+                  <div class="bar-lbl">13</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:90%"></div>
+                    <div class="bar bar-out" style="height:55%"></div>
+                  </div>
+                  <div class="bar-lbl">14</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:65%"></div>
+                    <div class="bar bar-out" style="height:70%"></div>
+                  </div>
+                  <div class="bar-lbl">15</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:80%"></div>
+                    <div class="bar bar-out" style="height:45%"></div>
+                  </div>
+                  <div class="bar-lbl">18</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:55%"></div>
+                    <div class="bar bar-out" style="height:65%"></div>
+                  </div>
+                  <div class="bar-lbl">19</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:100%"></div>
+                    <div class="bar bar-out" style="height:50%"></div>
+                  </div>
+                  <div class="bar-lbl">20</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:60%"></div>
+                    <div class="bar bar-out" style="height:90%"></div>
+                  </div>
+                  <div class="bar-lbl">21</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:75%"></div>
+                    <div class="bar bar-out" style="height:60%"></div>
+                  </div>
+                  <div class="bar-lbl">22</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:85%"></div>
+                    <div class="bar bar-out" style="height:42%"></div>
+                  </div>
+                  <div class="bar-lbl" style="font-weight:700;color:var(--brand-primary)">25★</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:40%;opacity:.35"></div>
+                    <div class="bar bar-out" style="height:30%;opacity:.35"></div>
+                  </div>
+                  <div class="bar-lbl">26</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:50%;opacity:.35"></div>
+                    <div class="bar bar-out" style="height:55%;opacity:.35"></div>
+                  </div>
+                  <div class="bar-lbl">27</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:65%;opacity:.35"></div>
+                    <div class="bar bar-out" style="height:45%;opacity:.35"></div>
+                  </div>
+                  <div class="bar-lbl">28</div>
+                </div>
+                <div class="bar-group">
+                  <div class="bar-wrap">
+                    <div class="bar bar-in" style="height:70%;opacity:.35"></div>
+                    <div class="bar bar-out" style="height:60%;opacity:.35"></div>
+                  </div>
+                  <div class="bar-lbl">29</div>
+                </div>
+              </div>
+              <div
+                style="display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--surface-divider)">
+                <div style="text-align:center">
+                  <div style="font-size:11px;color:var(--text-muted)">Month Inflows</div>
+                  <div style="font-size:16px;font-weight:800;font-family:var(--font-mono);color:#0D7377">KES 18.4B</div>
+                </div>
+                <div style="text-align:center">
+                  <div style="font-size:11px;color:var(--text-muted)">Month Outflows</div>
+                  <div style="font-size:16px;font-weight:800;font-family:var(--font-mono);color:var(--brand-primary)">
+                    KES 16.1B</div>
+                </div>
+                <div style="text-align:center">
+                  <div style="font-size:11px;color:var(--text-muted)">Net Position</div>
+                  <div style="font-size:16px;font-weight:800;font-family:var(--font-mono);color:var(--status-success)">
+                    +KES 2.3B</div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      <!-- Blotter -->
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">Today's Deal Blotter</div><div class="card-subtitle">All deals · 25 Aug 2026</div></div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="text" class="form-control" style="width:170px;padding:5px 10px;font-size:11px" placeholder="Search deals…">
-            <a href="03-deal-capture.html" class="btn btn-primary btn-sm">+ New Deal</a>
+          <!-- NOP -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Net Open Position</div>
+                <div class="card-subtitle">By currency · Overnight</div>
+              </div>
+              <span class="badge badge-warning">1 Warning</span>
+            </div>
+            <div class="card-body" style="padding:var(--space-3)">
+              <div class="nop-grid">
+                <div class="nop-cell" style="--nc:#16A34A">
+                  <div class="nop-ccy">USD</div>
+                  <div class="nop-amt" style="color:#16A34A">+128.4M</div>
+                  <div class="nop-lim">Limit: 200M</div>
+                  <div class="nop-bar">
+                    <div class="nop-fill" style="width:64%"></div>
+                  </div>
+                  <div style="font-size:9px;text-align:right;color:var(--text-muted);margin-top:2px">64%</div>
+                </div>
+                <div class="nop-cell" style="--nc:#D97706">
+                  <div class="nop-ccy">EUR</div>
+                  <div class="nop-amt" style="color:#D97706">+42.1M</div>
+                  <div class="nop-lim">Limit: 50M</div>
+                  <div class="nop-bar">
+                    <div class="nop-fill" style="width:84%"></div>
+                  </div>
+                  <div style="font-size:9px;text-align:right;color:#D97706;font-weight:700;margin-top:2px">84% ⚠</div>
+                </div>
+                <div class="nop-cell" style="--nc:#2563EB">
+                  <div class="nop-ccy">GBP</div>
+                  <div class="nop-amt" style="color:#2563EB">−8.3M</div>
+                  <div class="nop-lim">Limit: 30M</div>
+                  <div class="nop-bar">
+                    <div class="nop-fill" style="width:28%"></div>
+                  </div>
+                  <div style="font-size:9px;text-align:right;color:var(--text-muted);margin-top:2px">28%</div>
+                </div>
+                <div class="nop-cell" style="--nc:#DC2626">
+                  <div class="nop-ccy">ZAR</div>
+                  <div class="nop-amt" style="color:#DC2626">+24.7M</div>
+                  <div class="nop-lim">Limit: 25M</div>
+                  <div class="nop-bar">
+                    <div class="nop-fill" style="width:99%"></div>
+                  </div>
+                  <div style="font-size:9px;text-align:right;color:#DC2626;font-weight:700;margin-top:2px">99% !</div>
+                </div>
+                <div class="nop-cell" style="--nc:#0891B2">
+                  <div class="nop-ccy">TZS</div>
+                  <div class="nop-amt" style="color:#0891B2">+15.0M</div>
+                  <div class="nop-lim">Limit: 40M</div>
+                  <div class="nop-bar">
+                    <div class="nop-fill" style="width:38%"></div>
+                  </div>
+                  <div style="font-size:9px;text-align:right;color:var(--text-muted);margin-top:2px">38%</div>
+                </div>
+                <div class="nop-cell" style="--nc:#7C3AED">
+                  <div class="nop-ccy">UGX</div>
+                  <div class="nop-amt" style="color:#7C3AED">+6.2M</div>
+                  <div class="nop-lim">Limit: 20M</div>
+                  <div class="nop-bar">
+                    <div class="nop-fill" style="width:31%"></div>
+                  </div>
+                  <div style="font-size:9px;text-align:right;color:var(--text-muted);margin-top:2px">31%</div>
+                </div>
+              </div>
+              <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--surface-divider)">
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Aggregate NOP Utilisation</div>
+                <div class="util-bar-track">
+                  <div class="util-bar-fill warn" style="width:72%"></div>
+                </div>
+                <div
+                  style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:3px">
+                  <span>KES 725M / 1,000M</span><span style="color:#D97706;font-weight:700">72%</span></div>
+              </div>
+            </div>
+            <div class="card-footer"><a href="05-limits-exposure.html"
+                style="font-size:11px;font-weight:600;color:var(--brand-primary)">View Limits &amp; Exposure →</a></div>
           </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Deal ID</th><th>Type</th><th>Counterparty</th><th>CCY</th><th style="text-align:right">Amount</th><th>Rate</th><th>Value Date</th><th>Status</th><th></th></tr></thead>
-            <tbody>
-              <tr><td><span class="mono">DEAL-00287</span></td><td><span class="badge badge-info">FX SPOT</span></td><td>Citi N.A.</td><td>USD/KES</td><td class="text-right mono fw-600">$2,500,000</td><td class="mono">129.42</td><td class="mono">25/08/2026</td><td><span class="badge badge-success">AUTHORISED</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
-              <tr><td><span class="mono">DEAL-00286</span></td><td><span class="badge badge-primary">FX FWD</span></td><td>Standard Bank</td><td>EUR/KES</td><td class="text-right mono fw-600">€1,000,000</td><td class="mono">140.85</td><td class="mono">25/11/2026</td><td><span class="badge badge-warning">PENDING AUTH</span></td><td><button class="btn btn-outline btn-sm">Authorise</button></td></tr>
-              <tr><td><span class="mono">DEAL-00285</span></td><td><span class="badge badge-neutral">FIXED DEP</span></td><td>StanChart Kenya</td><td>KES</td><td class="text-right mono fw-600">250,000,000</td><td class="mono">14.50%</td><td class="mono">25/08/2026</td><td><span class="badge badge-danger">MATURED</span></td><td><button class="btn btn-ghost btn-sm">Rollover</button></td></tr>
-              <tr><td><span class="mono">DEAL-00284</span></td><td><span class="badge badge-neutral">T-BILL</span></td><td>CBK Direct</td><td>KES</td><td class="text-right mono fw-600">500,000,000</td><td class="mono">14.87%</td><td class="mono">25/08/2026</td><td><span class="badge badge-danger">MATURED</span></td><td><button class="btn btn-ghost btn-sm">Rollover</button></td></tr>
-              <tr><td><span class="mono">DEAL-00283</span></td><td><span class="badge badge-info">REPO</span></td><td>DTBK</td><td>KES</td><td class="text-right mono fw-600">800,000,000</td><td class="mono">13.25%</td><td class="mono">26/08/2026</td><td><span class="badge badge-success">AUTHORISED</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
-              <tr><td><span class="mono">DEAL-00282</span></td><td><span class="badge badge-primary">ON BORROW</span></td><td>Equity Bank</td><td>KES</td><td class="text-right mono fw-600">1,200,000,000</td><td class="mono">13.00%</td><td class="mono">26/08/2026</td><td><span class="badge badge-success">AUTHORISED</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
-              <tr style="background:rgba(217,119,6,.04)"><td><span class="mono">DEAL-00281</span></td><td><span class="badge badge-warning">FX SWAP</span></td><td>Barclays Kenya</td><td>GBP/KES</td><td class="text-right mono fw-600">£500,000</td><td class="mono">163.45</td><td class="mono">25/08/2026</td><td><span class="badge badge-warning">PENDING AUTH</span></td><td><button class="btn btn-outline btn-sm">Authorise</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:11px;color:var(--text-muted)">Showing 7 of 24 deals today</span>
-          <button class="btn btn-ghost btn-sm">View all deals →</button>
-        </div>
-      </div>
 
-      <!-- Alert Feed -->
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">System Alerts</div><div class="card-subtitle">Unacknowledged · Today</div></div>
-          <span class="badge badge-danger">7 Active</span>
+          <!-- Maturities -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Maturity Alerts</div>
+                <div class="card-subtitle">Next 7 days</div>
+              </div>
+              <span class="badge badge-warning">8</span>
+            </div>
+            <div class="card-body" style="padding:0 var(--space-4)">
+              <div class="mat-row">
+                <div class="mat-dot" style="background:#DC2626"></div>
+                <div class="mat-info">
+                  <div class="i">T-Bill 91D</div>
+                  <div class="c">CBK Direct</div>
+                </div>
+                <div class="mat-right">
+                  <div class="a">500.0M</div>
+                  <div class="d" style="color:#DC2626;font-weight:600">TODAY</div>
+                </div>
+              </div>
+              <div class="mat-row">
+                <div class="mat-dot" style="background:#DC2626"></div>
+                <div class="mat-info">
+                  <div class="i">Fixed Deposit</div>
+                  <div class="c">StanChart Kenya</div>
+                </div>
+                <div class="mat-right">
+                  <div class="a">250.0M</div>
+                  <div class="d" style="color:#DC2626;font-weight:600">TODAY</div>
+                </div>
+              </div>
+              <div class="mat-row">
+                <div class="mat-dot" style="background:#D97706"></div>
+                <div class="mat-info">
+                  <div class="i">FX Forward USD</div>
+                  <div class="c">Citi N.A.</div>
+                </div>
+                <div class="mat-right">
+                  <div class="a">$5.0M</div>
+                  <div class="d">Tomorrow</div>
+                </div>
+              </div>
+              <div class="mat-row">
+                <div class="mat-dot" style="background:#D97706"></div>
+                <div class="mat-info">
+                  <div class="i">Repo Placement</div>
+                  <div class="c">DTBK</div>
+                </div>
+                <div class="mat-right">
+                  <div class="a">800.0M</div>
+                  <div class="d">26 Aug</div>
+                </div>
+              </div>
+              <div class="mat-row">
+                <div class="mat-dot" style="background:#2563EB"></div>
+                <div class="mat-info">
+                  <div class="i">T-Bond 5yr Coupon</div>
+                  <div class="c">CBK</div>
+                </div>
+                <div class="mat-right">
+                  <div class="a">187.5M</div>
+                  <div class="d">27 Aug</div>
+                </div>
+              </div>
+              <div class="mat-row">
+                <div class="mat-dot" style="background:#16A34A"></div>
+                <div class="mat-info">
+                  <div class="i">Overnight Borrowing</div>
+                  <div class="c">Equity Bank</div>
+                </div>
+                <div class="mat-right">
+                  <div class="a">1,200.0M</div>
+                  <div class="d">29 Aug</div>
+                </div>
+              </div>
+              <div class="mat-row">
+                <div class="mat-dot" style="background:#16A34A"></div>
+                <div class="mat-info">
+                  <div class="i">Fixed Deposit</div>
+                  <div class="c">KCB Group</div>
+                </div>
+                <div class="mat-right">
+                  <div class="a">400.0M</div>
+                  <div class="d">30 Aug</div>
+                </div>
+              </div>
+              <div class="mat-row">
+                <div class="mat-dot" style="background:#16A34A"></div>
+                <div class="mat-info">
+                  <div class="i">Commercial Paper</div>
+                  <div class="c">Safaricom PLC</div>
+                </div>
+                <div class="mat-right">
+                  <div class="a">200.0M</div>
+                  <div class="d">31 Aug</div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer"><a href="04-cash-position.html"
+                style="font-size:11px;font-weight:600;color:var(--brand-primary)">View maturity ladder →</a></div>
+          </div>
         </div>
-        <div style="overflow-y:auto;max-height:380px">
-          <div class="al-row">
-            <div class="al-icon" style="background:var(--danger-bg);color:var(--status-danger)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-            <div class="al-body">
-              <div class="t">NOP Breach — ZAR approaching hard limit</div>
-              <div class="d">ZAR NOP at 99% (24.7M / 25M). New FX deal blocked.</div>
-              <div class="ts">10:38 AM · HARD LIMIT WARNING</div>
-            </div>
-          </div>
-          <div class="al-row">
-            <div class="al-icon" style="background:var(--warning-bg);color:var(--status-warning)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-            <div class="al-body">
-              <div class="t">EUR NOP Warning — 84% utilised</div>
-              <div class="d">EUR NOP at 42.1M vs 50M limit. Warning threshold breached.</div>
-              <div class="ts">10:22 AM · NOP WARNING</div>
-            </div>
-          </div>
-          <div class="al-row">
-            <div class="al-icon" style="background:var(--info-bg);color:var(--status-info)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-            <div class="al-body">
-              <div class="t">Deal DEAL-00286 pending authorisation</div>
-              <div class="d">FX Forward EUR/KES awaiting second authoriser. Timeout in 18h.</div>
-              <div class="ts">09:55 AM · DEAL AUTH</div>
-            </div>
-          </div>
-          <div class="al-row">
-            <div class="al-icon" style="background:var(--danger-bg);color:var(--status-danger)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-            <div class="al-body">
-              <div class="t">Nostro Break — USD account unreconciled</div>
-              <div class="d">2 items unmatched in Citi USD Nostro. Aged 3 days.</div>
-              <div class="ts">08:30 AM · RECONCILIATION</div>
-            </div>
-          </div>
-          <div class="al-row">
-            <div class="al-icon" style="background:var(--success-bg);color:var(--status-success)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-            <div class="al-body">
-              <div class="t">T-Bill 91D matured — KES 500M received</div>
-              <div class="d">Principal + interest credited. Cash position updated.</div>
-              <div class="ts">08:15 AM · MATURITY</div>
-            </div>
-          </div>
-          <div class="al-row">
-            <div class="al-icon" style="background:var(--warning-bg);color:var(--status-warning)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-            <div class="al-body">
-              <div class="t">Market data — USD/KES rate stale</div>
-              <div class="d">Reuters feed not updated for 12 minutes. Using last known rate.</div>
-              <div class="ts">10:30 AM · MARKET DATA</div>
-            </div>
-          </div>
-          <div class="al-row">
-            <div class="al-icon" style="background:var(--info-bg);color:var(--status-info)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-            <div class="al-body">
-              <div class="t">LCR ratio approaching internal buffer</div>
-              <div class="d">LCR at 118% vs 125% internal buffer. Regulatory min: 100%.</div>
-              <div class="ts">07:00 AM · REGULATORY</div>
-            </div>
-          </div>
-        </div>
-        <div class="card-footer" style="display:flex;justify-content:space-between">
-          <button class="btn btn-ghost btn-sm">Mark all read</button>
-          <button class="btn btn-ghost btn-sm">View all alerts →</button>
-        </div>
-      </div>
-    </div>
 
-  </div><!-- /page-content -->
-</div><!-- /main-content -->
-</div><!-- /app-shell -->
+        <!-- Deal Blotter + Alerts -->
+        <div class="dashboard-row c75">
+
+          <!-- Blotter -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Today's Deal Blotter</div>
+                <div class="card-subtitle">All deals · 25 Aug 2026</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input type="text" class="form-control" style="width:170px;padding:5px 10px;font-size:11px"
+                  placeholder="Search deals…">
+                <a href="03-deal-capture.html" class="btn btn-primary btn-sm">+ New Deal</a>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Deal ID</th>
+                    <th>Type</th>
+                    <th>Counterparty</th>
+                    <th>CCY</th>
+                    <th style="text-align:right">Amount</th>
+                    <th>Rate</th>
+                    <th>Value Date</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="mono">DEAL-00287</span></td>
+                    <td><span class="badge badge-info">FX SPOT</span></td>
+                    <td>Citi N.A.</td>
+                    <td>USD/KES</td>
+                    <td class="text-right mono fw-600">$2,500,000</td>
+                    <td class="mono">129.42</td>
+                    <td class="mono">25/08/2026</td>
+                    <td><span class="badge badge-success">AUTHORISED</span></td>
+                    <td><button class="btn btn-ghost btn-sm">View</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="mono">DEAL-00286</span></td>
+                    <td><span class="badge badge-primary">FX FWD</span></td>
+                    <td>Standard Bank</td>
+                    <td>EUR/KES</td>
+                    <td class="text-right mono fw-600">€1,000,000</td>
+                    <td class="mono">140.85</td>
+                    <td class="mono">25/11/2026</td>
+                    <td><span class="badge badge-warning">PENDING AUTH</span></td>
+                    <td><button class="btn btn-outline btn-sm">Authorise</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="mono">DEAL-00285</span></td>
+                    <td><span class="badge badge-neutral">FIXED DEP</span></td>
+                    <td>StanChart Kenya</td>
+                    <td>KES</td>
+                    <td class="text-right mono fw-600">250,000,000</td>
+                    <td class="mono">14.50%</td>
+                    <td class="mono">25/08/2026</td>
+                    <td><span class="badge badge-danger">MATURED</span></td>
+                    <td><button class="btn btn-ghost btn-sm">Rollover</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="mono">DEAL-00284</span></td>
+                    <td><span class="badge badge-neutral">T-BILL</span></td>
+                    <td>CBK Direct</td>
+                    <td>KES</td>
+                    <td class="text-right mono fw-600">500,000,000</td>
+                    <td class="mono">14.87%</td>
+                    <td class="mono">25/08/2026</td>
+                    <td><span class="badge badge-danger">MATURED</span></td>
+                    <td><button class="btn btn-ghost btn-sm">Rollover</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="mono">DEAL-00283</span></td>
+                    <td><span class="badge badge-info">REPO</span></td>
+                    <td>DTBK</td>
+                    <td>KES</td>
+                    <td class="text-right mono fw-600">800,000,000</td>
+                    <td class="mono">13.25%</td>
+                    <td class="mono">26/08/2026</td>
+                    <td><span class="badge badge-success">AUTHORISED</span></td>
+                    <td><button class="btn btn-ghost btn-sm">View</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="mono">DEAL-00282</span></td>
+                    <td><span class="badge badge-primary">ON BORROW</span></td>
+                    <td>Equity Bank</td>
+                    <td>KES</td>
+                    <td class="text-right mono fw-600">1,200,000,000</td>
+                    <td class="mono">13.00%</td>
+                    <td class="mono">26/08/2026</td>
+                    <td><span class="badge badge-success">AUTHORISED</span></td>
+                    <td><button class="btn btn-ghost btn-sm">View</button></td>
+                  </tr>
+                  <tr style="background:rgba(217,119,6,.04)">
+                    <td><span class="mono">DEAL-00281</span></td>
+                    <td><span class="badge badge-warning">FX SWAP</span></td>
+                    <td>Barclays Kenya</td>
+                    <td>GBP/KES</td>
+                    <td class="text-right mono fw-600">£500,000</td>
+                    <td class="mono">163.45</td>
+                    <td class="mono">25/08/2026</td>
+                    <td><span class="badge badge-warning">PENDING AUTH</span></td>
+                    <td><button class="btn btn-outline btn-sm">Authorise</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:11px;color:var(--text-muted)">Showing 7 of 24 deals today</span>
+              <button class="btn btn-ghost btn-sm">View all deals →</button>
+            </div>
+          </div>
+
+          <!-- Alert Feed -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">System Alerts</div>
+                <div class="card-subtitle">Unacknowledged · Today</div>
+              </div>
+              <span class="badge badge-danger">7 Active</span>
+            </div>
+            <div style="overflow-y:auto;max-height:380px">
+              <div class="al-row">
+                <div class="al-icon" style="background:var(--danger-bg);color:var(--status-danger)"><svg fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path
+                      d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg></div>
+                <div class="al-body">
+                  <div class="t">NOP Breach — ZAR approaching hard limit</div>
+                  <div class="d">ZAR NOP at 99% (24.7M / 25M). New FX deal blocked.</div>
+                  <div class="ts">10:38 AM · HARD LIMIT WARNING</div>
+                </div>
+              </div>
+              <div class="al-row">
+                <div class="al-icon" style="background:var(--warning-bg);color:var(--status-warning)"><svg fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path
+                      d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg></div>
+                <div class="al-body">
+                  <div class="t">EUR NOP Warning — 84% utilised</div>
+                  <div class="d">EUR NOP at 42.1M vs 50M limit. Warning threshold breached.</div>
+                  <div class="ts">10:22 AM · NOP WARNING</div>
+                </div>
+              </div>
+              <div class="al-row">
+                <div class="al-icon" style="background:var(--info-bg);color:var(--status-info)"><svg fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg></div>
+                <div class="al-body">
+                  <div class="t">Deal DEAL-00286 pending authorisation</div>
+                  <div class="d">FX Forward EUR/KES awaiting second authoriser. Timeout in 18h.</div>
+                  <div class="ts">09:55 AM · DEAL AUTH</div>
+                </div>
+              </div>
+              <div class="al-row">
+                <div class="al-icon" style="background:var(--danger-bg);color:var(--status-danger)"><svg fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg></div>
+                <div class="al-body">
+                  <div class="t">Nostro Break — USD account unreconciled</div>
+                  <div class="d">2 items unmatched in Citi USD Nostro. Aged 3 days.</div>
+                  <div class="ts">08:30 AM · RECONCILIATION</div>
+                </div>
+              </div>
+              <div class="al-row">
+                <div class="al-icon" style="background:var(--success-bg);color:var(--status-success)"><svg fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg></div>
+                <div class="al-body">
+                  <div class="t">T-Bill 91D matured — KES 500M received</div>
+                  <div class="d">Principal + interest credited. Cash position updated.</div>
+                  <div class="ts">08:15 AM · MATURITY</div>
+                </div>
+              </div>
+              <div class="al-row">
+                <div class="al-icon" style="background:var(--warning-bg);color:var(--status-warning)"><svg fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg></div>
+                <div class="al-body">
+                  <div class="t">Market data — USD/KES rate stale</div>
+                  <div class="d">Reuters feed not updated for 12 minutes. Using last known rate.</div>
+                  <div class="ts">10:30 AM · MARKET DATA</div>
+                </div>
+              </div>
+              <div class="al-row">
+                <div class="al-icon" style="background:var(--info-bg);color:var(--status-info)"><svg fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg></div>
+                <div class="al-body">
+                  <div class="t">LCR ratio approaching internal buffer</div>
+                  <div class="d">LCR at 118% vs 125% internal buffer. Regulatory min: 100%.</div>
+                  <div class="ts">07:00 AM · REGULATORY</div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer" style="display:flex;justify-content:space-between">
+              <button class="btn btn-ghost btn-sm">Mark all read</button>
+              <button class="btn btn-ghost btn-sm">View all alerts →</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /page-content -->
+    </div><!-- /main-content -->
+  </div><!-- /app-shell -->
 </body>
+
 </html>
