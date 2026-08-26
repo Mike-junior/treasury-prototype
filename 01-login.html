@@ -774,6 +774,10 @@
         if (e.key === 'Backspace' && !el.value && i > 0) arr[i - 1].focus();
       });
     });
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      window.location.href = '02-dashboard.html';
+    });
   </script>
 </body>
 
