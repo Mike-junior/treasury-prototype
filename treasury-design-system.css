@@ -148,17 +148,11 @@ button { font-family: inherit; cursor: pointer; border: none; }
   overflow-y: auto;       /* scroll when content exceeds viewport height */
   overflow-x: hidden;
   padding-bottom: 80px;   /* ensure footer is never clipped by the bottom edge */
-  /* Custom scrollbar — visible on dark background */
-  scrollbar-width: thin;
-  scrollbar-color: #2A4060 transparent;
+  /* Hide scrollbar visually, keep scroll functional */
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge legacy */
 }
-.sidebar::-webkit-scrollbar { width: 5px; }
-.sidebar::-webkit-scrollbar-track { background: transparent; }
-.sidebar::-webkit-scrollbar-thumb {
-  background: #2A4060;
-  border-radius: 3px;
-}
-.sidebar::-webkit-scrollbar-thumb:hover { background: #3A5070; }
+.sidebar::-webkit-scrollbar { display: none; } /* Chrome / Safari / Opera */
 .sidebar-logo {
   display: flex;
   align-items: center;
