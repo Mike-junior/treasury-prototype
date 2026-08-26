@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendars &amp; Brokers — E&M Treasury Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:10px;}
+.cal-day{text-align:center;padding:5px 2px;border-radius:4px;cursor:pointer;}
+.cal-day.header{font-weight:700;color:var(--text-muted);cursor:default;}
+.cal-day.holiday{background:rgba(200,16,46,.12);color:var(--brand-primary);font-weight:700;}
+.cal-day.weekend{background:var(--surface-bg);color:var(--text-muted);}
+.cal-day:hover:not(.header):not(.holiday):not(.weekend){background:var(--info-bg);}
+.cal-day.today{background:var(--brand-secondary);color:#fff;font-weight:700;}
+.field-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.field-row:last-child{border-bottom:none;}
+.field-row .fk{color:var(--text-muted);}
+.field-row .fv{font-weight:600;}
+.holiday-item{display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.holiday-item:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<nav class="sidebar">
+  <div class="sidebar-logo"><div class="sidebar-logo-mark">E&M</div><div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
+    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
+    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
+    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
+    <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>Deal Register</a>
+    <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Settlement</a>
+    <a href="20-fx-nop-monitor.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>FX / NOP Monitor</a>
+    <a href="21-treasury-sales.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Treasury Sales</a>
+    <a href="22-nostro-correspondent.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Nostro &amp; Correspondent</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Analytics</div>
+    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+    <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
+    <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
+    <a href="23-middle-office.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Middle Office</a>
+    <a href="24-market-data.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Market Data</a>
+    <a href="25-ftp.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Funds Transfer Pricing</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Static Data</div>
+    <a href="15-instrument-master.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Instrument Master</a>
+    <a href="16-counterparty-master.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Counterparty Master</a>
+    <a href="17-static-data-misc.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendars &amp; Brokers</a>
+    <a href="19-product-factory.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>Product Factory</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">System</div>
+    <a href="18-user-management.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>User &amp; Roles</a>
+    <a href="26-accounting-gl.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Accounting &amp; GL</a>
+    <a href="27-audit-trail.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Audit Trail</a>
+    <a href="28-integration-monitor.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Integration Monitor</a>
+    <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Day End Close</a>
+    <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
+    <a href="29-tenant-admin.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Tenant Admin</a>
+  </div>
+  <div class="sidebar-footer"><div class="user-mini"><div class="user-avatar">JM</div><div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">Tenant Admin · LE-001</div></div></div></div>
+</nav>
+
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">Active Calendars</span><span class="rate">8</span></div>
+    <div class="fx-tick"><span class="pair">Next Holiday</span><span class="rate">Mashujaa Day</span><span class="delta" style="color:#94A3B8">20 Oct 2026</span></div>
+    <div class="fx-tick"><span class="pair">Registered Brokers</span><span class="rate">12</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>Static Data</span><span class="sep"> / </span><span class="current">Calendars &amp; Brokers</span></div>
+    <div class="topbar-spacer"></div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JM</div>
+      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">Tenant Admin</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Calendars, Brokers &amp; Custodians</h1><p class="page-subtitle">Business day calendars · Broker / custodian / depository master · FR-03.6 &amp; FR-03.7</p></div>
+      <div class="page-actions"><button class="btn btn-primary btn-sm">+ Add Calendar</button><button class="btn btn-outline btn-sm">+ Add Broker</button></div>
+    </div>
+
+    <div class="tabs" id="mainTabs">
+      <div class="tab-item active" onclick="mainTab('calendars')">Business Day Calendars</div>
+      <div class="tab-item" onclick="mainTab('brokers')">Brokers</div>
+      <div class="tab-item" onclick="mainTab('custodians')">Custodians &amp; Depositories</div>
+    </div>
+
+    <!-- CALENDARS TAB -->
+    <div class="tab-panel active" id="tab-calendars">
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:var(--space-4);align-items:start">
+
+        <!-- Calendar list -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Active Calendars</div></div>
+          <div style="padding:0">
+            <div onclick="showCal('ke')" style="padding:12px var(--space-4);border-bottom:1px solid var(--surface-divider);cursor:pointer;background:rgba(10,22,40,.04)">
+              <div style="font-size:12px;font-weight:700">🇰🇪 Kenya (KES)</div>
+              <div style="font-size:10px;color:var(--text-muted)">CBK clearing · NSE · T-Bills</div>
+            </div>
+            <div onclick="showCal('us')" style="padding:12px var(--space-4);border-bottom:1px solid var(--surface-divider);cursor:pointer">
+              <div style="font-size:12px;font-weight:700">🇺🇸 United States (USD)</div>
+              <div style="font-size:10px;color:var(--text-muted)">SWIFT · Fedwire · T+2</div>
+            </div>
+            <div onclick="showCal('eu')" style="padding:12px var(--space-4);border-bottom:1px solid var(--surface-divider);cursor:pointer">
+              <div style="font-size:12px;font-weight:700">🇪🇺 Eurozone (EUR)</div>
+              <div style="font-size:10px;color:var(--text-muted)">TARGET2 · T+2</div>
+            </div>
+            <div onclick="showCal('uk')" style="padding:12px var(--space-4);border-bottom:1px solid var(--surface-divider);cursor:pointer">
+              <div style="font-size:12px;font-weight:700">🇬🇧 United Kingdom (GBP)</div>
+              <div style="font-size:10px;color:var(--text-muted)">CHAPS · T+1</div>
+            </div>
+            <div onclick="showCal('tz')" style="padding:12px var(--space-4);border-bottom:1px solid var(--surface-divider);cursor:pointer">
+              <div style="font-size:12px;font-weight:700">🇹🇿 Tanzania (TZS)</div>
+              <div style="font-size:10px;color:var(--text-muted)">BoT clearing</div>
+            </div>
+            <div onclick="showCal('ug')" style="padding:12px var(--space-4);border-bottom:1px solid var(--surface-divider);cursor:pointer">
+              <div style="font-size:12px;font-weight:700">🇺🇬 Uganda (UGX)</div>
+              <div style="font-size:10px;color:var(--text-muted)">BoU clearing</div>
+            </div>
+            <div onclick="showCal('za')" style="padding:12px var(--space-4);border-bottom:1px solid var(--surface-divider);cursor:pointer">
+              <div style="font-size:12px;font-weight:700">🇿🇦 South Africa (ZAR)</div>
+              <div style="font-size:10px;color:var(--text-muted)">SARB · T+3</div>
+            </div>
+            <div style="padding:12px var(--space-4);cursor:pointer">
+              <div style="font-size:12px;font-weight:700">🌍 Combined (FX)</div>
+              <div style="font-size:10px;color:var(--text-muted)">Joint calendar for FX value dates</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar detail -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">🇰🇪 Kenya (KES) — 2026 Calendar</div><div class="card-subtitle">CBK clearing · NSE Bond Market · Public holidays</div></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-outline btn-sm">+ Add Holiday</button>
+              <button class="btn btn-warning btn-sm" onclick="alert('Preview: 14 deals would have settlement dates adjusted.\n\nDo you want to proceed?')">Preview Impact</button>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);padding:var(--space-4)">
+            <!-- Mini calendar -->
+            <div>
+              <div style="font-size:12px;font-weight:700;margin-bottom:var(--space-3)">August 2026</div>
+              <div class="cal-grid">
+                <div class="cal-day header">Mo</div><div class="cal-day header">Tu</div><div class="cal-day header">We</div><div class="cal-day header">Th</div><div class="cal-day header">Fr</div><div class="cal-day header">Sa</div><div class="cal-day header">Su</div>
+                <div class="cal-day"></div><div class="cal-day"></div><div class="cal-day"></div><div class="cal-day"></div><div class="cal-day"></div><div class="cal-day weekend">1</div><div class="cal-day weekend">2</div>
+                <div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day weekend">8</div><div class="cal-day weekend">9</div>
+                <div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day weekend">15</div><div class="cal-day weekend">16</div>
+                <div class="cal-day">17</div><div class="cal-day">18</div><div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day">21</div><div class="cal-day weekend">22</div><div class="cal-day weekend">23</div>
+                <div class="cal-day">24</div><div class="cal-day today">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day weekend">29</div><div class="cal-day weekend">30</div>
+                <div class="cal-day">31</div>
+              </div>
+              <div style="display:flex;gap:var(--space-3);margin-top:var(--space-3);font-size:10px">
+                <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(200,16,46,.12);display:inline-block"></span>Public Holiday</span>
+                <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--brand-secondary);display:inline-block"></span>Today</span>
+                <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--surface-bg);display:inline-block"></span>Weekend</span>
+              </div>
+            </div>
+
+            <!-- Holiday list -->
+            <div>
+              <div style="font-size:12px;font-weight:700;margin-bottom:var(--space-3)">2026 Public Holidays — Kenya</div>
+              <div class="holiday-item"><span>New Year's Day</span><span class="mono text-xs">01 Jan 2026</span><span class="badge badge-success">✓</span></div>
+              <div class="holiday-item"><span>Good Friday</span><span class="mono text-xs">03 Apr 2026</span><span class="badge badge-success">✓</span></div>
+              <div class="holiday-item"><span>Easter Monday</span><span class="mono text-xs">06 Apr 2026</span><span class="badge badge-success">✓</span></div>
+              <div class="holiday-item"><span>Labour Day</span><span class="mono text-xs">01 May 2026</span><span class="badge badge-success">✓</span></div>
+              <div class="holiday-item"><span>Madaraka Day</span><span class="mono text-xs">01 Jun 2026</span><span class="badge badge-success">✓</span></div>
+              <div class="holiday-item"><span>Huduma Day</span><span class="mono text-xs">15 Sep 2026</span><span class="badge badge-neutral">Upcoming</span></div>
+              <div class="holiday-item"><span>Mashujaa Day</span><span class="mono text-xs">20 Oct 2026</span><span class="badge badge-neutral">Upcoming</span></div>
+              <div class="holiday-item"><span>Jamhuri Day</span><span class="mono text-xs">12 Dec 2026</span><span class="badge badge-neutral">Upcoming</span></div>
+              <div class="holiday-item"><span>Christmas Day</span><span class="mono text-xs">25 Dec 2026</span><span class="badge badge-neutral">Upcoming</span></div>
+              <div class="holiday-item"><span>Boxing Day</span><span class="mono text-xs">26 Dec 2026</span><span class="badge badge-neutral">Upcoming</span></div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="alert alert-info" style="margin:0">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+              Adding or removing a holiday will trigger a preview showing all affected deal settlement dates before the change is committed (FR-03.6).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BROKERS TAB -->
+    <div class="tab-panel" id="tab-brokers">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Registered Brokers</div><div class="card-subtitle">NSE licensed · Approved for dealing</div><button class="btn btn-primary btn-sm">+ Add Broker</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Broker Name</th><th>License No.</th><th>Markets</th><th>Brokerage Rate</th><th>Contact</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Faida Investment Bank</td><td class="mono text-xs">NSE/BRK/001</td><td style="font-size:12px">T-Bills · T-Bonds · Equities</td><td class="mono">0.15% per trade</td><td style="font-size:11px">info@faida.co.ke</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+              <tr><td style="font-weight:600">Standard Investment Bank</td><td class="mono text-xs">NSE/BRK/002</td><td style="font-size:12px">T-Bills · T-Bonds</td><td class="mono">0.12% per trade</td><td style="font-size:11px">treasury@sib.co.ke</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+              <tr><td style="font-weight:600">Kingdom Securities</td><td class="mono text-xs">NSE/BRK/007</td><td style="font-size:12px">T-Bonds · Corp Bonds</td><td class="mono">0.18% per trade</td><td style="font-size:11px">bonds@kingdom.co.ke</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+              <tr><td style="font-weight:600;opacity:.6">Suntra Investment</td><td class="mono text-xs;opacity:.6">NSE/BRK/012</td><td style="font-size:12px;opacity:.6">T-Bills · T-Bonds</td><td class="mono;opacity:.6">0.20% per trade</td><td style="font-size:11px;opacity:.6">—</td><td><span class="badge badge-danger">SUSPENDED</span></td><td><button class="btn btn-ghost btn-sm">Reinstate</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTODIANS TAB -->
+    <div class="tab-panel" id="tab-custodians">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Custodians &amp; Depositories</div><div class="card-subtitle">CBK DRS · CDSC · Correspondent custodians</div><button class="btn btn-primary btn-sm">+ Add Custodian</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Custodian / Depository</th><th>Type</th><th>Markets</th><th>Account No.</th><th>Settlement Method</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">CBK Debt Registrar (DRS)</td><td><span class="badge badge-neutral">SOVEREIGN CSD</span></td><td>T-Bills · T-Bonds</td><td class="mono text-xs">DRS-001-EM</td><td>DVP via CBK RTGS</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td style="font-weight:600">CDSC (Nairobi)</td><td><span class="badge badge-neutral">EQUITY CSD</span></td><td>NSE Equities</td><td class="mono text-xs">CDSC-EM-001</td><td>DVP T+3</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td style="font-weight:600">Stanbic Custodial Services</td><td><span class="badge badge-neutral">GLOBAL CUSTODIAN</span></td><td>Offshore Securities</td><td class="mono text-xs">SCS-EM-2024</td><td>DVP via SWIFT MT540</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+function mainTab(t){
+  document.querySelectorAll('#mainTabs .tab-item').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab-panel').forEach(function(el){el.classList.remove('active');});
+  var idx={calendars:0,brokers:1,custodians:2}[t];
+  document.querySelectorAll('#mainTabs .tab-item')[idx].classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+}
+function showCal(id){ /* calendar switching — demo stays on KE */ }
+</script>
+</body>
+</html>
