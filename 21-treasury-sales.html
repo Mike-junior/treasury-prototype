@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Treasury Sales — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.qcard{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);margin-bottom:var(--space-3);overflow:hidden;}
+.qcard.q-open{border-left:3px solid var(--status-success);}
+.qcard.q-accepted{border-left:3px solid #2563EB;}
+.qcard.q-lapsed{border-left:3px solid var(--text-muted);opacity:.7;}
+.qhead{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--surface-divider);}
+.qbody{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);padding:var(--space-3) var(--space-4);}
+.qf .ql{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;}
+.qf .qv{font-size:13px;font-weight:700;font-family:var(--font-mono);margin-top:2px;}
+.qfoot{display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);background:var(--surface-bg);border-top:1px solid var(--surface-divider);}
+.hr-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.hr-row:last-child{border-bottom:none;}
+.hr-bar{flex:1;height:5px;background:var(--surface-divider);border-radius:3px;overflow:hidden;}
+.hr-fill{height:100%;border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<div id="sidebar-root"></div><script src="sidebar-include.js"></script>
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲+0.23</span></div>
+    <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span class="delta down">▼−0.41</span></div>
+    <div class="fx-tick"><span class="pair">Margin Today</span><span class="rate">KES 2.4M</span><span class="delta up">earned</span></div>
+    <div class="fx-tick"><span class="pair">Hit Rate</span><span class="rate">62%</span><span class="delta" style="color:#94A3B8">Aug</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Treasury Sales</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('nqp').style.display=''">+ New Quote</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#0D7377;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">WK</div>
+      <div><div style="font-size:12px;font-weight:600">Wanjiru Kamau</div><div style="font-size:10px;color:var(--text-muted)">Sales Dealer · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Treasury Sales — Quote to Cover</h1>
+        <p class="page-subtitle">Client quotes with credit limit pre-check · Margin attribution · Hit-rate analytics · FR-08</p></div>
+    </div>
+
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+      <div class="kpi-card" style="--kpi-accent:#2563EB"><div class="kpi-label">Quotes Today</div><div class="kpi-value">12</div><div class="kpi-meta">6 open · 3 accepted · 3 lapsed</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-success)"><div class="kpi-label">Hit Rate (Today)</div><div class="kpi-value" style="color:var(--status-success)">50%</div><div class="kpi-meta">3 accepted of 6 expired</div></div>
+      <div class="kpi-card" style="--kpi-accent:#0D7377"><div class="kpi-label">Margin Earned</div><div class="kpi-value mono" style="font-size:20px">2.4M</div><div class="kpi-meta">KES today</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-warning)"><div class="kpi-label">Avg Spread</div><div class="kpi-value">18bp</div><div class="kpi-meta">vs grid floor 10bp</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--brand-primary)"><div class="kpi-label">Open Quotes</div><div class="kpi-value">6</div><div class="kpi-meta">Awaiting client</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:var(--space-4);align-items:start">
+    <!-- LEFT: Quote blotter -->
+    <div>
+      <div class="tabs" id="qtabs">
+        <div class="tab-item active" onclick="qtab(this,'all')">All (12)</div>
+        <div class="tab-item" onclick="qtab(this,'open')">Open (6)</div>
+        <div class="tab-item" onclick="qtab(this,'accepted')">Accepted (3)</div>
+        <div class="tab-item" onclick="qtab(this,'lapsed')">Lapsed (3)</div>
+      </div>
+
+      <!-- Quote 1: OPEN -->
+      <div class="qcard q-open">
+        <div class="qhead">
+          <span class="badge badge-success">OPEN</span>
+          <span class="mono fw-600">QT-00042</span>
+          <span style="flex:1;font-size:12px">ABC Import Co. — USD/KES Spot</span>
+          <span style="font-size:11px;color:var(--status-warning)">Expires in 28 min</span>
+          <div style="width:60px;height:4px;background:var(--surface-divider);border-radius:2px;overflow:hidden;margin-left:8px"><div style="width:75%;height:100%;background:var(--status-warning);border-radius:2px"></div></div>
+        </div>
+        <div class="qbody">
+          <div class="qf"><div class="ql">Client</div><div class="qv" style="font-size:11px">ABC Import Co. Ltd</div></div>
+          <div class="qf"><div class="ql">Sell Amount</div><div class="qv">USD 500,000</div></div>
+          <div class="qf"><div class="ql">Interbank Rate</div><div class="qv">129.45</div></div>
+          <div class="qf"><div class="ql">Client Rate (Quoted)</div><div class="qv" style="color:#0D7377">129.25</div></div>
+          <div class="qf"><div class="ql">Spread</div><div class="qv">20bp</div></div>
+          <div class="qf"><div class="ql">Gross Margin</div><div class="qv" style="color:var(--status-success)">KES 100,000</div></div>
+          <div class="qf"><div class="ql">Credit Limit Check (FR-08.1)</div><div class="qv" style="color:var(--status-success)">✓ PASS (45%)</div></div>
+          <div class="qf"><div class="ql">Valid Until</div><div class="qv">10:48 AM</div></div>
+        </div>
+        <div class="qfoot">
+          <span style="font-size:11px;color:var(--text-muted)">Quote sent · Ref QT-00042</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-success btn-sm" onclick="acceptQ()">Accept &amp; Book Deals</button>
+            <button class="btn btn-ghost btn-sm">Requote</button>
+            <button class="btn btn-danger btn-sm">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quote 2: ACCEPTED -->
+      <div class="qcard q-accepted">
+        <div class="qhead">
+          <span class="badge badge-info">ACCEPTED</span>
+          <span class="mono fw-600">QT-00041</span>
+          <span style="flex:1;font-size:12px">XYZ Corp — EUR/KES Forward</span>
+          <span style="font-size:11px;color:var(--text-muted)">Accepted 09:45 AM</span>
+        </div>
+        <div class="qbody">
+          <div class="qf"><div class="ql">Notional</div><div class="qv">EUR 200,000</div></div>
+          <div class="qf"><div class="ql">Client Rate</div><div class="qv" style="color:#0D7377">140.50</div></div>
+          <div class="qf"><div class="ql">Cover Rate</div><div class="qv">140.12</div></div>
+          <div class="qf"><div class="ql">Spread</div><div class="qv">38bp</div></div>
+          <div class="qf"><div class="ql">Gross Margin</div><div class="qv" style="color:var(--status-success)">KES 76,000</div></div>
+          <div class="qf"><div class="ql">Client Deal</div><div class="qv" style="font-size:11px">DEAL-00290</div></div>
+          <div class="qf"><div class="ql">Cover Deal (FR-08.4)</div><div class="qv" style="font-size:11px">DEAL-00291</div></div>
+          <div class="qf"><div class="ql">Status</div><div class="qv" style="color:var(--status-success);font-size:11px">Both in Auth Queue</div></div>
+        </div>
+        <div class="qfoot">
+          <span style="font-size:11px;color:var(--status-success);font-weight:600">✓ Two deals created atomically per FR-08.4</span>
+          <a href="08-auth-queue.html" class="btn btn-ghost btn-sm">View in Auth Queue</a>
+        </div>
+      </div>
+
+      <!-- Quote 3: LAPSED -->
+      <div class="qcard q-lapsed">
+        <div class="qhead">
+          <span class="badge badge-neutral">LAPSED</span>
+          <span class="mono fw-600">QT-00039</span>
+          <span style="flex:1;font-size:12px">DEF Hotels — USD/KES Spot</span>
+          <span style="font-size:11px;color:var(--text-muted)">Lapsed 08:30 AM · retained for hit-rate FR-08.3</span>
+        </div>
+        <div class="qbody">
+          <div class="qf"><div class="ql">Notional</div><div class="qv">USD 300,000</div></div>
+          <div class="qf"><div class="ql">Client Rate</div><div class="qv">129.20</div></div>
+          <div class="qf"><div class="ql">Spread</div><div class="qv">25bp</div></div>
+          <div class="qf"><div class="ql">Reason</div><div class="qv" style="font-size:11px">Client no response</div></div>
+        </div>
+        <div class="qfoot">
+          <span style="font-size:11px;color:var(--text-muted)">Included in hit-rate denominator (FR-08.6)</span>
+          <button class="btn btn-ghost btn-sm">Requote</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: New quote form + analytics -->
+    <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+
+      <!-- New quote form -->
+      <div class="card" id="nqp" style="display:none">
+        <div class="card-header"><div class="card-title">Issue New Quote</div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('nqp').style.display='none'">✕</button></div>
+        <div class="card-body" style="padding:var(--space-3)">
+          <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Client *</label><select class="form-control"><option>ABC Import Co.</option><option>XYZ Corporation</option><option>DEF Hotels</option></select></div>
+          <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Product *</label><select class="form-control"><option>FX Spot</option><option>FX Forward</option><option>FX Swap</option></select></div>
+          <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Currency Pair *</label><select class="form-control"><option>USD/KES</option><option>EUR/KES</option><option>GBP/KES</option></select></div>
+          <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Notional *</label><input type="text" class="form-control" placeholder="e.g. 500,000"></div>
+          <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Validity (mins)</label><select class="form-control"><option>15</option><option selected>30</option><option>60</option></select></div>
+          <div style="background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);padding:var(--space-3)">
+            <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px">Auto-Calculated</div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-muted)">Interbank Rate</span><span class="mono fw-700">129.45</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-muted)">Grid Spread (Tier 2)</span><span class="mono fw-700">+20bp</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-muted)">Client Rate</span><span class="mono fw-700" style="color:#0D7377">129.25</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-muted)">Credit Limit (FR-08.1)</span><span class="fw-700" style="color:var(--status-success)">✓ PASS</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Est. Margin</span><span class="mono fw-700" style="color:var(--status-success)">KES 100,000</span></div>
+          </div>
+        </div>
+        <div class="card-footer" style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('nqp').style.display='none'">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="alert('Quote QT-00043 issued.\nValid 30 min.\nClient notified.')">Issue Quote</button>
+        </div>
+      </div>
+
+      <!-- Margin report FR-08.5 -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">Margin Earned — August 2026</div><div class="card-subtitle">FR-08.5 · By dealer &amp; product</div></div>
+        <div style="padding:var(--space-4)">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div class="hr-row"><span style="width:90px">W. Kamau</span><div class="hr-bar"><div class="hr-fill" style="width:68%;background:#0D7377"></div></div><span class="mono text-xs fw-600" style="width:60px;text-align:right">KES 1.6M</span></div>
+            <div class="hr-row"><span style="width:90px">J. Mwangi</span><div class="hr-bar"><div class="hr-fill" style="width:34%;background:#0D7377"></div></div><span class="mono text-xs fw-600" style="width:60px;text-align:right">KES 800K</span></div>
+            <div class="hr-row"><span style="width:90px">FX Spot</span><div class="hr-bar"><div class="hr-fill" style="width:58%;background:var(--brand-primary)"></div></div><span class="mono text-xs fw-600" style="width:60px;text-align:right">KES 1.4M</span></div>
+            <div class="hr-row"><span style="width:90px">FX Forward</span><div class="hr-bar"><div class="hr-fill" style="width:29%;background:var(--brand-primary)"></div></div><span class="mono text-xs fw-600" style="width:60px;text-align:right">KES 700K</span></div>
+            <div class="hr-row"><span style="width:90px">FX Swap</span><div class="hr-bar"><div class="hr-fill" style="width:12%;background:var(--brand-primary)"></div></div><span class="mono text-xs fw-600" style="width:60px;text-align:right">KES 300K</span></div>
+          </div>
+          <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--surface-divider);display:flex;justify-content:space-between;font-size:12px">
+            <span style="color:var(--text-muted)">Month Total</span>
+            <span class="mono fw-700" style="color:var(--status-success)">KES 2,400,000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hit rate FR-08.6 -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">Hit Rate Analytics</div><div class="card-subtitle">FR-08.6 · Lapsed quotes in denominator</div></div>
+        <div style="padding:var(--space-4)">
+          <div style="text-align:center;margin-bottom:var(--space-3)">
+            <div style="font-size:40px;font-weight:900;font-family:var(--font-mono);color:#2563EB">62%</div>
+            <div style="font-size:11px;color:var(--text-muted)">Month · 31 accepted of 50 issued</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div class="hr-row"><span style="width:80px">FX Spot</span><div class="hr-bar"><div class="hr-fill" style="width:70%;background:#2563EB"></div></div><span class="mono text-xs" style="width:35px;text-align:right">70%</span></div>
+            <div class="hr-row"><span style="width:80px">FX Forward</span><div class="hr-bar"><div class="hr-fill" style="width:55%;background:#2563EB"></div></div><span class="mono text-xs" style="width:35px;text-align:right">55%</span></div>
+            <div class="hr-row"><span style="width:80px">FX Swap</span><div class="hr-bar"><div class="hr-fill" style="width:50%;background:#2563EB"></div></div><span class="mono text-xs" style="width:35px;text-align:right">50%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Client pricing grid FR-08.7 -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">Client Pricing Grids</div><div class="card-subtitle">FR-08.7 · Spread by tier</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Client Tier</th><th>FX Spot</th><th>FX Fwd</th><th>FX Swap</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Tier 1 (&gt;USD 1M)</td><td class="mono">10bp</td><td class="mono">15bp</td><td class="mono">12bp</td></tr>
+              <tr><td style="font-weight:600">Tier 2 (&gt;USD 100K)</td><td class="mono">20bp</td><td class="mono">25bp</td><td class="mono">22bp</td></tr>
+              <tr><td style="font-weight:600">Tier 3 (retail)</td><td class="mono">40bp</td><td class="mono">50bp</td><td class="mono">45bp</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer"><button class="btn btn-outline btn-sm" onclick="alert('Pricing grid editor — requires Treasurer approval to activate changes.')">Edit Pricing Grid</button></div>
+      </div>
+
+    </div><!-- right -->
+    </div><!-- grid -->
+  </div>
+</div>
+</div>
+<script>
+function qtab(el,t){document.querySelectorAll('#qtabs .tab-item').forEach(function(e){e.classList.remove('active')});el.classList.add('active');}
+function acceptQ(){alert('Quote QT-00042 accepted.\n\nFR-08.4 — Two deals created atomically:\n• DEAL-00292 — Client deal at 129.25\n• DEAL-00293 — Cover deal at 129.45\n\nBoth routed to Auth Queue.');}
+</script>
+</body></html>
