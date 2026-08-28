@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Market Data — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.src-card{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);padding:var(--space-4);position:relative;overflow:hidden;}
+.src-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--sc,var(--status-success));}
+.src-card .sname{font-size:13px;font-weight:700;}
+.src-card .ssub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.src-card .sstatus{font-size:11px;font-weight:700;margin-top:8px;}
+.exc-row{display:flex;gap:var(--space-3);padding:10px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;cursor:pointer;transition:background .12s;}
+.exc-row:hover{background:var(--surface-bg);}
+.exc-row:last-child{border-bottom:none;}
+.exc-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.exc-icon svg{width:13px;height:13px;}
+.yc-point{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.yc-point:last-child{border-bottom:none;}
+.yc-point .yk{color:var(--text-muted);}
+.yc-point .yv{font-weight:700;font-family:var(--font-mono);}
+.audit-row{display:flex;gap:var(--space-3);padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:11px;}
+.audit-row:last-child{border-bottom:none;}
+.audit-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<div id="sidebar-root"></div><script src="sidebar-include.js"></script>
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">Reuters</span><span class="rate">Connected</span><span class="delta up">✓</span></div>
+    <div class="fx-tick"><span class="pair">Bloomberg</span><span class="rate">Connected</span><span class="delta up">✓</span></div>
+    <div class="fx-tick"><span class="pair">CBK Feed</span><span class="rate">Connected</span><span class="delta up">✓</span></div>
+    <div class="fx-tick"><span class="pair">Exceptions</span><span class="rate">2</span><span class="delta" style="color:var(--status-warning)">pending review</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Market Data Management</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm">Manual Rate Upload</button>
+      <button class="btn btn-primary btn-sm">Refresh All Feeds</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#0D7377;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">KO</div>
+      <div><div style="font-size:12px;font-weight:600">Kevin Omondi</div><div style="font-size:10px;color:var(--text-muted)">Middle Office · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Market Data Management</h1>
+        <p class="page-subtitle">Data source configuration · Validation exception queue · Yield curve viewer · Audit trail · FR-18</p></div>
+    </div>
+
+    <div class="tabs" id="mdTabs">
+      <div class="tab-item active" onclick="mdTab(this,'sources')">Data Sources</div>
+      <div class="tab-item" onclick="mdTab(this,'rates')">Live Rates</div>
+      <div class="tab-item" onclick="mdTab(this,'exceptions')">Exception Queue <span class="nav-badge" style="margin-left:4px;background:var(--status-warning)">2</span></div>
+      <div class="tab-item" onclick="mdTab(this,'curves')">Yield Curves</div>
+      <div class="tab-item" onclick="mdTab(this,'audit')">Audit Trail</div>
+    </div>
+
+    <!-- SOURCES TAB -->
+    <div class="tab-panel active" id="tab-sources">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-bottom:var(--space-4)">
+        <div class="src-card" style="--sc:var(--status-success)">
+          <div class="sname">Reuters Eikon</div>
+          <div class="ssub">FX rates · Bond prices · Money market rates · Real-time WebSocket</div>
+          <div class="sstatus" style="color:var(--status-success)">✓ CONNECTED · Last update: 10:42:15</div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;font-size:11px">
+            <span style="color:var(--text-muted)">Data types: FX, Bonds, MM</span>
+            <span class="badge badge-success">PRIMARY</span>
+          </div>
+        </div>
+        <div class="src-card" style="--sc:var(--status-success)">
+          <div class="sname">Bloomberg Terminal</div>
+          <div class="ssub">Bond prices · Corporate rates · Fallback to Reuters · BGN closing</div>
+          <div class="sstatus" style="color:var(--status-success)">✓ CONNECTED · Last update: 10:41:50</div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;font-size:11px">
+            <span style="color:var(--text-muted)">Data types: Bonds, Corp</span>
+            <span class="badge badge-info">SECONDARY</span>
+          </div>
+        </div>
+        <div class="src-card" style="--sc:var(--status-success)">
+          <div class="sname">CBK Market Data</div>
+          <div class="ssub">Official CBK mid-rates · T-Bill auction results · Official KES rates</div>
+          <div class="sstatus" style="color:var(--status-success)">✓ CONNECTED · Last update: 09:00:00</div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;font-size:11px">
+            <span style="color:var(--text-muted)">Data types: Official rates</span>
+            <span class="badge badge-success">REGULATORY</span>
+          </div>
+        </div>
+        <div class="src-card" style="--sc:var(--status-warning)">
+          <div class="sname">NSE Bond Market</div>
+          <div class="ssub">Secondary market bond prices · NSE daily closing prices</div>
+          <div class="sstatus" style="color:var(--status-warning)">⚠ DELAYED · Last update: 08:00 (market opens 9AM)</div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;font-size:11px">
+            <span style="color:var(--text-muted)">Data types: Bonds (secondary)</span>
+            <span class="badge badge-warning">SUPPLEMENTARY</span>
+          </div>
+        </div>
+        <div class="src-card" style="--sc:#6B7280">
+          <div class="sname">Manual Upload</div>
+          <div class="ssub">Fallback when feeds are unavailable · Requires Middle Office approval</div>
+          <div class="sstatus" style="color:var(--text-muted)">— Not active today</div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;font-size:11px">
+            <span style="color:var(--text-muted)">Any data type (with override)</span>
+            <span class="badge badge-neutral">MANUAL FALLBACK</span>
+          </div>
+        </div>
+        <div class="src-card" style="--sc:var(--status-danger)">
+          <div class="sname">STP Dealing Platform</div>
+          <div class="ssub">FIX protocol live deal prices from Bloomberg FX GO</div>
+          <div class="sstatus" style="color:var(--status-danger)">✗ DISCONNECTED · Last attempt: 10:30 AM</div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;font-size:11px">
+            <span style="color:var(--text-muted)">Data types: STP deal prices</span>
+            <button class="btn btn-danger btn-sm" style="padding:2px 8px;font-size:10px" onclick="alert('Reconnecting to FX GO STP adapter...')">Reconnect</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Source Priority Hierarchy</div><div class="card-subtitle">FR-18.1 · Used in order left → right when primary is unavailable</div></div>
+        <div style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4);flex-wrap:wrap">
+          <div style="padding:10px 16px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md);font-size:12px;font-weight:700;color:var(--status-success)">1. Reuters</div>
+          <svg width="16" height="16" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          <div style="padding:10px 16px;background:var(--info-bg);border:1px solid var(--info-border);border-radius:var(--radius-md);font-size:12px;font-weight:700;color:var(--status-info)">2. Bloomberg</div>
+          <svg width="16" height="16" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          <div style="padding:10px 16px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md);font-size:12px;font-weight:700;color:var(--status-success)">3. CBK Official</div>
+          <svg width="16" height="16" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          <div style="padding:10px 16px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:var(--radius-md);font-size:12px;font-weight:700;color:var(--status-warning)">4. NSE Closing</div>
+          <svg width="16" height="16" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          <div style="padding:10px 16px;background:#F3F4F6;border:1px solid #E5E7EB;border-radius:var(--radius-md);font-size:12px;font-weight:700;color:#4B5563">5. Manual Override (MO approval)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE RATES TAB -->
+    <div class="tab-panel" id="tab-rates">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-4)">
+        <div class="card"><div class="card-header"><div class="card-title">FX Rates</div><div class="card-subtitle">Reuters · 10:42</div></div><div class="table-wrap"><table><thead><tr><th>Pair</th><th>Bid</th><th>Ask</th><th>Mid</th><th>Change</th></tr></thead><tbody><tr><td class="mono fw-600">USD/KES</td><td class="mono">129.42</td><td class="mono">129.48</td><td class="mono">129.45</td><td class="mono" style="color:var(--status-success)">+0.23</td></tr><tr><td class="mono fw-600">EUR/KES</td><td class="mono">140.08</td><td class="mono">140.16</td><td class="mono">140.12</td><td class="mono" style="color:var(--status-danger)">−0.41</td></tr><tr><td class="mono fw-600">GBP/KES</td><td class="mono">163.72</td><td class="mono">163.84</td><td class="mono">163.78</td><td class="mono" style="color:var(--status-success)">+0.67</td></tr><tr><td class="mono fw-600">ZAR/KES</td><td class="mono">7.019</td><td class="mono">7.027</td><td class="mono">7.023</td><td class="mono" style="color:var(--status-danger)">−0.051</td></tr></tbody></table></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Interest Rates</div><div class="card-subtitle">CBK · 09:00</div></div><div class="table-wrap"><table><thead><tr><th>Instrument</th><th>Rate</th><th>Change</th></tr></thead><tbody><tr><td>CBR</td><td class="mono fw-600">13.00%</td><td class="mono" style="color:var(--text-muted)">unch</td></tr><tr><td>T-Bill 91d</td><td class="mono fw-600">14.87%</td><td class="mono" style="color:var(--status-success)">+5bp</td></tr><tr><td>T-Bill 182d</td><td class="mono fw-600">15.23%</td><td class="mono" style="color:var(--status-success)">+3bp</td></tr><tr><td>T-Bill 364d</td><td class="mono fw-600">16.10%</td><td class="mono" style="color:var(--text-muted)">unch</td></tr><tr><td>Bond 5yr IFB</td><td class="mono fw-600">16.00%</td><td class="mono" style="color:var(--text-muted)">unch</td></tr></tbody></table></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Bond Prices</div><div class="card-subtitle">Reuters · Bloomberg BGN · 10:42</div></div><div class="table-wrap"><table><thead><tr><th>Instrument</th><th>Clean Price</th><th>Yield</th><th>Source</th></tr></thead><tbody><tr><td style="font-size:11px">IFB 10yr 2025</td><td class="mono">101.20</td><td class="mono">15.42%</td><td style="font-size:10px">Reuters</td></tr><tr><td style="font-size:11px">FXD 15yr 2024</td><td class="mono">101.10</td><td class="mono">15.61%</td><td style="font-size:10px">Reuters</td></tr><tr><td style="font-size:11px">SAF CP 2026</td><td class="mono">98.50</td><td class="mono">13.50%</td><td style="font-size:10px">Bloomberg</td></tr></tbody></table></div></div>
+      </div>
+    </div>
+
+    <!-- EXCEPTION QUEUE TAB -->
+    <div class="tab-panel" id="tab-exceptions">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Validation Exception Queue</div><div class="card-subtitle">FR-18.2 · Stale data · Spikes · Zero rates · Require Middle Office review</div></div>
+        <div>
+          <div class="exc-row">
+            <div class="exc-icon" style="background:var(--warning-bg);color:var(--status-warning)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div style="flex:1"><div style="font-weight:600;color:var(--status-warning)">STALE RATE — USD/KES (Reuters)</div><div style="color:var(--text-muted);margin-top:2px">Rate not updated for 12 minutes. Last value: 129.45 at 10:30. Tolerance: 10 minutes.</div></div>
+            <div style="text-align:right"><div class="mono text-xs">10:42 AM</div><div style="margin-top:4px;display:flex;gap:4px"><button class="btn btn-outline btn-sm">Use Bloomberg</button><button class="btn btn-success btn-sm">Accept</button></div></div>
+          </div>
+          <div class="exc-row">
+            <div class="exc-icon" style="background:var(--danger-bg);color:var(--status-danger)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+            <div style="flex:1"><div style="font-weight:600;color:var(--status-danger)">PRICE SPIKE — IFB 10yr 2025 (NSE)</div><div style="color:var(--text-muted);margin-top:2px">NSE price 95.40 deviates &gt;5% from Reuters 101.20. Likely data error. Using Reuters price.</div></div>
+            <div style="text-align:right"><div class="mono text-xs">09:15 AM</div><div style="margin-top:4px;display:flex;gap:4px"><button class="btn btn-danger btn-sm">Reject NSE</button><button class="btn btn-success btn-sm">Use Reuters</button></div></div>
+          </div>
+        </div>
+        <div class="card-footer"><span style="font-size:11px;color:var(--text-muted)">Unresolved exceptions prevent EOD valuation run from completing</span></div>
+      </div>
+    </div>
+
+    <!-- YIELD CURVES TAB -->
+    <div class="tab-panel" id="tab-curves">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
+        <div class="card">
+          <div class="card-header"><div class="card-title">KES Yield Curve</div><div class="card-subtitle">FR-18.3 · Bootstrap method · 25 Aug 2026</div></div>
+          <div style="padding:var(--space-4)">
+            <div style="display:flex;align-items:flex-end;gap:3px;height:100px;margin-bottom:var(--space-3)">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:linear-gradient(to top,#0A1628,#2563EB);height:74%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">ON</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:linear-gradient(to top,#0A1628,#2563EB);height:77%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">1W</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:linear-gradient(to top,#0A1628,#2563EB);height:79%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">1M</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:linear-gradient(to top,#0A1628,#2563EB);height:83%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">3M</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:linear-gradient(to top,#0A1628,#2563EB);height:86%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">6M</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:linear-gradient(to top,#0A1628,#2563EB);height:91%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">1Y</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:linear-gradient(to top,#0A1628,#2563EB);height:95%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">2Y</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:linear-gradient(to top,#0A1628,#2563EB);height:97%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">5Y</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:linear-gradient(to top,#0A1628,#2563EB);height:100%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">10Y</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">
+              <div class="yc-point"><span class="yk">O/N</span><span class="yv">13.00%</span></div>
+              <div class="yc-point"><span class="yk">3M</span><span class="yv">14.87%</span></div>
+              <div class="yc-point"><span class="yk">6M</span><span class="yv">15.23%</span></div>
+              <div class="yc-point"><span class="yk">1Y</span><span class="yv">16.10%</span></div>
+              <div class="yc-point"><span class="yk">5Y</span><span class="yv">16.00%</span></div>
+              <div class="yc-point"><span class="yk">10Y</span><span class="yv">16.00%</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">USD Yield Curve (for FX Forward pricing)</div><div class="card-subtitle">FR-11.5 · Used to derive forward points</div></div>
+          <div style="padding:var(--space-4)">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+              <div class="yc-point"><span class="yk">O/N (Fed Funds)</span><span class="yv">5.33%</span></div>
+              <div class="yc-point"><span class="yk">1M SOFR</span><span class="yv">5.31%</span></div>
+              <div class="yc-point"><span class="yk">3M SOFR</span><span class="yv">5.28%</span></div>
+              <div class="yc-point"><span class="yk">6M SOFR</span><span class="yv">5.12%</span></div>
+              <div class="yc-point"><span class="yk">1Y Treasury</span><span class="yv">4.89%</span></div>
+              <div class="yc-point"><span class="yk">2Y Treasury</span><span class="yv">4.72%</span></div>
+            </div>
+            <div class="alert alert-info" style="margin-top:var(--space-3)">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+              <div style="font-size:11px">KES/USD interest rate differential drives FX forward points. 3M differential: 14.87% − 5.28% = 9.59% → ~+73 forward points on USD/KES</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIT TAB -->
+    <div class="tab-panel" id="tab-audit">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Market Data Audit Trail</div><div class="card-subtitle">FR-18.4 · Immutable · Reproducibility snapshots for past valuations</div></div>
+        <div>
+          <div class="audit-row"><div class="audit-dot" style="background:var(--status-success)"></div><div style="flex:1"><span class="mono fw-600">Reuters</span> USD/KES loaded · 129.45 · Source: Reuters RIC USDKES=</div><div class="mono text-xs">10:42:15</div></div>
+          <div class="audit-row"><div class="audit-dot" style="background:var(--status-success)"></div><div style="flex:1"><span class="mono fw-600">CBK</span> Official T-Bill yields loaded · 91d: 14.87%, 182d: 15.23%</div><div class="mono text-xs">09:00:02</div></div>
+          <div class="audit-row"><div class="audit-dot" style="background:var(--status-warning)"></div><div style="flex:1"><span class="mono fw-600">OVERRIDE</span> IFB 10yr clean price · System: 101.42 → Override: 101.20 · By K. Omondi + J. Mwangi</div><div class="mono text-xs">09:00:45</div></div>
+          <div class="audit-row"><div class="audit-dot" style="background:var(--status-success)"></div><div style="flex:1"><span class="mono fw-600">Reuters</span> EUR/KES loaded · 140.12 · Source: Reuters RIC EURKES=</div><div class="mono text-xs">08:55:00</div></div>
+          <div class="audit-row"><div class="audit-dot" style="background:var(--status-success)"></div><div style="flex:1"><span class="mono fw-600">SNAPSHOT</span> EOD valuation snapshot locked for 24 Aug 2026 · All rates frozen</div><div class="mono text-xs">24/08 17:30</div></div>
+        </div>
+        <div class="card-footer"><a href="27-audit-trail.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View full system audit trail →</a></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<script>
+function mdTab(el,t){
+  document.querySelectorAll('#mdTabs .tab-item').forEach(function(e){e.classList.remove('active')});
+  el.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('tab-'+t).classList.add('active');
+}
+</script>
+</body></html>
