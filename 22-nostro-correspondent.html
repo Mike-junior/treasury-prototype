@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Nostro &amp; Correspondent — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.nostro-card{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);padding:var(--space-4);cursor:pointer;transition:border-color .15s;position:relative;}
+.nostro-card.sel{border-color:var(--brand-primary);box-shadow:0 0 0 2px rgba(200,16,46,.1);}
+.nostro-card .nc-ccy{font-size:16px;font-weight:900;}
+.nostro-card .nc-bank{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.nostro-card .nc-bal{font-size:18px;font-weight:800;font-family:var(--font-mono);margin-top:6px;}
+.nostro-card .nc-status{font-size:10px;font-weight:700;margin-top:4px;}
+.flow-row{display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.flow-row:last-child{border-bottom:none;}
+.flow-row .fk{color:var(--text-muted);}
+.flow-row .fv{font-weight:700;font-family:var(--font-mono);}
+.brk-row{display:flex;gap:var(--space-3);padding:10px var(--space-4);border-bottom:1px solid var(--surface-divider);cursor:pointer;transition:background .12s;}
+.brk-row:hover{background:var(--surface-bg);}
+.brk-row:last-child{border-bottom:none;}
+.age-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<div id="sidebar-root"></div><script src="sidebar-include.js"></script>
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲+0.23</span></div>
+    <div class="fx-tick"><span class="pair">Active Nostros</span><span class="rate">8</span></div>
+    <div class="fx-tick"><span class="pair">Breaks Outstanding</span><span class="rate">4</span><span class="delta" style="color:var(--status-danger)">2 aged</span></div>
+    <div class="fx-tick"><span class="pair">Charge Disputes</span><span class="rate">1</span><span class="delta" style="color:var(--status-warning)">⚠</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Nostro &amp; Correspondent</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm">Import MT940</button>
+      <button class="btn btn-primary btn-sm">Auto-Match</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#0D7377;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">SO</div>
+      <div><div style="font-size:12px;font-weight:600">Susan Otieno</div><div style="font-size:10px;color:var(--text-muted)">Back Office · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Nostro &amp; Correspondent Banking</h1>
+        <p class="page-subtitle">Nostro account master · Projected positions · MT940 import · Break management · FR-10</p></div>
+      <div class="page-actions">
+        <button class="btn btn-outline btn-sm">+ Add Nostro Account</button>
+        <button class="btn btn-outline btn-sm">Export Breaks</button>
+      </div>
+    </div>
+
+    <!-- Nostro account cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+      <div class="nostro-card sel" onclick="selNostro(this)">
+        <div class="nc-ccy">USD</div>
+        <div class="nc-bank">Citi N.A. — New York</div>
+        <div class="nc-bal" style="color:var(--status-success)">$12,847,500</div>
+        <div style="margin-top:6px"><div class="util-bar-track"><div class="util-bar-fill" style="width:64%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;margin-top:2px"><span style="color:var(--text-muted)">Target: $20M</span><span style="color:var(--status-success);font-weight:700">64% ✓</span></div></div>
+        <div class="nc-status" style="color:var(--status-danger)">⚠ 2 unmatched breaks (aged)</div>
+        <span style="position:absolute;top:8px;right:8px" class="badge badge-danger">2 Breaks</span>
+      </div>
+      <div class="nostro-card" onclick="selNostro(this)">
+        <div class="nc-ccy">EUR</div>
+        <div class="nc-bank">Deutsche Bank — Frankfurt</div>
+        <div class="nc-bal" style="color:var(--status-success)">€4,200,000</div>
+        <div style="margin-top:6px"><div class="util-bar-track"><div class="util-bar-fill warn" style="width:84%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;margin-top:2px"><span style="color:var(--text-muted)">Target: €5M</span><span style="color:var(--status-warning);font-weight:700">84% ⚠</span></div></div>
+        <div class="nc-status" style="color:var(--status-warning)">⚠ 1 break (today)</div>
+        <span style="position:absolute;top:8px;right:8px" class="badge badge-warning">1 Break</span>
+      </div>
+      <div class="nostro-card" onclick="selNostro(this)">
+        <div class="nc-ccy">GBP</div>
+        <div class="nc-bank">Barclays — London</div>
+        <div class="nc-bal" style="color:var(--status-success)">£2,100,000</div>
+        <div style="margin-top:6px"><div class="util-bar-track"><div class="util-bar-fill" style="width:42%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;margin-top:2px"><span style="color:var(--text-muted)">Target: £5M</span><span style="color:var(--status-success);font-weight:700">42% ✓</span></div></div>
+        <div class="nc-status" style="color:var(--status-success)">✓ Fully reconciled</div>
+        <span style="position:absolute;top:8px;right:8px" class="badge badge-success">Clear</span>
+      </div>
+      <div class="nostro-card" onclick="selNostro(this)">
+        <div class="nc-ccy">KES</div>
+        <div class="nc-bank">CBK — Settlement Account</div>
+        <div class="nc-bal" style="color:var(--status-success)">KES 2,847M</div>
+        <div style="margin-top:6px"><div class="util-bar-track"><div class="util-bar-fill" style="width:57%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;margin-top:2px"><span style="color:var(--text-muted)">Target: KES 5B</span><span style="color:var(--status-success);font-weight:700">57% ✓</span></div></div>
+        <div class="nc-status" style="color:var(--status-warning)">⚠ 1 timing difference</div>
+        <span style="position:absolute;top:8px;right:8px" class="badge badge-warning">1 Break</span>
+      </div>
+    </div>
+
+    <div class="tabs" id="nTabs">
+      <div class="tab-item active" onclick="ntab(this,'position')">Position &amp; Flows</div>
+      <div class="tab-item" onclick="ntab(this,'breaks')">Breaks &amp; Reconciliation</div>
+      <div class="tab-item" onclick="ntab(this,'import')">Statement Import</div>
+      <div class="tab-item" onclick="ntab(this,'charges')">Correspondent Charges</div>
+      <div class="tab-item" onclick="ntab(this,'analytics')">Nostro Analytics</div>
+    </div>
+
+    <!-- POSITION TAB -->
+    <div class="tab-panel active" id="tab-position">
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">
+        <div class="card">
+          <div class="card-header"><div class="card-title">USD Nostro — Projected Position</div><div class="card-subtitle">Citi N.A. New York · All known flows · FR-10.2</div></div>
+          <div>
+            <div class="flow-row" style="background:var(--surface-bg)"><span class="fk" style="font-weight:700;color:var(--text-primary)">Opening Balance (today)</span><span class="fv">$10,200,000</span></div>
+            <div class="flow-row"><span class="fk">FX Spot settlements (in)</span><span class="fv" style="color:var(--status-success)">+$2,500,000</span></div>
+            <div class="flow-row"><span class="fk">FX Forward maturities (in)</span><span class="fv" style="color:var(--status-success)">+$1,000,000</span></div>
+            <div class="flow-row"><span class="fk">Customer FCY payments (out)</span><span class="fv" style="color:var(--status-danger)">−$800,000</span></div>
+            <div class="flow-row"><span class="fk">Correspondent charges</span><span class="fv" style="color:var(--status-danger)">−$52,500</span></div>
+            <div class="flow-row" style="background:rgba(13,115,119,.04)"><span style="font-weight:700">Projected EOD Balance</span><span class="fv" style="color:var(--status-success);font-size:14px">$12,847,500</span></div>
+            <div class="flow-row"><span class="fk">Target Balance</span><span class="fv">$20,000,000</span></div>
+            <div class="flow-row"><span class="fk">Minimum Threshold</span><span class="fv">$5,000,000</span></div>
+            <div class="flow-row"><span class="fk">Status vs Target</span><span class="fv" style="color:var(--status-success)">ADEQUATE ✓</span></div>
+          </div>
+          <div class="card-footer">
+            <div class="alert alert-info" style="margin:0;font-size:11px">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+              Projection includes pending (PENDING_AUTH) deals. Shortfalls trigger alert to Back Office manager per FR-10.3.
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">7-Day Position Forecast</div><div class="card-subtitle">USD Nostro · All known flows</div></div>
+          <div style="padding:var(--space-4)">
+            <div style="display:flex;align-items:flex-end;gap:3px;height:90px;margin-bottom:var(--space-3)">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:64%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">25</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:72%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">26</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:88%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">27</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:65%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">28</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:80%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">29</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;opacity:.4;height:40%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">01</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;opacity:.4;height:55%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">02</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Today (25 Aug)</span><span class="mono fw-600">$12.8M</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">26 Aug</span><span class="mono fw-600">$14.4M</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">27 Aug (FX settles)</span><span class="mono fw-600" style="color:var(--status-success)">$17.6M</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">28–29 Aug</span><span class="mono fw-600">$13M–$16M</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BREAKS TAB -->
+    <div class="tab-panel" id="tab-breaks">
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Reconciliation Breaks — USD Nostro</div><div class="card-subtitle">MT940 vs TMS · 4 outstanding · FR-10.4–10.5</div><button class="btn btn-primary btn-sm">Auto-Match</button></div>
+          <div>
+            <div class="brk-row">
+              <div class="age-dot" style="background:var(--status-danger)"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:var(--status-danger)">UNMATCHED — No GL entry found</div>
+                <div style="font-size:11px;color:var(--text-muted)">Nostro: $750,000 CR · REF: NYC20260822019 · 22 Aug 2026</div>
+              </div>
+              <span class="badge badge-danger">AGED 3 DAYS</span>
+              <button class="btn btn-danger btn-sm" style="margin-left:8px">Investigate</button>
+            </div>
+            <div class="brk-row">
+              <div class="age-dot" style="background:var(--status-danger)"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:var(--status-danger)">AMOUNT MISMATCH</div>
+                <div style="font-size:11px;color:var(--text-muted)">Nostro: $5,012,500 vs TMS: $5,000,000 · Diff: $12,500 · DEAL-00271</div>
+              </div>
+              <span class="badge badge-danger">AGED 3 DAYS</span>
+              <button class="btn btn-danger btn-sm" style="margin-left:8px">Investigate</button>
+            </div>
+            <div class="brk-row">
+              <div class="age-dot" style="background:var(--status-warning)"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:var(--status-warning)">VALUE DATE DIFFERENCE</div>
+                <div style="font-size:11px;color:var(--text-muted)">FX Swap near leg — nostro date 26 Aug vs TMS 27 Aug · DEAL-00281</div>
+              </div>
+              <span class="badge badge-warning">TODAY</span>
+              <button class="btn btn-outline btn-sm" style="margin-left:8px">Review</button>
+            </div>
+            <div class="brk-row">
+              <div class="age-dot" style="background:var(--status-info)"></div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:var(--status-info)">PENDING — Value date not yet due</div>
+                <div style="font-size:11px;color:var(--text-muted)">Expected receipt $6.2M · Repo return · Value 26 Aug · DEAL-00283</div>
+              </div>
+              <span class="badge badge-info">PENDING</span>
+              <button class="btn btn-ghost btn-sm" style="margin-left:8px">Track</button>
+            </div>
+          </div>
+          <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:11px;color:var(--status-danger);font-weight:600">⚑ 2 aged breaks require escalation (FR-10.5)</span>
+            <button class="btn btn-ghost btn-sm">Export All Breaks</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Break Ageing Summary</div></div>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;padding:8px;background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:var(--radius-md)">
+              <span style="font-size:12px;font-weight:600;color:var(--status-danger)">3+ Days (Escalation)</span>
+              <span class="mono fw-700" style="color:var(--status-danger)">2 breaks — $762,500</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:var(--radius-md)">
+              <span style="font-size:12px;font-weight:600;color:var(--status-warning)">Today</span>
+              <span class="mono fw-700" style="color:var(--status-warning)">1 break — $0 (date diff)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px;background:var(--info-bg);border:1px solid var(--info-border);border-radius:var(--radius-md)">
+              <span style="font-size:12px;font-weight:600;color:var(--status-info)">Pending (future)</span>
+              <span class="mono fw-700" style="color:var(--status-info)">1 item — expected</span>
+            </div>
+          </div>
+          <div class="card-footer"><a href="06-reconciliation.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View full GL reconciliation →</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMPORT TAB -->
+    <div class="tab-panel" id="tab-import">
+      <div class="card">
+        <div class="card-header"><div class="card-title">MT940 / camt.053 Statement Import</div><div class="card-subtitle">FR-10.4 · Auto-match against TMS deal register</div></div>
+        <div class="card-body">
+          <div style="border:2px dashed var(--surface-border);border-radius:var(--radius-lg);padding:var(--space-8);text-align:center;cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='#94A3B8'" onmouseleave="this.style.borderColor=''">
+            <svg width="40" height="40" fill="none" stroke="var(--text-muted)" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto var(--space-3)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">Drag &amp; drop MT940 / MT950 / camt.053 file</div>
+            <div style="font-size:11px;color:var(--text-muted)">Or click to browse · Supported: .txt, .sta, .xml</div>
+            <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3)">Browse File</button>
+          </div>
+          <div style="margin-top:var(--space-4)">
+            <div style="font-size:12px;font-weight:700;margin-bottom:var(--space-2)">Recent Imports</div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>File</th><th>Account</th><th>Date</th><th>Items</th><th>Auto-Matched</th><th>Breaks</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono text-xs">MT940_CITI_USD_250826.txt</td><td>USD Nostro</td><td class="mono text-xs">25/08/2026 07:00</td><td class="mono">38</td><td class="mono" style="color:var(--status-success)">34</td><td class="mono" style="color:var(--status-danger)">4</td><td><span class="badge badge-warning">4 BREAKS</span></td></tr>
+                  <tr><td class="mono text-xs">MT940_DB_EUR_250826.txt</td><td>EUR Nostro</td><td class="mono text-xs">25/08/2026 07:05</td><td class="mono">22</td><td class="mono" style="color:var(--status-success)">21</td><td class="mono" style="color:var(--status-warning)">1</td><td><span class="badge badge-warning">1 BREAK</span></td></tr>
+                  <tr><td class="mono text-xs">MT940_BAR_GBP_250826.txt</td><td>GBP Nostro</td><td class="mono text-xs">25/08/2026 07:10</td><td class="mono">15</td><td class="mono" style="color:var(--status-success)">15</td><td class="mono">0</td><td><span class="badge badge-success">CLEAR</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARGES TAB -->
+    <div class="tab-panel" id="tab-charges">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Correspondent Bank Charges</div><div class="card-subtitle">FR-10.6 · Matched against agreed fee schedule · Variances flagged</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Correspondent</th><th>Period</th><th>Charge Type</th><th style="text-align:right">Billed</th><th style="text-align:right">Schedule</th><th style="text-align:right">Variance</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Citi N.A. NY</td><td class="mono text-xs">Aug 2026</td><td>SWIFT MT202</td><td class="text-right mono">$25.00/msg × 38</td><td class="text-right mono">$20.00/msg</td><td class="text-right mono" style="color:var(--status-danger)">+25%</td><td><span class="badge badge-danger">DISPUTE</span></td><td><button class="btn btn-danger btn-sm">Raise Dispute</button></td></tr>
+              <tr><td style="font-weight:600">Deutsche Bank</td><td class="mono text-xs">Aug 2026</td><td>Account maintenance</td><td class="text-right mono">€200.00</td><td class="text-right mono">€200.00</td><td class="text-right mono" style="color:var(--status-success)">0%</td><td><span class="badge badge-success">MATCHED</span></td><td><button class="btn btn-ghost btn-sm">Approve</button></td></tr>
+              <tr><td style="font-weight:600">Barclays London</td><td class="mono text-xs">Aug 2026</td><td>CHAPS payment</td><td class="text-right mono">£30.00/msg × 12</td><td class="text-right mono">£30.00/msg</td><td class="text-right mono" style="color:var(--status-success)">0%</td><td><span class="badge badge-success">MATCHED</span></td><td><button class="btn btn-ghost btn-sm">Approve</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer"><span style="font-size:11px;color:var(--status-danger);font-weight:600">⚠ Citi charge is 25% above agreed schedule — dispute raised automatically per FR-10.6 (threshold: 15%)</span></div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div class="tab-panel" id="tab-analytics">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4)">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Idle Balances</div><div class="card-subtitle">FR-10.7 · Above target</div></div>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:var(--radius-md)"><span style="font-weight:600;color:var(--status-warning)">USD — Citi NY</span><span class="mono fw-700" style="color:var(--status-warning)">$7.2M idle</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md)"><span>EUR — Deutsche</span><span class="mono fw-600">€0 idle</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md)"><span>GBP — Barclays</span><span class="mono fw-600">£0 idle</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Overdraft Cost</div><div class="card-subtitle">FR-10.7 · YTD</div></div>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">USD overdraft days</span><span class="mono fw-600">0 days</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">EUR overdraft days</span><span class="mono fw-600">0 days</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Total overdraft cost YTD</span><span class="mono fw-700" style="color:var(--status-success)">$0</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Relationship Value</div><div class="card-subtitle">FR-10.7 · by correspondent</div></div>
+          <div style="padding:var(--space-4);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Citi N.A. — volume YTD</span><span class="mono fw-600">$142M</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Deutsche Bank — vol YTD</span><span class="mono fw-600">€38M</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Barclays — vol YTD</span><span class="mono fw-600">£22M</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<script>
+function selNostro(el){document.querySelectorAll('.nostro-card').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel');}
+function ntab(el,t){
+  document.querySelectorAll('#nTabs .tab-item').forEach(function(e){e.classList.remove('active')});
+  el.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('tab-'+t).classList.add('active');
+}
+</script>
+</body></html>
