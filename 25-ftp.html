@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Funds Transfer Pricing — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.curve-row{display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.curve-row:last-child{border-bottom:none;}
+.curve-row .ck{color:var(--text-muted);}
+.curve-row .cv{font-weight:700;font-family:var(--font-mono);}
+.ftp-bar{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.ftp-bar:last-child{border-bottom:none;}
+.ftp-track{flex:1;height:5px;background:var(--surface-divider);border-radius:3px;overflow:hidden;}
+.ftp-fill{height:100%;border-radius:3px;}
+.tenor-row{display:flex;justify-content:space-between;padding:7px var(--space-3);border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.tenor-row:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<div id="sidebar-root"></div><script src="sidebar-include.js"></script>
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">Active FTP Curves</span><span class="rate">4</span></div>
+    <div class="fx-tick"><span class="pair">Curves in Draft</span><span class="rate">1</span><span class="delta" style="color:var(--status-warning)">pending approval</span></div>
+    <div class="fx-tick"><span class="pair">Total Transfer Charges</span><span class="rate">KES 128M</span><span class="delta" style="color:#94A3B8">MTD</span></div>
+    <div class="fx-tick"><span class="pair">Mismatch Margin</span><span class="rate">KES 44M</span><span class="delta up">retained</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Funds Transfer Pricing</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('newCurvePanel').style.display=''">+ New FTP Curve</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JM</div>
+      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">Treasurer · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Funds Transfer Pricing</h1>
+        <p class="page-subtitle">FTP curve management · Transfer charges/credits per business unit · Mismatch margin · FR-13</p></div>
+    </div>
+
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+      <div class="kpi-card" style="--kpi-accent:#0A1628"><div class="kpi-label">Total Transfer Charges (MTD)</div><div class="kpi-value mono" style="font-size:20px">KES 128M</div><div class="kpi-meta">Charged to business units</div></div>
+      <div class="kpi-card" style="--kpi-accent:#0D7377"><div class="kpi-label">Total Transfer Credits (MTD)</div><div class="kpi-value mono" style="font-size:20px">KES 84M</div><div class="kpi-meta">Credited to deposit units</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-success)"><div class="kpi-label">Mismatch Margin (FR-13.4)</div><div class="kpi-value mono" style="font-size:20px">KES 44M</div><div class="kpi-meta">Retained by Treasury</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-warning)"><div class="kpi-label">Draft Curves Pending</div><div class="kpi-value" style="color:var(--status-warning)">1</div><div class="kpi-meta">Awaiting Treasurer approval</div></div>
+    </div>
+
+    <div class="tabs" id="ftpTabs">
+      <div class="tab-item active" onclick="ftpTab(this,'curves')">FTP Curves</div>
+      <div class="tab-item" onclick="ftpTab(this,'charges')">Transfer Charges</div>
+      <div class="tab-item" onclick="ftpTab(this,'margin')">Mismatch Margin</div>
+      <div class="tab-item" onclick="ftpTab(this,'history')">Curve History</div>
+    </div>
+
+    <!-- CURVES TAB -->
+    <div class="tab-panel active" id="tab-curves">
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Active FTP Curves</div><div class="card-subtitle">FR-13.1 · Versioned &amp; effective-dated · Draft curves invisible outside ALM desk</div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Curve Name</th><th>Currency</th><th>Method</th><th>Effective From</th><th>Approved By</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <tr onclick="showCurve('kes')" style="cursor:pointer">
+                  <td style="font-weight:600">KES Base Curve v3.2</td>
+                  <td class="mono">KES</td>
+                  <td><span class="badge badge-info">Matched Maturity</span></td>
+                  <td class="mono text-xs">01/08/2026</td>
+                  <td style="font-size:12px">J. Mwangi</td>
+                  <td><span class="badge badge-success">ACTIVE</span></td>
+                  <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td>
+                </tr>
+                <tr onclick="showCurve('usd')" style="cursor:pointer">
+                  <td style="font-weight:600">USD Base Curve v1.1</td>
+                  <td class="mono">USD</td>
+                  <td><span class="badge badge-neutral">Pool-Based</span></td>
+                  <td class="mono text-xs">01/06/2026</td>
+                  <td style="font-size:12px">J. Mwangi</td>
+                  <td><span class="badge badge-success">ACTIVE</span></td>
+                  <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td>
+                </tr>
+                <tr onclick="showCurve('retail')" style="cursor:pointer">
+                  <td style="font-weight:600">Retail Deposits Curve v2.0</td>
+                  <td class="mono">KES</td>
+                  <td><span class="badge badge-warning">Blended</span></td>
+                  <td class="mono text-xs">01/07/2026</td>
+                  <td style="font-size:12px">J. Mwangi</td>
+                  <td><span class="badge badge-success">ACTIVE</span></td>
+                  <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View</button></td>
+                </tr>
+                <tr style="background:rgba(217,119,6,.03)">
+                  <td style="font-weight:600">KES Base Curve v3.3</td>
+                  <td class="mono">KES</td>
+                  <td><span class="badge badge-info">Matched Maturity</span></td>
+                  <td class="mono text-xs">01/09/2026 (planned)</td>
+                  <td style="font-size:12px">—</td>
+                  <td><span class="badge badge-warning">DRAFT</span></td>
+                  <td><button class="btn btn-primary btn-sm">Approve</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer">
+            <div class="alert alert-info" style="margin:0;font-size:11px">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+              FR-13.3: Draft curves require ROLE_TREASURER approval before taking effect. Historical curves are immutable (FR-13.6).
+            </div>
+          </div>
+        </div>
+        <!-- Curve detail -->
+        <div class="card" id="curveDetail">
+          <div class="card-header"><div class="card-title">KES Base Curve v3.2</div><div class="card-subtitle">Matched Maturity · Active from 01/08/2026</div></div>
+          <div style="padding:0">
+            <div class="tenor-row" style="background:var(--surface-bg)"><span style="font-weight:600;font-size:10px;color:var(--text-muted)">TENOR</span><span style="font-weight:600;font-size:10px;color:var(--text-muted)">BID (Deposit)</span><span style="font-weight:600;font-size:10px;color:var(--text-muted)">OFFER (Lending)</span></div>
+            <div class="tenor-row"><span>Overnight</span><span class="mono fw-600">13.00%</span><span class="mono fw-600">13.50%</span></div>
+            <div class="tenor-row"><span>1 Week</span><span class="mono fw-600">13.25%</span><span class="mono fw-600">13.75%</span></div>
+            <div class="tenor-row"><span>1 Month</span><span class="mono fw-600">13.50%</span><span class="mono fw-600">14.00%</span></div>
+            <div class="tenor-row"><span>3 Months</span><span class="mono fw-600">14.00%</span><span class="mono fw-600">14.87%</span></div>
+            <div class="tenor-row"><span>6 Months</span><span class="mono fw-600">14.50%</span><span class="mono fw-600">15.23%</span></div>
+            <div class="tenor-row"><span>1 Year</span><span class="mono fw-600">15.00%</span><span class="mono fw-600">16.10%</span></div>
+            <div class="tenor-row"><span>3 Years</span><span class="mono fw-600">15.50%</span><span class="mono fw-600">16.50%</span></div>
+            <div class="tenor-row"><span>5 Years</span><span class="mono fw-600">15.75%</span><span class="mono fw-600">16.75%</span></div>
+          </div>
+          <div class="card-footer"><span style="font-size:11px;color:var(--text-muted)">Liquidity premium: +25bp for tenors &gt;1Y · Approved by J. Mwangi on 31/07/2026</span></div>
+        </div>
+      </div>
+
+      <!-- New curve panel -->
+      <div class="card" id="newCurvePanel" style="display:none;margin-top:var(--space-4)">
+        <div class="card-header"><div class="card-title">Create New FTP Curve</div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('newCurvePanel').style.display='none'">✕</button></div>
+        <div class="card-body">
+          <div class="form-grid-3">
+            <div class="form-group"><label class="form-label">Curve Name *</label><input type="text" class="form-control" placeholder="e.g. KES Base Curve v3.3"></div>
+            <div class="form-group"><label class="form-label">Currency *</label><select class="form-control"><option>KES</option><option>USD</option><option>EUR</option></select></div>
+            <div class="form-group"><label class="form-label">Construction Method *</label><select class="form-control"><option>Matched Maturity</option><option>Pool-Based</option><option>Blended</option></select></div>
+            <div class="form-group"><label class="form-label">Effective From *</label><input type="date" class="form-control" value="2026-09-01"></div>
+            <div class="form-group"><label class="form-label">Liquidity Premium (bps)</label><input type="text" class="form-control" value="25"></div>
+          </div>
+        </div>
+        <div class="card-footer" style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn btn-outline btn-sm">Save as Draft</button>
+          <button class="btn btn-primary btn-sm" onclick="alert('FTP Curve saved as DRAFT.\nInvisible to dealers until Treasurer approves.\nRef: FTP-DRAFT-005')">Submit for Treasurer Approval</button>
+        </div>
+      </div>
+    </div>
