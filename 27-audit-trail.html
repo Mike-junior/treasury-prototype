@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Audit Trail — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.audit-detail{background:#0A1628;border-radius:var(--radius-md);padding:var(--space-3);font-family:var(--font-mono);font-size:11px;line-height:1.8;color:#94A3B8;margin-top:var(--space-3);}
+.audit-detail .ak{color:#60A5FA;}
+.audit-detail .av{color:#E2E8F0;}
+.audit-detail .achange{color:#4ADE80;}
+.audit-detail .aold{color:#F87171;}
+.at-row{display:flex;gap:var(--space-3);padding:10px var(--space-4);border-bottom:1px solid var(--surface-divider);cursor:pointer;transition:background .12s;}
+.at-row:hover{background:var(--surface-bg);}
+.at-row:last-child{border-bottom:none;}
+.at-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<div id="sidebar-root"></div><script src="sidebar-include.js"></script>
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">Audit Records (7yr)</span><span class="rate">2,847,432</span></div>
+    <div class="fx-tick"><span class="pair">Records Today</span><span class="rate">1,284</span></div>
+    <div class="fx-tick"><span class="pair">SoD Violations Attempted</span><span class="rate">1</span><span class="delta" style="color:var(--status-danger)">blocked</span></div>
+    <div class="fx-tick"><span class="pair">Retention</span><span class="rate">7 years</span><span class="delta" style="color:var(--status-success)">immutable</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Audit Trail</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm">Export Audit Report</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#4B5563;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">IA</div>
+      <div><div style="font-size:12px;font-weight:600">Internal Audit</div><div style="font-size:10px;color:var(--text-muted)">Read-only · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Audit Trail Viewer</h1>
+        <p class="page-subtitle">Immutable 7-year audit log · FR-22 · ROLE_INTERNAL_AUDIT · Every system action recorded with old/new values, IP &amp; session ID</p></div>
+    </div>
+    <div class="alert alert-info" style="margin-bottom:var(--space-4)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div style="font-size:11px"><strong>FR-22:</strong> This log is immutable — no record can be deleted, modified or suppressed. Retention: 7 years. Every action by every user is recorded including failed attempts, overrides and SoD violations.</div>
+    </div>
+
+    <!-- Search filters -->
+    <div class="card" style="margin-bottom:var(--space-4)">
+      <div class="card-body" style="padding:var(--space-3)">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr) auto;gap:var(--space-3);align-items:end">
+          <div class="form-group" style="margin:0"><label class="form-label">Date From</label><input type="date" class="form-control" value="2026-08-25"></div>
+          <div class="form-group" style="margin:0"><label class="form-label">Date To</label><input type="date" class="form-control" value="2026-08-25"></div>
+          <div class="form-group" style="margin:0"><label class="form-label">User</label><input type="text" class="form-control" placeholder="e.g. j.mwangi"></div>
+          <div class="form-group" style="margin:0"><label class="form-label">Action Type</label><select class="form-control"><option>All Actions</option><option>DEAL_SUBMIT</option><option>DEAL_AUTH</option><option>DEAL_REJECT</option><option>CONFIG_CHANGE</option><option>USER_LOGIN</option><option>SOD_VIOLATION</option><option>LIMIT_OVERRIDE</option></select></div>
+          <div class="form-group" style="margin:0"><label class="form-label">Entity Type</label><select class="form-control"><option>All Entities</option><option>Deal</option><option>Limit</option><option>User</option><option>Config</option><option>MarketData</option></select></div>
+          <button class="btn btn-primary btn-sm">Search</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 400px;gap:var(--space-4);align-items:start">
+      <!-- Audit log list -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">Audit Events — 25 Aug 2026</div><div class="card-subtitle">1,284 events today · Click row to view full detail</div></div>
+        <div>
+          <div class="at-row" onclick="showAudit('deal_auth')">
+            <div class="at-dot" style="background:var(--status-success)"></div>
+            <div style="flex:1"><div style="font-weight:600">DEAL_AUTH</div><div style="font-size:11px;color:var(--text-muted)">m.njoki authorised DEAL-00287 (FX Spot USD/KES $2.5M)</div></div>
+            <div style="text-align:right"><div class="mono text-xs">09:31:05</div><span class="badge badge-success" style="margin-top:4px">SUCCESS</span></div>
+          </div>
+          <div class="at-row" onclick="showAudit('deal_submit')">
+            <div class="at-dot" style="background:#2563EB"></div>
+            <div style="flex:1"><div style="font-weight:600">DEAL_SUBMIT</div><div style="font-size:11px;color:var(--text-muted)">j.mwangi submitted DEAL-00287 · rate 129.42 vs market 129.45 (−3bp, within tolerance)</div></div>
+            <div style="text-align:right"><div class="mono text-xs">09:12:44</div><span class="badge badge-info" style="margin-top:4px">RECORDED</span></div>
+          </div>
+          <div class="at-row" onclick="showAudit('sod_violation')">
+            <div class="at-dot" style="background:var(--status-danger)"></div>
+            <div style="flex:1"><div style="font-weight:600" style="color:var(--status-danger)">SOD_VIOLATION_ATTEMPT</div><div style="font-size:11px;color:var(--text-muted)">j.mwangi attempted to authorise own deal DEAL-00287 via API · BLOCKED</div></div>
+            <div style="text-align:right"><div class="mono text-xs">09:11:02</div><span class="badge badge-danger" style="margin-top:4px">BLOCKED</span></div>
+          </div>
+          <div class="at-row" onclick="showAudit('limit_override')">
+            <div class="at-dot" style="background:var(--status-warning)"></div>
+            <div style="flex:1"><div style="font-weight:600">LIMIT_OVERRIDE</div><div style="font-size:11px;color:var(--text-muted)">k.omondi acknowledged EUR NOP warning (84%) with justification: "Passive breach — rate movement"</div></div>
+            <div style="text-align:right"><div class="mono text-xs">10:22:33</div><span class="badge badge-warning" style="margin-top:4px">OVERRIDE</span></div>
+          </div>
+          <div class="at-row" onclick="showAudit('config_change')">
+            <div class="at-dot" style="background:#7C3AED"></div>
+            <div style="flex:1"><div style="font-weight:600">CONFIG_CHANGE</div><div style="font-size:11px;color:var(--text-muted)">j.mwangi updated ZAR NOP limit from 20M to 25M · required secondary approval</div></div>
+            <div style="text-align:right"><div class="mono text-xs">08:45:12</div><span class="badge badge-primary" style="margin-top:4px">CONFIG</span></div>
+          </div>
+          <div class="at-row" onclick="showAudit('user_login')">
+            <div class="at-dot" style="background:var(--status-success)"></div>
+            <div style="flex:1"><div style="font-weight:600">USER_LOGIN</div><div style="font-size:11px;color:var(--text-muted)">j.mwangi authenticated · MFA TOTP passed · IP: 41.90.x.x · Session: S-0825-001</div></div>
+            <div style="text-align:right"><div class="mono text-xs">08:55:31</div><span class="badge badge-success" style="margin-top:4px">SUCCESS</span></div>
+          </div>
+          <div class="at-row" onclick="showAudit('market_override')">
+            <div class="at-dot" style="background:var(--status-warning)"></div>
+            <div style="flex:1"><div style="font-weight:600">MARKET_DATA_OVERRIDE</div><div style="font-size:11px;color:var(--text-muted)">k.omondi overrode IFB 10yr price 101.42→101.20 · Source: Bloomberg BGN · Approved by j.mwangi</div></div>
+            <div style="text-align:right"><div class="mono text-xs">09:00:45</div><span class="badge badge-warning" style="margin-top:4px">OVERRIDE</span></div>
+          </div>
+          <div class="at-row">
+            <div class="at-dot" style="background:var(--text-muted)"></div>
+            <div style="flex:1"><div style="font-weight:600">DATE_ADVANCE</div><div style="font-size:11px;color:var(--text-muted)">System advanced business date from 24/08/2026 to 25/08/2026 · EOD complete</div></div>
+            <div style="text-align:right"><div class="mono text-xs">24/08 17:02</div><span class="badge badge-neutral" style="margin-top:4px">SYSTEM</span></div>
+          </div>
+        </div>
+        <div class="card-footer" style="display:flex;justify-content:space-between">
+          <span style="font-size:11px;color:var(--text-muted)">Showing 8 of 1,284 events</span>
+          <div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm">‹ Prev</button><button class="btn btn-outline btn-sm" style="background:var(--brand-secondary);color:#fff">1</button><button class="btn btn-outline btn-sm">2</button><button class="btn btn-outline btn-sm">Next ›</button></div>
+        </div>
+      </div>
+
+      <!-- Detail panel -->
+      <div class="card">
+        <div class="card-header"><div class="card-title" id="auditDetailTitle">SOD_VIOLATION_ATTEMPT</div><div class="card-subtitle">Full audit record · Immutable</div></div>
+        <div style="padding:var(--space-4)">
+          <div style="display:flex;flex-direction:column;gap:5px;font-size:12px">
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Event ID</span><span class="mono fw-600">EVT-2026-08-25-000843</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Timestamp</span><span class="mono fw-600">2026-08-25T09:11:02.341Z</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">User</span><span class="mono fw-600">j.mwangi (James Mwangi)</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Action</span><span class="mono fw-600" style="color:var(--status-danger)">SOD_VIOLATION_ATTEMPT</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Entity Type</span><span class="mono fw-600">DEAL</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Entity ID</span><span class="mono fw-600">DEAL-00287</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Result</span><span class="mono fw-600" style="color:var(--status-danger)">BLOCKED — HTTP 403</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">IP Address</span><span class="mono fw-600">41.90.xxx.xxx</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Session ID</span><span class="mono fw-600">S-0825-001</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">User Agent</span><span class="mono fw-600" style="font-size:10px">Chrome 127 / Windows</span></div>
+          </div>
+          <div class="audit-detail">
+            <span class="ak">error_code: </span><span class="av">"ERR_SOD_VIOLATION"</span><br>
+            <span class="ak">message: </span><span class="aold">"Capturer cannot authorise own deal"</span><br>
+            <span class="ak">deal_id: </span><span class="av">"DEAL-00287"</span><br>
+            <span class="ak">dealer_id: </span><span class="av">"USR-001 (j.mwangi)"</span><br>
+            <span class="ak">authoriser_id: </span><span class="av">"USR-001 (j.mwangi)"</span><br>
+            <span class="ak">check: </span><span class="aold">"dealer_id == authoriser_id → BLOCKED"</span><br>
+            <span class="ak">api_endpoint: </span><span class="av">"POST /api/v1/deals/DEAL-00287/authorise"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+var auditData = {
+  deal_auth:{title:'DEAL_AUTH — DEAL-00287',detail:'Authorised by m.njoki\nDeal: DEAL-00287 FX Spot USD/KES\nStatus: PENDING_AUTH → AUTHORISED\nNote: "Rates verified. Within mandate."'},
+  deal_submit:{title:'DEAL_SUBMIT — DEAL-00287',detail:'Submitted by j.mwangi\nRate: 129.42 vs market 129.45 (−3bp ✓)\nLimit check: PASSED (1 warning - Agg NOP 72%)'},
+  sod_violation:{title:'SOD_VIOLATION_ATTEMPT — DEAL-00287',detail:'j.mwangi attempted self-authorisation\nBlocked: HTTP 403 ERR_SOD_VIOLATION'},
+  limit_override:{title:'LIMIT_OVERRIDE — EUR NOP',detail:'k.omondi acknowledged EUR NOP warning\nJustification: Passive breach — EUR rate movement\nBreached threshold: 80% → Current: 84%'},
+  config_change:{title:'CONFIG_CHANGE — ZAR NOP Limit',detail:'Old value: KES 20,000,000\nNew value: KES 25,000,000\nApproved by: m.njoki'},
+  user_login:{title:'USER_LOGIN — j.mwangi',detail:'MFA TOTP: PASSED\nIP: 41.90.xxx.xxx\nSession: S-0825-001'},
+  market_override:{title:'MARKET_DATA_OVERRIDE — IFB 10yr',detail:'Old price: 101.42 (Reuters)\nNew price: 101.20 (Bloomberg BGN)\nJustification: Reuters feed stale 12min\nApproved by: j.mwangi'}
+};
+function showAudit(id){if(auditData[id]){document.getElementById('auditDetailTitle').textContent=auditData[id].title;}}
+</script>
+</body></html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Accounting &amp; GL — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.rule-row{display:flex;gap:var(--space-3);padding:10px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;cursor:pointer;transition:background .12s;}
+.rule-row:hover{background:var(--surface-bg);}
+.rule-row:last-child{border-bottom:none;}
+.jnl-row{display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.jnl-row:last-child{border-bottom:none;}
+.jnl-row .jk{color:var(--text-muted);}
+.jnl-row .jv{font-weight:700;font-family:var(--font-mono);}
+.posting-row{display:flex;gap:var(--space-3);padding:10px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.posting-row:last-child{border-bottom:none;}
+.post-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.post-icon svg{width:12px;height:12px;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<div id="sidebar-root"></div><script src="sidebar-include.js"></script>
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">GL Adapter</span><span class="rate">Connected</span><span class="delta up">✓</span></div>
+    <div class="fx-tick"><span class="pair">Pending Batches</span><span class="rate">3</span><span class="delta" style="color:var(--status-warning)">awaiting approval</span></div>
+    <div class="fx-tick"><span class="pair">Failed Postings</span><span class="rate">1</span><span class="delta" style="color:var(--status-danger)">retry queue</span></div>
+    <div class="fx-tick"><span class="pair">Posted Today</span><span class="rate">287</span><span class="delta up">entries</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Accounting &amp; GL</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm">Rule Simulation</button>
+      <button class="btn btn-primary btn-sm" onclick="alert('Posting batch approved and sent to CBS GL.\nRef: BATCH-2026-0825-003')">Post Pending Batch</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#0D7377;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">SO</div>
+      <div><div style="font-size:12px;font-weight:600">Susan Otieno</div><div style="font-size:10px;color:var(--text-muted)">Back Office · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Accounting Engine &amp; GL Posting Monitor</h1>
+        <p class="page-subtitle">Configuration-driven accounting rules · Zero hardcoded journal entries · GL posting monitor · FR-16</p></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+      <div class="kpi-card" style="--kpi-accent:#0A1628"><div class="kpi-label">Accounting Rules Active</div><div class="kpi-value">48</div><div class="kpi-meta">8 event types × 6 products</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-warning)"><div class="kpi-label">Pending Batches</div><div class="kpi-value" style="color:var(--status-warning)">3</div><div class="kpi-meta">Awaiting Back Office approval</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-success)"><div class="kpi-label">Posted Today</div><div class="kpi-value" style="color:var(--status-success)">287</div><div class="kpi-meta">All entries to CBS GL</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-danger)"><div class="kpi-label">Failed / Retry</div><div class="kpi-value" style="color:var(--status-danger)">1</div><div class="kpi-meta">CBS timeout — retrying</div></div>
+    </div>
+
+    <div class="tabs" id="glTabs">
+      <div class="tab-item active" onclick="glTab(this,'rules')">Accounting Rules</div>
+      <div class="tab-item" onclick="glTab(this,'batches')">Posting Batches</div>
+      <div class="tab-item" onclick="glTab(this,'postings')">Posted Entries</div>
+      <div class="tab-item" onclick="glTab(this,'failed')">Failed / Retry</div>
+      <div class="tab-item" onclick="glTab(this,'simulation')">Rule Simulation</div>
+    </div>
+
+    <!-- RULES TAB -->
+    <div class="tab-panel active" id="tab-rules">
+      <div class="alert alert-info" style="margin-bottom:var(--space-4)">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+        <div style="font-size:11px"><strong>FR-16.1:</strong> No deal event ever produces a hardcoded journal entry. Every entry is resolved at runtime from an AccountingRule matched by: EventType + InstrumentType + BookType + LegalEntityId. Zero code deployment for new rules.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Accounting Rule Register</div><div class="card-subtitle">FR-16.1 · 48 active rules · Effective-dated &amp; versioned</div><button class="btn btn-primary btn-sm">+ New Rule</button></div>
+          <div>
+            <div class="rule-row" onclick="showRule('fx_settle')">
+              <div style="flex:1"><div style="font-weight:600">FX_SPOT → DEAL_SETTLE</div><div style="font-size:10px;color:var(--text-muted)">Book: FX Trading · Entity: LE-001 · IFRS 9</div></div>
+              <div style="text-align:right;font-size:11px"><div>Dr: <span class="mono">KES Nostro</span></div><div>Cr: <span class="mono">FCY Nostro</span></div></div>
+              <span class="badge badge-success" style="margin-left:8px">ACTIVE</span>
+            </div>
+            <div class="rule-row" onclick="showRule('fx_mtm')">
+              <div style="flex:1"><div style="font-weight:600">FX_SPOT → MTM_REVALUATION</div><div style="font-size:10px;color:var(--text-muted)">Book: FX Trading · Entity: LE-001 · IFRS 9</div></div>
+              <div style="text-align:right;font-size:11px"><div>Dr/Cr: <span class="mono">FX MTM P&amp;L</span></div><div>Cr/Dr: <span class="mono">Unrealised P&amp;L</span></div></div>
+              <span class="badge badge-success" style="margin-left:8px">ACTIVE</span>
+            </div>
+            <div class="rule-row" onclick="showRule('bond_settle')">
+              <div style="flex:1"><div style="font-weight:600">T_BOND_HTM → DEAL_SETTLE</div><div style="font-size:10px;color:var(--text-muted)">Book: HTM · Entity: LE-001 · IFRS 9 AC</div></div>
+              <div style="text-align:right;font-size:11px"><div>Dr: <span class="mono">HTM Investment</span></div><div>Cr: <span class="mono">CBK Settlement</span></div></div>
+              <span class="badge badge-success" style="margin-left:8px">ACTIVE</span>
+            </div>
+            <div class="rule-row" onclick="showRule('bond_coupon')">
+              <div style="flex:1"><div style="font-weight:600">T_BOND_HTM → COUPON_RECEIVED</div><div style="font-size:10px;color:var(--text-muted)">Book: HTM · Entity: LE-001</div></div>
+              <div style="text-align:right;font-size:11px"><div>Dr: <span class="mono">CBK Settlement</span></div><div>Cr: <span class="mono">Interest Income</span></div></div>
+              <span class="badge badge-success" style="margin-left:8px">ACTIVE</span>
+            </div>
+            <div class="rule-row" onclick="showRule('bond_accrue')">
+              <div style="flex:1"><div style="font-weight:600">T_BOND_HTM → ACCRUAL_RUN</div><div style="font-size:10px;color:var(--text-muted)">Book: HTM · Entity: LE-001 · Daily accrual</div></div>
+              <div style="text-align:right;font-size:11px"><div>Dr: <span class="mono">Accrued Interest</span></div><div>Cr: <span class="mono">Interest Accrued P&amp;L</span></div></div>
+              <span class="badge badge-success" style="margin-left:8px">ACTIVE</span>
+            </div>
+            <div class="rule-row" onclick="showRule('fd_settle')">
+              <div style="flex:1"><div style="font-weight:600">FIXED_DEPOSIT → DEAL_SETTLE</div><div style="font-size:10px;color:var(--text-muted)">Book: Placement/Deposit · Entity: LE-001</div></div>
+              <div style="text-align:right;font-size:11px"><div>Dr: <span class="mono">Placement Asset</span></div><div>Cr: <span class="mono">CBK Settlement</span></div></div>
+              <span class="badge badge-success" style="margin-left:8px">ACTIVE</span>
+            </div>
+          </div>
+        </div>
+        <div class="card" id="ruleDetail">
+          <div class="card-header"><div class="card-title">FX_SPOT → DEAL_SETTLE</div><div class="card-subtitle">Rule detail · FR-16.1</div></div>
+          <div style="padding:var(--space-4)">
+            <div class="jnl-row"><span class="jk">Event Type</span><span class="jv">DEAL_SETTLE</span></div>
+            <div class="jnl-row"><span class="jk">Instrument Type</span><span class="jv">FX_SPOT</span></div>
+            <div class="jnl-row"><span class="jk">Book Type</span><span class="jv">FX_TRADING</span></div>
+            <div class="jnl-row"><span class="jk">Legal Entity</span><span class="jv">LE-001</span></div>
+            <div class="jnl-row"><span class="jk">Framework</span><span class="jv">IFRS 9</span></div>
+            <div class="jnl-row"><span class="jk">Effective From</span><span class="jv">01/01/2026</span></div>
+            <div style="margin-top:var(--space-3);background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);overflow:hidden">
+              <div style="padding:8px var(--space-3);background:var(--brand-secondary);color:#fff;font-size:10px;font-weight:700;text-transform:uppercase">Journal Entry Template</div>
+              <div style="padding:var(--space-3);font-family:var(--font-mono);font-size:11px;line-height:2">
+                <div><span style="color:#4ADE80">Dr:</span> <span style="color:#E2E8F0">KES Nostro (deal.kesNostroAccount)</span></div>
+                <div style="padding-left:20px;color:var(--text-muted)">Amount: deal.notional × deal.spotRate</div>
+                <div style="margin-top:4px"><span style="color:#F87171">Cr:</span> <span style="color:#E2E8F0">FCY Nostro (deal.fcyNostroAccount)</span></div>
+                <div style="padding-left:20px;color:var(--text-muted)">Amount: deal.notional (FCY)</div>
+              </div>
+            </div>
+            <div style="margin-top:var(--space-3)"><button class="btn btn-outline btn-sm" onclick="alert('Rule simulation: projecting journal entries for DEAL-00287...\n\nDr KES Nostro (CBK): KES 323,550,000\nCr USD Nostro (Citi NY): USD 2,500,000\n\nEntries not persisted.')">Simulate for DEAL-00287</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BATCHES TAB -->
+    <div class="tab-panel" id="tab-batches">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Pending GL Posting Batches</div><div class="card-subtitle">FR-16.5 · Require Back Office approval before posting to CBS GL</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Batch ID</th><th>Event Type</th><th>Entries</th><th>Total Dr (KES)</th><th>Total Cr (KES)</th><th>Balanced</th><th>Created</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr style="background:rgba(217,119,6,.03)"><td class="mono fw-600">BATCH-0825-001</td><td style="font-size:12px">DEAL_SETTLE (FX Spot)</td><td class="mono">4</td><td class="mono">323,550,000</td><td class="mono">323,550,000</td><td><span class="badge badge-success">✓ Balanced</span></td><td class="mono text-xs">09:31</td><td><span class="badge badge-warning">PENDING</span></td><td><button class="btn btn-success btn-sm">Post to GL</button></td></tr>
+            <tr style="background:rgba(217,119,6,.03)"><td class="mono fw-600">BATCH-0825-002</td><td style="font-size:12px">ACCRUAL_RUN (Daily)</td><td class="mono">142</td><td class="mono">411,900,000</td><td class="mono">411,900,000</td><td><span class="badge badge-success">✓ Balanced</span></td><td class="mono text-xs">10:30</td><td><span class="badge badge-warning">PENDING</span></td><td><button class="btn btn-success btn-sm">Post to GL</button></td></tr>
+            <tr style="background:rgba(217,119,6,.03)"><td class="mono fw-600">BATCH-0825-003</td><td style="font-size:12px">MTM_REVALUATION</td><td class="mono">12</td><td class="mono">28,700,000</td><td class="mono">28,700,000</td><td><span class="badge badge-success">✓ Balanced</span></td><td class="mono text-xs">10:30</td><td><span class="badge badge-warning">PENDING</span></td><td><button class="btn btn-success btn-sm">Post to GL</button></td></tr>
+          </tbody>
+          </table>
+        </div>
+        <div class="card-footer" style="display:flex;justify-content:space-between">
+          <span style="font-size:11px;color:var(--text-muted)">All 3 batches balanced · Ready to post</span>
+          <button class="btn btn-primary btn-sm" onclick="alert('All 3 batches posted to CBS GL.\nConfirmation refs: CBS-0825-001 / 002 / 003')">Post All Batches</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- POSTED ENTRIES TAB -->
+    <div class="tab-panel" id="tab-postings">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Posted GL Entries — Today</div><div class="card-subtitle">287 entries · All posted to CBS · FR-16.5</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Entry Ref</th><th>Event</th><th>Deal / Source</th><th>GL Account (Dr)</th><th style="text-align:right">Dr Amount</th><th>GL Account (Cr)</th><th style="text-align:right">Cr Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="mono text-xs">JNL-0825-001</td><td style="font-size:11px">DEAL_SETTLE</td><td class="mono text-xs">DEAL-00287</td><td style="font-size:11px">KES Nostro — CBK</td><td class="text-right mono">323,550,000</td><td style="font-size:11px">USD Nostro — Citi NY</td><td class="text-right mono">2,500,000 USD</td><td><span class="badge badge-success">POSTED</span></td></tr>
+            <tr><td class="mono text-xs">JNL-0825-002</td><td style="font-size:11px">MATURITY</td><td class="mono text-xs">DEAL-00284</td><td style="font-size:11px">KES Nostro — CBK</td><td class="text-right mono">500,000,000</td><td style="font-size:11px">T-Bill Investment</td><td class="text-right mono">500,000,000</td><td><span class="badge badge-success">POSTED</span></td></tr>
+            <tr><td class="mono text-xs">JNL-0825-003</td><td style="font-size:11px">COUPON_RECEIVED</td><td class="mono text-xs">BOND-0043</td><td style="font-size:11px">KES Nostro — CBK</td><td class="text-right mono">187,500,000</td><td style="font-size:11px">Interest Income</td><td class="text-right mono">187,500,000</td><td><span class="badge badge-success">POSTED</span></td></tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAILED TAB -->
+    <div class="tab-panel" id="tab-failed">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Failed Postings — Retry Queue</div><div class="card-subtitle">FR-16.6 · Exponential backoff retry · Alert on 3rd failure</div></div>
+        <div style="padding:var(--space-4)">
+          <div style="background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:var(--radius-md);padding:var(--space-4)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div><div style="font-size:13px;font-weight:700;color:var(--status-danger)">JNL-0825-141 — ACCRUAL_RUN Failed</div><div style="font-size:11px;color:var(--status-danger);margin-top:4px">CBS GL adapter timeout after 30 seconds. Retry attempt 1/3. Next retry in 5 minutes.</div></div>
+              <span class="badge badge-danger">RETRY 1/3</span>
+            </div>
+            <div style="margin-top:var(--space-3);display:flex;gap:8px">
+              <button class="btn btn-primary btn-sm" onclick="alert('Manual retry triggered. Posting JNL-0825-141 to CBS GL...')">Retry Now</button>
+              <button class="btn btn-outline btn-sm">View Error Log</button>
+              <button class="btn btn-ghost btn-sm">Skip Entry</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer"><a href="28-integration-monitor.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View CBS GL adapter health →</a></div>
+      </div>
+    </div>
+
+    <!-- SIMULATION TAB -->
+    <div class="tab-panel" id="tab-simulation">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Accounting Rule Simulation</div><div class="card-subtitle">FR-16.3 · Preview journal entries for a test deal without persisting anything</div></div>
+        <div class="card-body">
+          <div class="form-grid-3" style="margin-bottom:var(--space-4)">
+            <div class="form-group"><label class="form-label">Instrument Type</label><select class="form-control"><option>FX_SPOT</option><option>T_BOND_HTM</option><option>FIXED_DEPOSIT</option></select></div>
+            <div class="form-group"><label class="form-label">Event Type</label><select class="form-control"><option>DEAL_SETTLE</option><option>MTM_REVALUATION</option><option>COUPON_RECEIVED</option><option>ACCRUAL_RUN</option></select></div>
+            <div class="form-group"><label class="form-label">Test Amount (KES)</label><input type="text" class="form-control" value="323,550,000"></div>
+            <div class="form-group"><label class="form-label">Book Type</label><select class="form-control"><option>FX_TRADING</option><option>HTM</option><option>AFS</option></select></div>
+            <div class="form-group"><label class="form-label">Legal Entity</label><select class="form-control"><option>LE-001 Kenya</option></select></div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('simResult').style.display=''">Run Simulation</button>
+          <div id="simResult" style="display:none;margin-top:var(--space-4);background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);overflow:hidden">
+            <div style="padding:8px var(--space-3);background:var(--brand-secondary);color:#fff;font-size:11px;font-weight:700">SIMULATION RESULT — NOT PERSISTED</div>
+            <div style="padding:var(--space-3);font-family:var(--font-mono);font-size:12px;line-height:2.2">
+              <div><span style="color:var(--status-success)">Dr</span> 1001-KES-NOSTRO-CBK &nbsp;&nbsp;&nbsp; KES 323,550,000</div>
+              <div><span style="color:var(--status-danger)">Cr</span> 2001-USD-NOSTRO-CITI &nbsp;&nbsp;&nbsp; USD 2,500,000 (equiv. KES 323,550,000)</div>
+              <div style="margin-top:8px;color:var(--text-muted)">Rule matched: FX_SPOT / DEAL_SETTLE / FX_TRADING / LE-001</div>
+              <div style="color:var(--status-success)">✓ Balanced · No entries persisted</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<script>
+function glTab(el,t){document.querySelectorAll('#glTabs .tab-item').forEach(function(e){e.classList.remove('active')});el.classList.add('active');document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});document.getElementById('tab-'+t).classList.add('active');}
+function showRule(id){document.querySelector('#ruleDetail .card-title').textContent=id.replace(/_/g,' → ').toUpperCase();}
+</script>
+</body></html>
