@@ -246,3 +246,99 @@
         <div class="card-footer"><span style="font-size:11px;color:var(--text-muted)">Stop-loss breach blocks new position-adding deals via pre-deal limit check (FR-14.5). Closing trades always permitted.</span></div>
       </div>
     </div>
+
+    <!-- P&L ATTRIBUTION TAB -->
+    <div class="tab-panel" id="tab-pnl">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
+        <div class="card">
+          <div class="card-header"><div class="card-title">P&amp;L Attribution — August 2026</div><div class="card-subtitle">FR-14.6 · Carry · MTM movement · Funding cost</div></div>
+          <div style="padding:var(--space-4)">
+            <div class="pnl-bar"><span style="width:110px">Carry Income</span><div class="pnl-track"><div class="pnl-fill" style="width:82%;background:var(--status-success)"></div></div><span class="mono text-xs fw-600" style="width:65px;text-align:right;color:var(--status-success)">+KES 412M</span></div>
+            <div class="pnl-bar"><span style="width:110px">MTM Movement</span><div class="pnl-track"><div class="pnl-fill" style="width:10%;background:#2563EB"></div></div><span class="mono text-xs fw-600" style="width:65px;text-align:right;color:#2563EB">+KES 44M</span></div>
+            <div class="pnl-bar"><span style="width:110px">FX Trading</span><div class="pnl-track"><div class="pnl-fill" style="width:6%;background:#0D7377"></div></div><span class="mono text-xs fw-600" style="width:65px;text-align:right;color:#0D7377">+KES 29M</span></div>
+            <div class="pnl-bar"><span style="width:110px">Funding Cost</span><div class="pnl-track"><div class="pnl-fill" style="width:4%;background:var(--status-danger)"></div></div><span class="mono text-xs fw-600" style="width:65px;text-align:right;color:var(--status-danger)">−KES 18M</span></div>
+            <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--surface-divider);display:flex;justify-content:space-between;font-size:13px">
+              <span style="font-weight:700">Net P&amp;L (MTD)</span>
+              <span class="mono fw-700" style="color:var(--status-success)">+KES 467M</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">P&amp;L by Desk</div></div>
+          <div style="padding:var(--space-4)">
+            <div class="pnl-bar"><span style="width:110px">Bond HTM Desk</span><div class="pnl-track"><div class="pnl-fill" style="width:70%;background:#0A1628"></div></div><span class="mono text-xs fw-600" style="width:65px;text-align:right">+KES 328M</span></div>
+            <div class="pnl-bar"><span style="width:110px">Bond AFS Desk</span><div class="pnl-track"><div class="pnl-fill" style="width:18%;background:#2563EB"></div></div><span class="mono text-xs fw-600" style="width:65px;text-align:right">+KES 84M</span></div>
+            <div class="pnl-bar"><span style="width:110px">FX Desk</span><div class="pnl-track"><div class="pnl-fill" style="width:6%;background:var(--brand-primary)"></div></div><span class="mono text-xs fw-600" style="width:65px;text-align:right;color:var(--brand-primary)">+KES 29M</span></div>
+            <div class="pnl-bar"><span style="width:110px">MM Desk</span><div class="pnl-track"><div class="pnl-fill" style="width:4%;background:#0D7377"></div></div><span class="mono text-xs fw-600" style="width:65px;text-align:right">+KES 26M</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKET DATA OVERRIDES TAB -->
+    <div class="tab-panel" id="tab-overrides">
+      <div class="alert alert-danger" style="margin-bottom:var(--space-4)">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="15" height="15"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div style="font-size:11px"><strong>FR-14.3:</strong> Market data overrides require ROLE_MIDDLE_OFFICE, a written justification with source reference, AND a second Middle Office user approval. Dealers have zero access. Every override is permanently visible in the audit trail.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:var(--space-4);align-items:start">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Override Register</div><div class="card-subtitle">All market data overrides · Immutable record</div><button class="btn btn-primary btn-sm" onclick="alert('New override form — requires 2nd Middle Office approval.')">+ New Override</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Instrument</th><th>Data Type</th><th>System Value</th><th>Override Value</th><th>Justification</th><th>Approved By</th><th>Timestamp</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600">IFB 10yr 2025</td>
+                  <td>Clean Price</td>
+                  <td class="mono">101.42</td>
+                  <td class="mono" style="color:var(--status-warning)">101.20</td>
+                  <td style="font-size:11px">Reuters feed stale 25 min — used Bloomberg closing</td>
+                  <td style="font-size:11px">K. Omondi + J. Mwangi</td>
+                  <td class="mono text-xs">25/08/2026 09:00</td>
+                  <td><span class="badge badge-warning">ACTIVE</span></td>
+                </tr>
+                <tr style="opacity:.6">
+                  <td style="font-weight:600">FXD 15yr 2024</td>
+                  <td>Clean Price</td>
+                  <td class="mono">101.18</td>
+                  <td class="mono">101.10</td>
+                  <td style="font-size:11px">Holiday in London — used last valid price</td>
+                  <td style="font-size:11px">K. Omondi + W. Kamau</td>
+                  <td class="mono text-xs">19/08/2026 EOD</td>
+                  <td><span class="badge badge-neutral">EXPIRED</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">New Override Request</div></div>
+          <div class="card-body" style="padding:var(--space-3)">
+            <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Instrument *</label><select class="form-control"><option>IFB 10yr 2025</option><option>FXD 15yr 2024</option></select></div>
+            <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Data Type *</label><select class="form-control"><option>Clean Price</option><option>Yield</option><option>FX Rate</option></select></div>
+            <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">System Value</label><input type="text" class="form-control" value="101.42" readonly style="background:#F8FAFC"></div>
+            <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Override Value *</label><input type="text" class="form-control" placeholder="Enter value"></div>
+            <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Source Reference *</label><input type="text" class="form-control" placeholder="e.g. Bloomberg BGN 25 Aug 2026 16:00"></div>
+            <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Justification *</label><textarea class="form-control" rows="2" placeholder="Written reason required (FR-14.3)"></textarea></div>
+          </div>
+          <div class="card-footer" style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn btn-primary btn-sm" onclick="alert('Override submitted for 2nd Middle Office approval.\nRef: OVR-2026-048')">Submit for Approval</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<script>
+function moTab(el,t){
+  document.querySelectorAll('#moTabs .tab-item').forEach(function(e){e.classList.remove('active')});
+  el.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('tab-'+t).classList.add('active');
+}
+function runVal(){alert('Valuation run started.\nUsing locked market data as of 10:30 AM.\nResults available in 45 seconds.');}
+</script>
+</body></html>
