@@ -55,25 +55,8 @@
 <body>
 <div class="app-shell">
 
-<!-- Sidebar -->
-<nav class="sidebar">
-  <div class="sidebar-logo">
-    <div class="sidebar-logo-mark">E&M</div>
-    <div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Main</div>
-    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
-    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
-    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
-    <a href="05-limits-exposure.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
-    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
-    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
-  </div>
-  <div class="sidebar-footer">
-    <div class="user-mini"><div class="user-avatar">KO</div><div class="user-mini-info"><div class="name">Kevin Omondi</div><div class="role">Middle Office · LE-001</div></div></div>
-  </div>
-</nav>
+<div id="sidebar-root"></div>
+<script src="sidebar-include.js"></script>
 
 <div class="main-content">
   <div class="fx-ticker-bar">
