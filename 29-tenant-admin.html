@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tenant Admin — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.tenant-card{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);padding:var(--space-4);cursor:pointer;transition:all .15s;}
+.tenant-card:hover,.tenant-card.sel{border-color:var(--brand-primary);box-shadow:var(--shadow-md);}
+.tenant-card .tn{font-size:13px;font-weight:700;}
+.tenant-card .tt{font-size:11px;color:var(--text-muted);}
+.tenant-card .tbadges{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+.step-row{display:flex;gap:var(--space-3);padding:10px 0;border-bottom:1px solid var(--surface-divider);align-items:flex-start;font-size:12px;}
+.step-row:last-child{border-bottom:none;}
+.step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;}
+.s-done{background:var(--status-success);color:#fff;}
+.s-active{background:var(--brand-primary);color:#fff;}
+.s-pending{background:var(--surface-border);color:var(--text-muted);}
+.env-row{display:flex;align-items:center;justify-content:space-between;padding:10px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.env-row:last-child{border-bottom:none;}
+.env-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--radius-full);font-size:10px;font-weight:700;border:1px solid;}
+.field-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.field-row:last-child{border-bottom:none;}
+.field-row .fk{color:var(--text-muted);}
+.field-row .fv{font-weight:600;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<div id="sidebar-root"></div><script src="sidebar-include.js"></script>
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">Active Tenants</span><span class="rate">4</span></div>
+    <div class="fx-tick"><span class="pair">Edition</span><span class="rate">ENTERPRISE</span><span class="delta" style="color:var(--status-success)">LE-001</span></div>
+    <div class="fx-tick"><span class="pair">Platform Version</span><span class="rate">E&M TMS v2.0</span></div>
+    <div class="fx-tick"><span class="pair">Env Promotions Pending</span><span class="rate">1</span><span class="delta" style="color:var(--status-warning)">UAT→Prod</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Tenant Administration</span></div>
+    <div class="topbar-spacer"></div>
+    <div style="background:rgba(200,16,46,.1);border:1px solid rgba(200,16,46,.3);color:var(--brand-primary);padding:5px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:700">E&amp;M Platform Admin</div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#4B5563;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">PA</div>
+      <div><div style="font-size:12px;font-weight:600">Platform Admin</div><div style="font-size:10px;color:var(--text-muted)">E&M Technology House</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Tenant Administration</h1>
+        <p class="page-subtitle">Provision new tenants · Manage legal entities · Configure branding · Environment promotion · FR-01 · Zero code deployment</p></div>
+      <div class="page-actions">
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('newTenantPanel').style.display=''">+ Provision New Tenant</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="taTabs">
+      <div class="tab-item active" onclick="taTab(this,'tenants')">Tenants</div>
+      <div class="tab-item" onclick="taTab(this,'entities')">Legal Entities</div>
+      <div class="tab-item" onclick="taTab(this,'branding')">Branding</div>
+      <div class="tab-item" onclick="taTab(this,'environments')">Environments &amp; Promotion</div>
+      <div class="tab-item" onclick="taTab(this,'history')">Config History</div>
+    </div>
+
+    <!-- TENANTS TAB -->
+    <div class="tab-panel active" id="tab-tenants">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+        <div class="tenant-card sel">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div><div class="tn">First National Bank Ltd</div><div class="tt">FNB · Kenya · TIER_2_BANK</div></div>
+            <span class="badge badge-success">ACTIVE</span>
+          </div>
+          <div class="tbadges">
+            <span class="badge badge-info">ENTERPRISE</span>
+            <span class="badge badge-neutral">KES</span>
+            <span class="badge badge-neutral">CBK</span>
+          </div>
+          <div style="margin-top:8px;font-size:10px;color:var(--text-muted)">Subscribed: 01/01/2026 · 18 users · 6 modules</div>
+        </div>
+        <div class="tenant-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div><div class="tn">East Africa Commerce Bank</div><div class="tt">EACB · Uganda · TIER_1_BANK</div></div>
+            <span class="badge badge-success">ACTIVE</span>
+          </div>
+          <div class="tbadges">
+            <span class="badge badge-primary">CORPORATE</span>
+            <span class="badge badge-neutral">UGX</span>
+            <span class="badge badge-neutral">BoU</span>
+          </div>
+          <div style="margin-top:8px;font-size:10px;color:var(--text-muted)">Subscribed: 01/03/2026 · 24 users · 8 modules</div>
+        </div>
+        <div class="tenant-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div><div class="tn">Savannah Microfinance</div><div class="tt">SMF · Tanzania · MFI</div></div>
+            <span class="badge badge-success">ACTIVE</span>
+          </div>
+          <div class="tbadges">
+            <span class="badge badge-neutral">ESSENTIALS</span>
+            <span class="badge badge-neutral">TZS</span>
+            <span class="badge badge-neutral">BoT</span>
+          </div>
+          <div style="margin-top:8px;font-size:10px;color:var(--text-muted)">Subscribed: 01/06/2026 · 5 users · 3 modules</div>
+        </div>
+        <div class="tenant-card" style="border-style:dashed;cursor:pointer" onclick="document.getElementById('newTenantPanel').style.display=''">
+          <div style="text-align:center;padding:var(--space-4);color:var(--text-muted)">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto var(--space-2)"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <div style="font-size:12px;font-weight:600">Provision New Tenant</div>
+            <div style="font-size:11px;margin-top:4px">FR-01.1 · No code deployment</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tenant provisioning form -->
+      <div class="card" id="newTenantPanel" style="display:none">
+        <div class="card-header"><div class="card-title">Provision New Tenant — FR-01.1</div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('newTenantPanel').style.display='none'">✕</button></div>
+        <div class="card-body">
+          <div class="form-grid-3">
+            <div class="form-group"><label class="form-label">Legal Name *</label><input type="text" class="form-control" placeholder="e.g. Savannah Bank Ltd"></div>
+            <div class="form-group"><label class="form-label">Trading Name</label><input type="text" class="form-control" placeholder="e.g. Savannah Bank"></div>
+            <div class="form-group"><label class="form-label">Institution Type *</label><select class="form-control"><option>TIER_1_BANK</option><option>TIER_2_BANK</option><option>MFI</option><option>SACCOS</option></select></div>
+            <div class="form-group"><label class="form-label">Country *</label><select class="form-control"><option>Kenya (KE)</option><option>Uganda (UG)</option><option>Tanzania (TZ)</option><option>Rwanda (RW)</option></select></div>
+            <div class="form-group"><label class="form-label">Base Currency *</label><select class="form-control"><option>KES</option><option>UGX</option><option>TZS</option></select></div>
+            <div class="form-group"><label class="form-label">Edition *</label><select class="form-control"><option>ESSENTIALS</option><option>PROFESSIONAL</option><option selected>ENTERPRISE</option><option>CORPORATE</option></select></div>
+            <div class="form-group" style="grid-column:1/-1"><label class="form-label">Module Entitlements</label>
+              <div style="display:flex;gap:var(--space-4);flex-wrap:wrap;margin-top:6px;font-size:12px">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked> Deal Capture</label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked> ALM / IRRBB</label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked> FTP</label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked> Treasury Sales</label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked> Nostro Management</label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked> Regulatory Reporting</label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox"> Islamic Window</label>
+              </div>
+            </div>
+            <div class="form-group"><label class="form-label">Regulatory Pack</label><select class="form-control"><option>PACK-CBK-CONV-2026</option><option>PACK-BOU-2026</option><option>PACK-BOT-2026</option></select></div>
+            <div class="form-group"><label class="form-label">Subscription Start *</label><input type="date" class="form-control" value="2026-09-01"></div>
+            <div class="form-group"><label class="form-label">Tenant Admin Email *</label><input type="text" class="form-control" placeholder="admin@bank.co.ke"></div>
+            <div class="form-group"><label class="form-label">Segment Template</label><select class="form-control"><option>ENTERPRISE_CONV_KE_2026</option><option>ESSENTIALS_CONV_2026</option><option>BLANK (manual config)</option></select></div>
+          </div>
+        </div>
+        <div class="card-footer" style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('newTenantPanel').style.display='none'">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="alert('Tenant provisioned successfully!\n\nTenant ID: TEN-005\nKeycloak realm created\nSegment template applied\nProvisioning email sent to admin@bank.co.ke\n\nNo code deployment was required (FR-01.1).')">Provision Tenant</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEGAL ENTITIES TAB -->
+    <div class="tab-panel" id="tab-entities">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Legal Entities — FNB Kenya</div><div class="card-subtitle">FR-01.3 · Multiple entities per tenant · CONVENTIONAL &amp; ISLAMIC_WINDOW</div><button class="btn btn-primary btn-sm">+ Add Entity</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Entity ID</th><th>Name</th><th>Type</th><th>Currency</th><th>Regulator</th><th>Reg. Pack</th><th>FY End</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="mono fw-600">LE-001</td><td style="font-weight:600">FNB Kenya Ltd (Conventional)</td><td><span class="badge badge-neutral">CONVENTIONAL</span></td><td class="mono">KES</td><td>CBK</td><td class="mono text-xs">PACK-CBK-CONV-2026</td><td>31-Dec</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td class="mono fw-600">LE-002</td><td style="font-weight:600">FNB Islamic Window Kenya</td><td><span class="badge badge-warning">ISLAMIC_WINDOW</span></td><td class="mono">KES</td><td>CBK</td><td class="mono text-xs">PACK-CBK-CONV-2026 + PACK-CBK-ISLAMIC-2026</td><td>31-Dec</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANDING TAB -->
+    <div class="tab-panel" id="tab-branding">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Branding Configuration</div><div class="card-subtitle">FR-01.6 · Per legal entity · Zero code deployment</div></div>
+          <div class="card-body">
+            <div class="form-group" style="margin-bottom:var(--space-3)"><label class="form-label">Institution Name (Report Header)</label><input type="text" class="form-control" value="First National Bank Ltd"></div>
+            <div class="form-group" style="margin-bottom:var(--space-3)"><label class="form-label">Primary Brand Colour</label>
+              <div style="display:flex;gap:var(--space-2);align-items:center"><input type="color" value="#C8102E" style="width:40px;height:36px;border-radius:6px;border:1px solid var(--surface-border);cursor:pointer"><input type="text" class="form-control" value="#C8102E" style="flex:1"></div>
+            </div>
+            <div class="form-group" style="margin-bottom:var(--space-3)"><label class="form-label">Language</label><select class="form-control"><option>English (en-KE)</option><option>Swahili (sw-KE)</option><option>French (fr)</option></select></div>
+            <div class="form-group" style="margin-bottom:var(--space-3)"><label class="form-label">Date Format</label><select class="form-control"><option>DD/MM/YYYY</option><option>MM/DD/YYYY</option><option>YYYY-MM-DD</option></select></div>
+            <div class="form-group" style="margin-bottom:var(--space-3)"><label class="form-label">Number Format</label><select class="form-control"><option>1,234,567.89 (UK/KE)</option><option>1.234.567,89 (EU)</option></select></div>
+            <div class="form-group"><label class="form-label">Time Zone</label><select class="form-control"><option>Africa/Nairobi (EAT +3)</option><option>Africa/Kampala (EAT +3)</option><option>Africa/Dar_es_Salaam (EAT +3)</option></select></div>
+          </div>
+          <div class="card-footer" style="display:flex;justify-content:flex-end;gap:8px">
+            <button class="btn btn-primary btn-sm" onclick="alert('Branding saved.\nChanges take effect on next user login.')">Save Branding</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Report Letterhead Preview</div></div>
+          <div style="margin:var(--space-4);border:1px solid var(--surface-border);border-radius:var(--radius-md);overflow:hidden">
+            <div style="background:#C8102E;padding:16px 20px;display:flex;align-items:center;gap:12px">
+              <div style="width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:#C8102E">FNB</div>
+              <div>
+                <div style="color:#fff;font-weight:800;font-size:14px">First National Bank Ltd</div>
+                <div style="color:rgba(255,255,255,.7);font-size:10px">Treasury Management System — Confidential</div>
+              </div>
+            </div>
+            <div style="padding:16px 20px;font-size:12px;color:var(--text-muted)">
+              <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px">Daily Position Report</div>
+              <div>Business Date: 25 August 2026 · Legal Entity: LE-001 · Currency: KES</div>
+              <div style="margin-top:12px;padding:8px;background:var(--surface-bg);border-radius:6px;font-size:11px">Report content will appear here...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENVIRONMENTS TAB -->
+    <div class="tab-panel" id="tab-environments">
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Environment Promotion</div><div class="card-subtitle">FR-01.8 · Sandbox → UAT → Production · Versioned package · Approval required</div></div>
+          <div>
+            <div class="env-row">
+              <div>
+                <div style="font-weight:700;font-size:13px">Sandbox</div>
+                <div style="font-size:11px;color:var(--text-muted)">Testing & development · No live data</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                <span class="env-pill" style="background:var(--success-bg);color:var(--status-success);border-color:var(--success-border)">● RUNNING</span>
+                <span style="font-size:10px;color:var(--text-muted)">Config v2.1.0-sandbox</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:center;padding:var(--space-2) 0">
+              <button class="btn btn-outline btn-sm" onclick="alert('Export config package v2.1.0-sandbox → UAT\n\nValidating: 48 rules, 18 users, 6 limits...\nPackage exported: PKG-2026-0825-001')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                Promote Sandbox → UAT
+              </button>
+            </div>
+            <div class="env-row" style="background:rgba(217,119,6,.03)">
+              <div>
+                <div style="font-weight:700;font-size:13px">UAT</div>
+                <div style="font-size:11px;color:var(--text-muted)">User acceptance testing · Synthetic data</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                <span class="env-pill" style="background:var(--warning-bg);color:var(--status-warning);border-color:var(--warning-border)">● PROMOTION PENDING</span>
+                <span style="font-size:10px;color:var(--text-muted)">Config v2.0.8-uat → pending v2.1.0</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:center;padding:var(--space-2) 0">
+              <button class="btn btn-primary btn-sm" onclick="alert('Promote UAT config v2.1.0 → Production?\n\nPre-promotion validation:\n✓ 48 accounting rules validated\n✓ 18 users validated\n✓ 6 limits validated\n✓ Backup of Production taken\n\nApprover: J. Mwangi\n\nPromotion successful. Requires next user session to take effect.')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                Promote UAT → Production (Pending Approval)
+              </button>
+            </div>
+            <div class="env-row">
+              <div>
+                <div style="font-weight:700;font-size:13px">Production</div>
+                <div style="font-size:11px;color:var(--text-muted)">Live environment · Real data · 99.9% SLA</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                <span class="env-pill" style="background:var(--success-bg);color:var(--status-success);border-color:var(--success-border)">● LIVE</span>
+                <span style="font-size:10px;color:var(--text-muted)">Config v2.0.8-production</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Onboarding Checklist</div><div class="card-subtitle">FR-01.2 · Segment template status</div></div>
+          <div style="padding:var(--space-3)">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div class="step-row"><div class="step-num s-done">✓</div><div><div style="font-weight:600">Tenant Provisioned</div><div style="color:var(--text-muted)">TEN-001 created · 01/01/2026</div></div></div>
+              <div class="step-row"><div class="step-num s-done">✓</div><div><div style="font-weight:600">Segment Template Applied</div><div style="color:var(--text-muted)">ENTERPRISE_CONV_KE_2026 applied in &lt;5 min</div></div></div>
+              <div class="step-row"><div class="step-num s-done">✓</div><div><div style="font-weight:600">Legal Entities Created</div><div style="color:var(--text-muted)">LE-001 Conventional · LE-002 Islamic Window</div></div></div>
+              <div class="step-row"><div class="step-num s-done">✓</div><div><div style="font-weight:600">Users &amp; Roles Configured</div><div style="color:var(--text-muted)">18 users · 7 role types · MFA enrolled</div></div></div>
+              <div class="step-row"><div class="step-num s-done">✓</div><div><div style="font-weight:600">Static Data Loaded</div><div style="color:var(--text-muted)">268 instruments · 84 counterparties</div></div></div>
+              <div class="step-row"><div class="step-num s-done">✓</div><div><div style="font-weight:600">Limits Configured</div><div style="color:var(--text-muted)">48 rules · CTY + NOP + Dealer limits</div></div></div>
+              <div class="step-row"><div class="step-num s-active">7</div><div><div style="font-weight:600" style="color:var(--brand-primary)">UAT Promotion</div><div style="color:var(--status-warning)">Config v2.1.0 pending Treasurer approval</div></div></div>
+              <div class="step-row" style="border-bottom:none"><div class="step-num s-pending">8</div><div><div style="font-weight:600;color:var(--text-muted)">Go-Live Sign-Off</div><div style="color:var(--text-muted)">Awaiting UAT completion</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIG HISTORY TAB -->
+    <div class="tab-panel" id="tab-history">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Configuration Version History</div><div class="card-subtitle">FR-01.7 · All configuration changes · Who, what, when, previous value</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Timestamp</th><th>Changed By</th><th>Change Type</th><th>Object</th><th>Old Value</th><th>New Value</th><th>Environment</th></tr></thead>
+          <tbody>
+            <tr><td class="mono text-xs">25/08/2026 08:45</td><td style="font-size:12px">J. Mwangi</td><td><span class="badge badge-warning">LIMIT_CHANGE</span></td><td style="font-size:12px">ZAR NOP Limit</td><td class="mono text-xs">KES 20M</td><td class="mono text-xs">KES 25M</td><td><span class="badge badge-success">PRODUCTION</span></td></tr>
+            <tr><td class="mono text-xs">01/08/2026 14:22</td><td style="font-size:12px">J. Mwangi</td><td><span class="badge badge-info">FTP_CURVE</span></td><td style="font-size:12px">KES Base Curve v3.2</td><td class="mono text-xs">v3.1</td><td class="mono text-xs">v3.2 (active)</td><td><span class="badge badge-success">PRODUCTION</span></td></tr>
+            <tr><td class="mono text-xs">31/07/2026 09:00</td><td style="font-size:12px">Platform Admin</td><td><span class="badge badge-primary">ENV_PROMOTION</span></td><td style="font-size:12px">Config v2.0.8</td><td class="mono text-xs">v2.0.7-prod</td><td class="mono text-xs">v2.0.8-prod</td><td><span class="badge badge-success">PRODUCTION</span></td></tr>
+            <tr><td class="mono text-xs">15/07/2026 11:30</td><td style="font-size:12px">J. Mwangi</td><td><span class="badge badge-neutral">USER_ADDED</span></td><td style="font-size:12px">W. Kamau</td><td class="mono text-xs">—</td><td class="mono text-xs">ROLE_DEALER (MM)</td><td><span class="badge badge-success">PRODUCTION</span></td></tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<script>
+function taTab(el,t){document.querySelectorAll('#taTabs .tab-item').forEach(function(e){e.classList.remove('active')});el.classList.add('active');document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});document.getElementById('tab-'+t).classList.add('active');}
+</script>
+</body></html>
