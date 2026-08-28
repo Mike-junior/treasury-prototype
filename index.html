@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E&M TMS — Screen Index</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#F4F6FA;color:#0A1628;min-height:100vh;}
+.topbar{background:#0A1628;padding:18px 40px;display:flex;align-items:center;gap:14px;}
+.logo-box{width:38px;height:38px;background:#C8102E;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#fff;}
+.logo-text .name{font-size:15px;font-weight:800;color:#fff;}
+.logo-text .sub{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:.5px;text-transform:uppercase;}
+.hero{background:linear-gradient(135deg,#0A1628 0%,#1E3A5F 100%);padding:48px 40px;color:#fff;}
+.hero h1{font-size:32px;font-weight:800;margin-bottom:8px;}
+.hero p{font-size:14px;color:rgba(255,255,255,.55);max-width:600px;line-height:1.7;}
+.stats{display:flex;gap:40px;margin-top:24px;}
+.stat .val{font-size:24px;font-weight:800;}
+.stat .lbl{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;}
+.content{padding:40px;}
+.section-title{font-size:11px;font-weight:800;color:#718096;text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #E2E8F0;}
+.section{margin-bottom:40px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:18px;text-decoration:none;color:inherit;display:block;transition:all .15s;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cc,#C8102E);}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);border-color:#94A3B8;transform:translateY(-2px);}
+.card .num{font-size:10px;font-weight:700;color:#A0AEC0;font-family:'JetBrains Mono',monospace;margin-bottom:6px;}
+.card .title{font-size:13px;font-weight:700;margin-bottom:4px;}
+.card .desc{font-size:11px;color:#718096;line-height:1.5;}
+.card .fr{font-size:10px;font-weight:600;color:var(--cc,#C8102E);margin-top:8px;}
+.card .arrow{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;color:#CBD5E0;transition:color .15s,transform .15s;}
+.card:hover .arrow{color:var(--cc,#C8102E);transform:translateY(-50%) translateX(3px);}
+.tip{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:20px 24px;margin-bottom:40px;display:flex;gap:16px;align-items:flex-start;}
+.tip-icon{width:36px;height:36px;background:#EFF6FF;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tip-icon svg{width:18px;height:18px;color:#2563EB;}
+.tip .t{font-size:13px;font-weight:700;margin-bottom:4px;}
+.tip .d{font-size:12px;color:#718096;line-height:1.6;}
+code{background:#F1F5F9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px;color:#0A1628;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-box">E&M</div>
+  <div class="logo-text">
+    <div class="name">E&M Technology House Ltd</div>
+    <div class="sub">Treasury Management System v2.0</div>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Screen Design Index</h1>
+  <p>29 high-fidelity HTML mockup screens covering all functional requirements from the BRD v2.0. Click any screen to open it. All screens are self-contained — no backend required.</p>
+  <div class="stats">
+    <div class="stat"><div class="val">29</div><div class="lbl">Screens</div></div>
+    <div class="stat"><div class="val">24</div><div class="lbl">FR areas covered</div></div>
+    <div class="stat"><div class="val">1</div><div class="lbl">Design system (CSS)</div></div>
+    <div class="stat"><div class="val">7</div><div class="lbl">User roles</div></div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- HOW TO VIEW TIP -->
+  <div class="tip">
+    <div class="tip-icon">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <div>
+      <div class="t">How to view the screens</div>
+      <div class="d">
+        <strong>Best way:</strong> Right-click this file in VS Code → <strong>Open with Live Server</strong> — all 29 screens and navigation links will work perfectly.<br>
+        <strong>Quick way:</strong> Double-click any <code>.html</code> file in your file explorer to open it directly in Chrome or Edge.<br>
+        <strong>Note:</strong> Screens 20–29 use <code>sidebar-include.js</code> for the navigation. They require Live Server (or any local HTTP server) to load the sidebar correctly.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: AUTHENTICATION & MAIN SCREENS -->
+  <div class="section">
+    <div class="section-title">Authentication &amp; Main Screens</div>
+    <div class="grid">
+      <a href="01-login.html" class="card" style="--cc:#C8102E">
+        <div class="num">01</div><div class="title">Login</div>
+        <div class="desc">Split-panel login with MFA/OTP, Google SSO, production environment badge.</div>
+        <div class="fr">FR-02 · Auth / MFA</div><span class="arrow">›</span>
+      </a>
+      <a href="02-dashboard.html" class="card" style="--cc:#0A1628">
+        <div class="num">02</div><div class="title">Dashboard</div>
+        <div class="desc">FX ticker, KPI cards, cashflow chart, NOP tiles, maturity alerts, deal blotter, system alerts.</div>
+        <div class="fr">FR-21 · Dashboards</div><span class="arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- SECTION 2: FRONT OFFICE -->
+  <div class="section">
+    <div class="section-title">Front Office</div>
+    <div class="grid">
+      <a href="03-deal-capture.html" class="card" style="--cc:#C8102E">
+        <div class="num">03</div><div class="title">Deal Capture</div>
+        <div class="desc">7-product tabs (FX Spot/Fwd/Swap, FD, Repo, T-Bill, Overnight). 4-step wizard, limit check, rate challenge.</div>
+        <div class="fr">FR-05 · Deal Capture</div><span class="arrow">›</span>
+      </a>
+      <a href="21-treasury-sales.html" class="card" style="--cc:#0D7377">
+        <div class="num">21</div><div class="title">Treasury Sales</div>
+        <div class="desc">Quote-to-cover workflow. Credit limit pre-check, margin attribution, hit-rate analytics, client pricing grids.</div>
+        <div class="fr">FR-08 · Quote to Cover</div><span class="arrow">›</span>
+      </a>
+      <a href="08-auth-queue.html" class="card" style="--cc:#7C3AED">
+        <div class="num">08</div><div class="title">Auth Queue</div>
+        <div class="desc">Four-eyes deal authorisation. SLA timers, limit impact panel, approve/reject/return workflow.</div>
+        <div class="fr">FR-07 · Four-Eyes Auth</div><span class="arrow">›</span>
+      </a>
+      <a href="09-deal-register.html" class="card" style="--cc:#2563EB">
+        <div class="num">09</div><div class="title">Deal Register</div>
+        <div class="desc">Full deal blotter with expandable rows, product filters, date range, pagination.</div>
+        <div class="fr">FR-05.8 · Blotter</div><span class="arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- SECTION 3: TREASURY POSITIONS -->
+  <div class="section">
+    <div class="section-title">Treasury Positions</div>
+    <div class="grid">
+      <a href="04-cash-position.html" class="card" style="--cc:#0D7377">
+        <div class="num">04</div><div class="title">Cash Position</div>
+        <div class="desc">Cash worksheet from 6 sources, 7-day forecast chart, maturity ladder, SRR status.</div>
+        <div class="fr">FR-09 · Cash &amp; Liquidity</div><span class="arrow">›</span>
+      </a>
+      <a href="20-fx-nop-monitor.html" class="card" style="--cc:#C8102E">
+        <div class="num">20</div><div class="title">FX / NOP Monitor</div>
+        <div class="desc">Real-time NOP aggregated from all sources. Per-currency tiles, source breakdown, 5-day history, FX revaluation.</div>
+        <div class="fr">FR-11 · FX &amp; NOP</div><span class="arrow">›</span>
+      </a>
+      <a href="05-limits-exposure.html" class="card" style="--cc:#D97706">
+        <div class="num">05</div><div class="title">Limits &amp; Exposure</div>
+        <div class="desc">CTY/NOP/Sector/Dealer limit tabs, breach lifecycle, real-time utilisation bars.</div>
+        <div class="fr">FR-06 · Limit Check</div><span class="arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- SECTION 4: OPERATIONS -->
+  <div class="section">
+    <div class="section-title">Operations</div>
+    <div class="grid">
+      <a href="12-settlement.html" class="card" style="--cc:#2563EB">
+        <div class="num">12</div><div class="title">Settlement</div>
+        <div class="desc">Settlement queue, SWIFT MT202 preview, lifecycle tracker, upcoming settlements.</div>
+        <div class="fr">FR-15 · Settlement</div><span class="arrow">›</span>
+      </a>
+      <a href="06-reconciliation.html" class="card" style="--cc:#0D7377">
+        <div class="num">06</div><div class="title">Reconciliation (TMS-GL)</div>
+        <div class="desc">Nostro account selector, match/break table, side-by-side break investigation, ageing summary.</div>
+        <div class="fr">FR-17 · Reconciliation</div><span class="arrow">›</span>
+      </a>
+      <a href="22-nostro-correspondent.html" class="card" style="--cc:#0891B2">
+        <div class="num">22</div><div class="title">Nostro &amp; Correspondent</div>
+        <div class="desc">Nostro positions, projected flows, MT940 import, break management, charge disputes, analytics.</div>
+        <div class="fr">FR-10 · Nostro Banking</div><span class="arrow">›</span>
+      </a>
+      <a href="13-day-end.html" class="card" style="--cc:#4B5563">
+        <div class="num">13</div><div class="title">Day End Close</div>
+        <div class="desc">5-phase EOD checklist, blocking state, sign-off workflow, date rollover.</div>
+        <div class="fr">FR-20 · Day End</div><span class="arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- SECTION 5: MIDDLE OFFICE & ANALYTICS -->
+  <div class="section">
+    <div class="section-title">Middle Office &amp; Analytics</div>
+    <div class="grid">
+      <a href="23-middle-office.html" class="card" style="--cc:#7C3AED">
+        <div class="num">23</div><div class="title">Middle Office</div>
+        <div class="desc">MTM valuation, VaR 95%/99%, stop-loss monitor, P&L attribution, market data overrides.</div>
+        <div class="fr">FR-14 · Valuation &amp; Risk</div><span class="arrow">›</span>
+      </a>
+      <a href="10-alm.html" class="card" style="--cc:#2563EB">
+        <div class="num">10</div><div class="title">ALM / IRRBB</div>
+        <div class="desc">Repricing gap table, 6 stress scenarios, LCR/NSFR, NIM trend chart.</div>
+        <div class="fr">FR-12 · ALM</div><span class="arrow">›</span>
+      </a>
+      <a href="25-ftp.html" class="card" style="--cc:#D4A017">
+        <div class="num">25</div><div class="title">Funds Transfer Pricing</div>
+        <div class="desc">FTP curve management (3 methods), transfer charges/credits, mismatch margin, reproducibility.</div>
+        <div class="fr">FR-13 · FTP</div><span class="arrow">›</span>
+      </a>
+      <a href="07-reports.html" class="card" style="--cc:#0A1628">
+        <div class="num">07</div><div class="title">Reports &amp; Analytics</div>
+        <div class="desc">Portfolio breakdown, deal mix donut, performance KPIs, report catalogue grid.</div>
+        <div class="fr">FR-21 · Reporting</div><span class="arrow">›</span>
+      </a>
+      <a href="11-regulatory-reports.html" class="card" style="--cc:#C8102E">
+        <div class="num">11</div><div class="title">Regulatory Reports</div>
+        <div class="desc">NOP daily return, LCR daily, CBK Prudential Return, submission log and deadlines.</div>
+        <div class="fr">FR-19 · Regulatory</div><span class="arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- SECTION 6: STATIC DATA -->
+  <div class="section">
+    <div class="section-title">Static Data</div>
+    <div class="grid">
+      <a href="15-instrument-master.html" class="card" style="--cc:#0A1628">
+        <div class="num">15</div><div class="title">Instrument Master</div>
+        <div class="desc">Instrument register, 4-tab detail (Details/Ratings/Cash Flows/Positions), secondary approval workflow.</div>
+        <div class="fr">FR-03.1 · Instruments</div><span class="arrow">›</span>
+      </a>
+      <a href="16-counterparty-master.html" class="card" style="--cc:#2563EB">
+        <div class="num">16</div><div class="title">Counterparty Master</div>
+        <div class="desc">Group consolidation, AML screening, SSIs per currency, limits, suspension workflow.</div>
+        <div class="fr">FR-03.3–03.5 · Counterparties</div><span class="arrow">›</span>
+      </a>
+      <a href="17-static-data-misc.html" class="card" style="--cc:#0D7377">
+        <div class="num">17</div><div class="title">Calendars &amp; Brokers</div>
+        <div class="desc">Business day calendars with visual calendar and impact preview, broker register, custodians.</div>
+        <div class="fr">FR-03.6–03.7 · Calendars</div><span class="arrow">›</span>
+      </a>
+      <a href="19-product-factory.html" class="card" style="--cc:#7C3AED">
+        <div class="num">19</div><div class="title">Product Definition Factory</div>
+        <div class="desc">Product catalogue (9 shipped + custom), version control, active-deal blocking, accounting rule linkage.</div>
+        <div class="fr">FR-04 · Product Factory</div><span class="arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- SECTION 7: SYSTEM -->
+  <div class="section">
+    <div class="section-title">System Administration</div>
+    <div class="grid">
+      <a href="18-user-management.html" class="card" style="--cc:#C8102E">
+        <div class="num">18</div><div class="title">User &amp; Role Management</div>
+        <div class="desc">User lifecycle, time-bound roles, SoD exceptions dashboard, MFA compliance, add-user form.</div>
+        <div class="fr">FR-02 · User &amp; SoD</div><span class="arrow">›</span>
+      </a>
+      <a href="24-market-data.html" class="card" style="--cc:#0891B2">
+        <div class="num">24</div><div class="title">Market Data Management</div>
+        <div class="desc">Source hierarchy, live rates, validation exception queue, yield curves, audit trail.</div>
+        <div class="fr">FR-18 · Market Data</div><span class="arrow">›</span>
+      </a>
+      <a href="26-accounting-gl.html" class="card" style="--cc:#0A1628">
+        <div class="num">26</div><div class="title">Accounting &amp; GL</div>
+        <div class="desc">Configuration-driven rule engine, posting batches, GL monitor, retry queue, rule simulation.</div>
+        <div class="fr">FR-16 · Accounting</div><span class="arrow">›</span>
+      </a>
+      <a href="27-audit-trail.html" class="card" style="--cc:#4B5563">
+        <div class="num">27</div><div class="title">Audit Trail</div>
+        <div class="desc">Immutable 7-year log with JSON old/new values, SoD violation attempts, full search/filter.</div>
+        <div class="fr">FR-22 · Audit Trail</div><span class="arrow">›</span>
+      </a>
+      <a href="28-integration-monitor.html" class="card" style="--cc:#D97706">
+        <div class="num">28</div><div class="title">Integration Monitor</div>
+        <div class="desc">6 adapter health cards (CBS GL, SWIFT, STP, Market Data, Statements, Core Banking), throughput, retry queue.</div>
+        <div class="fr">FR-24 · Integration</div><span class="arrow">›</span>
+      </a>
+      <a href="14-configuration.html" class="card" style="--cc:#4B5563">
+        <div class="num">14</div><div class="title">Configuration</div>
+        <div class="desc">System toggles (4-eyes, MFA, limits, audit), user management, limit setup, audit log.</div>
+        <div class="fr">FR-23 · Config</div><span class="arrow">›</span>
+      </a>
+      <a href="29-tenant-admin.html" class="card" style="--cc:#C8102E">
+        <div class="num">29</div><div class="title">Tenant Administration</div>
+        <div class="desc">Tenant provisioning (zero code deploy), legal entities, branding, Sandbox→UAT→Production promotion.</div>
+        <div class="fr">FR-01 · Platform Admin</div><span class="arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:32px 0;font-size:12px;color:#A0AEC0;border-top:1px solid #E2E8F0;margin-top:20px">
+    <strong>E&M Technology House Ltd</strong> · Treasury Management System v2.0 · August 2026<br>
+    29 screens · BRD v2.0 · FR-01 through FR-24 · Design reference only
+  </div>
+
+</div>
+</body>
+</html>
