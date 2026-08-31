@@ -148,16 +148,346 @@
 
     <!-- LEGAL ENTITIES TAB -->
     <div class="tab-panel" id="tab-entities">
-      <div class="card">
-        <div class="card-header"><div class="card-title">Legal Entities — FNB Kenya</div><div class="card-subtitle">FR-01.3 · Multiple entities per tenant · CONVENTIONAL &amp; ISLAMIC_WINDOW</div><button class="btn btn-primary btn-sm">+ Add Entity</button></div>
+      <div class="card" style="margin-bottom:var(--space-4)">
+        <div class="card-header">
+          <div><div class="card-title">Legal Entities — FNB Kenya</div><div class="card-subtitle">FR-01.3 · Multiple entities per tenant · CONVENTIONAL &amp; ISLAMIC_WINDOW · Each entity has its own regulator, currency and regulatory packs</div></div>
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('addEntityPanel').style.display='';document.getElementById('addEntityPanel').scrollIntoView({behavior:'smooth'})">+ Add Entity</button>
+        </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Entity ID</th><th>Name</th><th>Type</th><th>Currency</th><th>Regulator</th><th>Reg. Pack</th><th>FY End</th><th>Status</th><th></th></tr></thead>
-          <tbody>
-            <tr><td class="mono fw-600">LE-001</td><td style="font-weight:600">FNB Kenya Ltd (Conventional)</td><td><span class="badge badge-neutral">CONVENTIONAL</span></td><td class="mono">KES</td><td>CBK</td><td class="mono text-xs">PACK-CBK-CONV-2026</td><td>31-Dec</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
-            <tr><td class="mono fw-600">LE-002</td><td style="font-weight:600">FNB Islamic Window Kenya</td><td><span class="badge badge-warning">ISLAMIC_WINDOW</span></td><td class="mono">KES</td><td>CBK</td><td class="mono text-xs">PACK-CBK-CONV-2026 + PACK-CBK-ISLAMIC-2026</td><td>31-Dec</td><td><span class="badge badge-success">ACTIVE</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
-          </tbody>
+            <thead><tr><th>Entity ID</th><th>Name</th><th>Type</th><th>Currency</th><th>Regulator</th><th>Reg. Pack(s)</th><th>FY End</th><th>Time Zone</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="mono fw-600">LE-001</td>
+                <td><div style="font-weight:600;font-size:12px">FNB Kenya Ltd (Conventional)</div><div style="font-size:10px;color:var(--text-muted)">Primary entity · KE</div></td>
+                <td><span class="badge badge-neutral">CONVENTIONAL</span></td>
+                <td class="mono">KES</td>
+                <td style="font-size:12px">CBK</td>
+                <td class="mono text-xs">PACK-CBK-CONV-2026</td>
+                <td class="mono text-xs">31-Dec</td>
+                <td style="font-size:11px">Africa/Nairobi (EAT)</td>
+                <td><span class="badge badge-success">ACTIVE</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="openEditEntity('LE-001')">Edit</button></td>
+              </tr>
+              <tr>
+                <td class="mono fw-600">LE-002</td>
+                <td><div style="font-weight:600;font-size:12px">FNB Islamic Window Kenya</div><div style="font-size:10px;color:var(--text-muted)">Sharia-compliant window · KE</div></td>
+                <td><span class="badge badge-warning">ISLAMIC_WINDOW</span></td>
+                <td class="mono">KES</td>
+                <td style="font-size:12px">CBK</td>
+                <td class="mono text-xs">PACK-CBK-CONV-2026<br>+ PACK-CBK-ISLAMIC-2026</td>
+                <td class="mono text-xs">31-Dec</td>
+                <td style="font-size:11px">Africa/Nairobi (EAT)</td>
+                <td><span class="badge badge-success">ACTIVE</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="openEditEntity('LE-002')">Edit</button></td>
+              </tr>
+            </tbody>
           </table>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:var(--text-muted)">Each legal entity is independently configured · Deactivating an entity does not delete historical data · FR-01.3</span>
+        </div>
+      </div>
+
+      <!-- ADD ENTITY FORM -->
+      <div class="card" id="addEntityPanel" style="display:none">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Add New Legal Entity — FR-01.3</div>
+            <div class="card-subtitle">Each entity is independently configured with its own regulator, packs, currency and calendar</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('addEntityPanel').style.display='none'">✕ Close</button>
+        </div>
+        <div class="card-body">
+
+          <!-- Section 1: Identity -->
+          <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;padding-bottom:8px;border-bottom:1px solid var(--surface-divider);margin-bottom:var(--space-4);grid-column:1/-1">1 — Entity Identity</div>
+          <div class="form-grid-3" style="margin-bottom:var(--space-5)">
+            <div class="form-group">
+              <label class="form-label">Entity Full Legal Name <span style="color:var(--brand-primary)">*</span></label>
+              <input type="text" class="form-control" placeholder="e.g. FNB Uganda Ltd">
+              <span class="form-hint">Must match certificate of incorporation exactly</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Short / Trading Name</label>
+              <input type="text" class="form-control" placeholder="e.g. FNB Uganda">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Entity Type <span style="color:var(--brand-primary)">*</span></label>
+              <select class="form-control" id="entityTypeSelect" onchange="toggleIslamicPack()">
+                <option value="">— Select type —</option>
+                <option value="CONVENTIONAL">CONVENTIONAL</option>
+                <option value="ISLAMIC_WINDOW">ISLAMIC_WINDOW</option>
+                <option value="SUBSIDIARY">SUBSIDIARY</option>
+                <option value="BRANCH">BRANCH</option>
+                <option value="REPRESENTATIVE_OFFICE">REPRESENTATIVE_OFFICE</option>
+              </select>
+              <span class="form-hint">ISLAMIC_WINDOW requires an additional Sharia regulatory pack</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Country <span style="color:var(--brand-primary)">*</span></label>
+              <select class="form-control" onchange="updateRegulator()">
+                <option value="">— Select country —</option>
+                <option value="KE">Kenya (KE)</option>
+                <option value="UG">Uganda (UG)</option>
+                <option value="TZ">Tanzania (TZ)</option>
+                <option value="RW">Rwanda (RW)</option>
+                <option value="ET">Ethiopia (ET)</option>
+                <option value="ZA">South Africa (ZA)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Entity Status</label>
+              <select class="form-control">
+                <option>ACTIVE</option>
+                <option>INACTIVE</option>
+                <option>PENDING_ACTIVATION</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Section 2: Currency & Financial Calendar -->
+          <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;padding-bottom:8px;border-bottom:1px solid var(--surface-divider);margin-bottom:var(--space-4)">2 — Currency &amp; Financial Calendar</div>
+          <div class="form-grid-3" style="margin-bottom:var(--space-5)">
+            <div class="form-group">
+              <label class="form-label">Reporting Currency <span style="color:var(--brand-primary)">*</span></label>
+              <select class="form-control">
+                <option value="">— Select currency —</option>
+                <option value="KES">KES — Kenyan Shilling</option>
+                <option value="UGX">UGX — Ugandan Shilling</option>
+                <option value="TZS">TZS — Tanzanian Shilling</option>
+                <option value="RWF">RWF — Rwandan Franc</option>
+                <option value="USD">USD — US Dollar</option>
+                <option value="ZAR">ZAR — South African Rand</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Financial Year End <span style="color:var(--brand-primary)">*</span></label>
+              <select class="form-control">
+                <option value="12-31">31 December</option>
+                <option value="03-31">31 March</option>
+                <option value="06-30">30 June</option>
+                <option value="09-30">30 September</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Business Day Calendar <span style="color:var(--brand-primary)">*</span></label>
+              <select class="form-control">
+                <option>Kenya (CBK clearing)</option>
+                <option>Uganda (BoU clearing)</option>
+                <option>Tanzania (BoT clearing)</option>
+                <option>Combined (FX — KE+US+UK)</option>
+              </select>
+              <span class="form-hint">Used for settlement date calculations</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Time Zone <span style="color:var(--brand-primary)">*</span></label>
+              <select class="form-control">
+                <option>Africa/Nairobi (EAT +3)</option>
+                <option>Africa/Kampala (EAT +3)</option>
+                <option>Africa/Dar_es_Salaam (EAT +3)</option>
+                <option>Africa/Kigali (CAT +2)</option>
+                <option>Africa/Johannesburg (SAST +2)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date Display Format</label>
+              <select class="form-control">
+                <option>DD/MM/YYYY (Kenya default)</option>
+                <option>MM/DD/YYYY</option>
+                <option>YYYY-MM-DD (ISO 8601)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Number Format</label>
+              <select class="form-control">
+                <option>1,234,567.89 (UK/KE)</option>
+                <option>1.234.567,89 (EU)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Section 3: Regulator & Regulatory Packs -->
+          <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;padding-bottom:8px;border-bottom:1px solid var(--surface-divider);margin-bottom:var(--space-4)">3 — Regulator &amp; Regulatory Packs</div>
+          <div class="form-grid-3" style="margin-bottom:var(--space-5)">
+            <div class="form-group">
+              <label class="form-label">Primary Regulator <span style="color:var(--brand-primary)">*</span></label>
+              <select class="form-control" id="regulatorSelect">
+                <option value="">— Select regulator —</option>
+                <option value="CBK">CBK — Central Bank of Kenya</option>
+                <option value="BOU">BoU — Bank of Uganda</option>
+                <option value="BOT">BoT — Bank of Tanzania</option>
+                <option value="BNR">BNR — National Bank of Rwanda</option>
+                <option value="SARB">SARB — SA Reserve Bank</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Regulator License Number</label>
+              <input type="text" class="form-control" placeholder="e.g. CBK/NI/001/2026">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Regulatory License Type</label>
+              <select class="form-control">
+                <option>Full Commercial Banking</option>
+                <option>Microfinance</option>
+                <option>Non-Bank Financial Institution</option>
+                <option>Investment Bank</option>
+              </select>
+            </div>
+
+            <!-- Regulatory packs — full width -->
+            <div class="form-group" style="grid-column:1/-1">
+              <label class="form-label">Regulatory Pack Assignments <span style="color:var(--brand-primary)">*</span></label>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-2);margin-top:6px">
+                <label style="display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--surface-border);border-radius:var(--radius-md);cursor:pointer;font-size:12px;transition:border-color .12s" id="packKeCon">
+                  <input type="checkbox" checked style="margin-top:2px;accent-color:var(--brand-primary)">
+                  <div>
+                    <div style="font-weight:700">PACK-CBK-CONV-2026</div>
+                    <div style="color:var(--text-muted);font-size:10px;margin-top:2px">CBK Conventional banking returns · NOP daily · LCR/NSFR · Prudential</div>
+                  </div>
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--surface-border);border-radius:var(--radius-md);cursor:pointer;font-size:12px;transition:border-color .12s" id="packKeIsl">
+                  <input type="checkbox" id="islamicPackChk" style="margin-top:2px;accent-color:var(--brand-primary)">
+                  <div>
+                    <div style="font-weight:700">PACK-CBK-ISLAMIC-2026</div>
+                    <div style="color:var(--text-muted);font-size:10px;margin-top:2px">CBK Islamic window returns · Profit-sharing · Sharia compliance reporting</div>
+                  </div>
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--surface-border);border-radius:var(--radius-md);cursor:pointer;font-size:12px;transition:border-color .12s">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--brand-primary)">
+                  <div>
+                    <div style="font-weight:700">PACK-CBK-FX-2026</div>
+                    <div style="color:var(--text-muted);font-size:10px;margin-top:2px">CBK FX returns · NOP · Authorized dealer reporting · SWIFT</div>
+                  </div>
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--surface-border);border-radius:var(--radius-md);cursor:pointer;font-size:12px;transition:border-color .12s">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--brand-primary)">
+                  <div>
+                    <div style="font-weight:700">PACK-BOU-2026</div>
+                    <div style="color:var(--text-muted);font-size:10px;margin-top:2px">Bank of Uganda prudential returns · Forex reports</div>
+                  </div>
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--surface-border);border-radius:var(--radius-md);cursor:pointer;font-size:12px;transition:border-color .12s">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--brand-primary)">
+                  <div>
+                    <div style="font-weight:700">PACK-BOT-2026</div>
+                    <div style="color:var(--text-muted);font-size:10px;margin-top:2px">Bank of Tanzania prudential returns · TZS NOP</div>
+                  </div>
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--surface-border);border-radius:var(--radius-md);cursor:pointer;font-size:12px;transition:border-color .12s">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--brand-primary)">
+                  <div>
+                    <div style="font-weight:700">PACK-IFRS9-2026</div>
+                    <div style="color:var(--text-muted);font-size:10px;margin-top:2px">IFRS 9 classification, measurement &amp; ECL disclosure</div>
+                  </div>
+                </label>
+              </div>
+              <span class="form-hint" style="margin-top:8px;display:block">Multiple packs can be assigned. Packs determine which regulatory returns are generated and their submission schedules.</span>
+            </div>
+          </div>
+
+          <!-- Section 4: Treasury Configuration -->
+          <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;padding-bottom:8px;border-bottom:1px solid var(--surface-divider);margin-bottom:var(--space-4)">4 — Treasury Configuration</div>
+          <div class="form-grid-3" style="margin-bottom:var(--space-5)">
+            <div class="form-group">
+              <label class="form-label">Chart of Accounts Mapping <span style="color:var(--brand-primary)">*</span></label>
+              <select class="form-control">
+                <option>KE Standard CoA Template</option>
+                <option>UG Standard CoA Template</option>
+                <option>Custom (configure after creation)</option>
+              </select>
+              <span class="form-hint">Maps treasury GL accounts to CBS account codes</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Accounting Framework <span style="color:var(--brand-primary)">*</span></label>
+              <select class="form-control">
+                <option>IFRS (International Financial Reporting Standards)</option>
+                <option>IFRS + Local GAAP (dual framework)</option>
+                <option>Local GAAP only</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">NOP Reporting Currency</label>
+              <select class="form-control">
+                <option>Same as Reporting Currency (KES)</option>
+                <option>USD equivalent</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Authorised FX Dealer?</label>
+              <select class="form-control">
+                <option value="yes">Yes — FX dealing authorised by regulator</option>
+                <option value="no">No — FX for own account only</option>
+              </select>
+              <span class="form-hint">Determines if NOP daily return is required</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Islamic Sharia Board</label>
+              <input type="text" class="form-control" placeholder="e.g. FNB Sharia Advisory Board" id="shariaBoard" style="display:none">
+              <input type="text" class="form-control" placeholder="N/A — Conventional entity" readonly style="background:#F8FAFC" id="shariaBoardNA">
+              <span class="form-hint" id="shariaBoardHint">Required only for ISLAMIC_WINDOW entities</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Default Settlement Method</label>
+              <select class="form-control">
+                <option>CBK RTGS (KES)</option>
+                <option>SWIFT (FCY)</option>
+                <option>Both</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Section 5: Contacts -->
+          <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;padding-bottom:8px;border-bottom:1px solid var(--surface-divider);margin-bottom:var(--space-4)">5 — Key Contacts</div>
+          <div class="form-grid-3" style="margin-bottom:var(--space-2)">
+            <div class="form-group">
+              <label class="form-label">Chief Finance Officer</label>
+              <input type="text" class="form-control" placeholder="Full name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Treasurer</label>
+              <input type="text" class="form-control" placeholder="Full name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Compliance Officer</label>
+              <input type="text" class="form-control" placeholder="Full name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Regulatory Submissions Email</label>
+              <input type="text" class="form-control" placeholder="e.g. treasury@bank.co.ke">
+              <span class="form-hint">Used for regulatory return notifications and receipts</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ALCO Distribution List</label>
+              <input type="text" class="form-control" placeholder="e.g. alco@bank.co.ke">
+              <span class="form-hint">Receives daily position reports and ALCO packs</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Internal Audit Email</label>
+              <input type="text" class="form-control" placeholder="e.g. audit@bank.co.ke">
+            </div>
+          </div>
+
+        </div><!-- /card-body -->
+
+        <!-- Validation summary -->
+        <div style="margin:0 var(--space-5) var(--space-4)" id="entityValidationMsg" style="display:none">
+          <div class="alert alert-warning">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="15" height="15"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+            <div style="font-size:11px">Please complete all required fields (*) before saving.</div>
+          </div>
+        </div>
+
+        <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:11px;color:var(--text-muted)">New entity will be assigned the next available LE-XXX ID · Changes take effect immediately on save</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('addEntityPanel').style.display='none'">Cancel</button>
+            <button class="btn btn-outline btn-sm" onclick="alert('Draft saved.\nEntity will not be visible to users until activated.')">Save as Draft</button>
+            <button class="btn btn-primary btn-sm" onclick="saveEntity()">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Create Entity
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -292,5 +622,45 @@
 </div>
 <script>
 function taTab(el,t){document.querySelectorAll('#taTabs .tab-item').forEach(function(e){e.classList.remove('active')});el.classList.add('active');document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});document.getElementById('tab-'+t).classList.add('active');}
+
+function toggleIslamicPack(){
+  var type = document.getElementById('entityTypeSelect').value;
+  var isIslamic = type === 'ISLAMIC_WINDOW';
+  // Auto-check the Islamic pack when ISLAMIC_WINDOW is selected
+  document.getElementById('islamicPackChk').checked = isIslamic;
+  // Show/hide Sharia board field
+  document.getElementById('shariaBoard').style.display   = isIslamic ? '' : 'none';
+  document.getElementById('shariaBoardNA').style.display = isIslamic ? 'none' : '';
+  // Highlight Islamic pack card
+  document.getElementById('packKeIsl').style.borderColor = isIslamic ? 'var(--status-warning)' : '';
+  document.getElementById('packKeIsl').style.background  = isIslamic ? 'rgba(217,119,6,.04)' : '';
+}
+
+function updateRegulator(){
+  var map = {KE:'CBK', UG:'BoU', TZ:'BoT', RW:'BNR', ET:'NBE', ZA:'SARB'};
+  var sel = event.target;
+  var code = sel.value;
+  var regSel = document.getElementById('regulatorSelect');
+  var fullMap = {KE:'CBK — Central Bank of Kenya', UG:'BoU — Bank of Uganda', TZ:'BoT — Bank of Tanzania', RW:'BNR — National Bank of Rwanda', ET:'NBE — National Bank of Ethiopia', ZA:'SARB — SA Reserve Bank'};
+  if(fullMap[code]){
+    for(var i=0;i<regSel.options.length;i++){
+      if(regSel.options[i].text === fullMap[code]){ regSel.selectedIndex=i; break; }
+    }
+  }
+}
+
+function openEditEntity(id){
+  alert('Edit form for ' + id + ' — same fields as Add Entity, pre-populated with existing values.\nChanges require secondary approval before taking effect.');
+}
+
+function saveEntity(){
+  var name = document.querySelector('#addEntityPanel input[placeholder="e.g. FNB Uganda Ltd"]').value;
+  if(!name){
+    document.getElementById('entityValidationMsg').style.display='';
+    return;
+  }
+  alert('Legal Entity created successfully!\n\nEntity ID: LE-003\nName: ' + name + '\nStatus: ACTIVE\n\nRegulatory packs assigned.\nCalendar linked.\nUsers can now be scoped to this entity.');
+  document.getElementById('addEntityPanel').style.display='none';
+}
 </script>
 </body></html>
