@@ -26,12 +26,15 @@
       ]
     },
     {
-      label: 'Operations',
+      label: 'Back Office',
       items: [
-        { href: '12-settlement.html',         icon: 'credit-card',  label: 'Settlement' },
-        { href: '06-reconciliation.html',     icon: 'check-square', label: 'Reconciliation',   badge: '4', badgeWarn: true },
-        { href: '22-nostro-correspondent.html',icon: 'bank',        label: 'Nostro & Correspondent' },
-        { href: '13-day-end.html',            icon: 'sunset',       label: 'Day End Close' },
+        { href: '12-settlement.html',              icon: 'credit-card',  label: 'Settlement' },
+        { href: '30-confirmation-matching.html',   icon: 'check-square', label: 'Confirmation Matching', badge: '2', badgeWarn: true },
+        { href: '31-corporate-actions.html',       icon: 'calendar',     label: 'Corporate Actions',     badge: '2', badgeWarn: true },
+        { href: '06-reconciliation.html',          icon: 'layers',       label: 'Reconciliation',        badge: '4', badgeWarn: true },
+        { href: '22-nostro-correspondent.html',    icon: 'bank',         label: 'Nostro & Correspondent' },
+        { href: '26-accounting-gl.html',           icon: 'book-open',    label: 'Accounting & GL' },
+        { href: '13-day-end.html',                 icon: 'sunset',       label: 'Day End Close' },
       ]
     },
     {
@@ -63,7 +66,6 @@
       label: 'System',
       items: [
         { href: '18-user-management.html',      icon: 'user-plus',   label: 'User & Roles' },
-        { href: '26-accounting-gl.html',        icon: 'book-open',   label: 'Accounting & GL' },
         { href: '27-audit-trail.html',          icon: 'shield-check', label: 'Audit Trail' },
         { href: '28-integration-monitor.html',  icon: 'monitor',     label: 'Integration Monitor' },
         { href: '14-configuration.html',        icon: 'settings',    label: 'Configuration' },

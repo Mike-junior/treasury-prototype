@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Corporate Actions — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.event-row{display:flex;align-items:stretch;border-bottom:1px solid var(--surface-divider);cursor:pointer;transition:background .12s;}
+.event-row:hover{background:var(--surface-bg);}
+.event-row:last-child{border-bottom:none;}
+.event-type-stripe{width:4px;flex-shrink:0;border-radius:2px 0 0 2px;}
+.event-body{flex:1;padding:12px var(--space-4);display:grid;grid-template-columns:160px 1fr 1fr 1fr 1fr 120px 120px;gap:var(--space-3);align-items:center;font-size:12px;}
+.ev-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.ev-val{font-weight:600;font-family:var(--font-mono);}
+.cal-header{display:grid;grid-template-columns:50px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:0;background:var(--surface-bg);border-bottom:2px solid var(--surface-border);}
+.cal-day-h{padding:8px;text-align:center;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;}
+.cal-week{display:grid;grid-template-columns:50px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:0;}
+.cal-week-num{display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-muted);font-weight:600;border-right:1px solid var(--surface-divider);}
+.cal-cell{padding:6px;border-right:1px solid var(--surface-divider);border-bottom:1px solid var(--surface-divider);min-height:70px;position:relative;}
+.cal-cell.today{background:rgba(10,22,40,.03);}
+.cal-cell.weekend{background:#FAFAFA;}
+.cal-date{font-size:11px;font-weight:700;margin-bottom:4px;}
+.cal-date.today-d{width:22px;height:22px;background:var(--brand-primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.cal-event{font-size:9px;font-weight:600;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.ce-maturity{background:rgba(200,16,46,.1);color:var(--brand-primary);}
+.ce-coupon{background:rgba(37,99,235,.1);color:#1D4ED8;}
+.ce-rollover{background:rgba(217,119,6,.1);color:#B45309;}
+.ce-settlement{background:rgba(13,115,119,.1);color:#0D7377;}
+.ce-cbk{background:rgba(10,22,40,.1);color:#0A1628;}
+.process-step{display:flex;align-items:flex-start;gap:var(--space-3);padding:10px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.process-step:last-child{border-bottom:none;}
+.ps-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;}
+.ps-done{background:var(--status-success);color:#fff;}
+.ps-active{background:var(--brand-primary);color:#fff;}
+.ps-pending{background:var(--surface-border);color:var(--text-muted);}
+.field-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.field-row:last-child{border-bottom:none;}
+.field-row .fk{color:var(--text-muted);}
+.field-row .fv{font-weight:600;font-family:var(--font-mono);}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<div id="sidebar-root"></div><script src="sidebar-include.js"></script>
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">Events Today</span><span class="rate">4</span><span class="delta" style="color:var(--status-danger)">2 require action</span></div>
+    <div class="fx-tick"><span class="pair">Events This Week</span><span class="rate">12</span></div>
+    <div class="fx-tick"><span class="pair">Auto-Processed</span><span class="rate">2</span><span class="delta up">today</span></div>
+    <div class="fx-tick"><span class="pair">Pending Rollover Decision</span><span class="rate">2</span><span class="delta" style="color:var(--status-warning)">dealer action</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>Back Office</span><span class="sep"> / </span><span class="current">Corporate Actions &amp; Events</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm">Export Events</button>
+      <button class="btn btn-primary btn-sm" onclick="alert('Processing all auto-processable events...\n\n✓ T-Bill 91D maturity processed\n✓ Bond coupon accrual posted\n\n2 events require manual decision (rollover).')">Process Auto-Events</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#0D7377;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">SO</div>
+      <div><div style="font-size:12px;font-weight:600">Susan Otieno</div><div style="font-size:10px;color:var(--text-muted)">Back Office · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Corporate Actions &amp; Events Processing</h1>
+        <p class="page-subtitle">Back Office · Automated processing of maturities · Coupon payments · Rollovers · Pre-maturity withdrawals · FR-15.6</p></div>
+    </div>
+
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+      <div class="kpi-card" style="--kpi-accent:var(--status-danger)"><div class="kpi-label">Maturities Today</div><div class="kpi-value" style="color:var(--status-danger)">2</div><div class="kpi-meta">T-Bill + Fixed Deposit</div></div>
+      <div class="kpi-card" style="--kpi-accent:#2563EB"><div class="kpi-label">Coupons This Week</div><div class="kpi-value">1</div><div class="kpi-meta">T-Bond IFB coupon</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-warning)"><div class="kpi-label">Rollover Decisions</div><div class="kpi-value" style="color:var(--status-warning)">2</div><div class="kpi-meta">Dealer action required</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-success)"><div class="kpi-label">Auto-Processed Today</div><div class="kpi-value" style="color:var(--status-success)">2</div><div class="kpi-meta">GL entries posted</div></div>
+      <div class="kpi-card" style="--kpi-accent:#0D7377"><div class="kpi-label">Events Next 30 Days</div><div class="kpi-value">48</div><div class="kpi-meta">All products</div></div>
+    </div>
+
+    <div class="tabs" id="caTabs">
+      <div class="tab-item active" onclick="caTab(this,'today')">Today's Events (4)</div>
+      <div class="tab-item" onclick="caTab(this,'calendar')">Event Calendar</div>
+      <div class="tab-item" onclick="caTab(this,'rollover')">Rollover Decisions (2)</div>
+      <div class="tab-item" onclick="caTab(this,'premature')">Pre-Maturity Withdrawals</div>
+      <div class="tab-item" onclick="caTab(this,'history')">Processing History</div>
+    </div>
+
+    <!-- TODAY'S EVENTS TAB -->
+    <div class="tab-panel active" id="tab-today">
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--space-4);align-items:start">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Events Due Today — 25 Aug 2026</div><div class="card-subtitle">FR-15.6 · All events auto-identified from deal schedules</div></div>
+
+          <!-- Event 1: T-Bill Maturity — AUTO-PROCESSED -->
+          <div class="event-row" onclick="showEventDetail('tb')">
+            <div class="event-type-stripe" style="background:var(--brand-primary)"></div>
+            <div class="event-body">
+              <div>
+                <div class="ev-label">Event Type</div>
+                <span class="badge badge-primary" style="font-size:10px">MATURITY</span>
+              </div>
+              <div>
+                <div class="ev-label">Instrument / Deal</div>
+                <div class="ev-val" style="font-size:11px">T-Bill 91D</div>
+                <div style="font-size:10px;color:var(--text-muted)">DEAL-00284 · CBK</div>
+              </div>
+              <div>
+                <div class="ev-label">Principal</div>
+                <div class="ev-val">KES 500M</div>
+              </div>
+              <div>
+                <div class="ev-label">Interest / Discount</div>
+                <div class="ev-val" style="color:var(--status-success)">+KES 17.9M</div>
+              </div>
+              <div>
+                <div class="ev-label">Total Receipt</div>
+                <div class="ev-val" style="color:var(--status-success)">KES 517.9M</div>
+              </div>
+              <div>
+                <div class="ev-label">Processing</div>
+                <span class="badge badge-success">AUTO-PROCESSED</span>
+              </div>
+              <div>
+                <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View GL</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Event 2: Fixed Deposit Maturity — AUTO-PROCESSED -->
+          <div class="event-row" onclick="showEventDetail('fd')">
+            <div class="event-type-stripe" style="background:var(--brand-primary)"></div>
+            <div class="event-body">
+              <div>
+                <div class="ev-label">Event Type</div>
+                <span class="badge badge-primary" style="font-size:10px">MATURITY</span>
+              </div>
+              <div>
+                <div class="ev-label">Instrument / Deal</div>
+                <div class="ev-val" style="font-size:11px">Fixed Deposit</div>
+                <div style="font-size:10px;color:var(--text-muted)">DEAL-00285 · StanChart</div>
+              </div>
+              <div>
+                <div class="ev-label">Principal</div>
+                <div class="ev-val">KES 250M</div>
+              </div>
+              <div>
+                <div class="ev-label">Interest</div>
+                <div class="ev-val" style="color:var(--status-success)">+KES 1.16M</div>
+              </div>
+              <div>
+                <div class="ev-label">Total Receipt</div>
+                <div class="ev-val" style="color:var(--status-success)">KES 251.16M</div>
+              </div>
+              <div>
+                <div class="ev-label">Processing</div>
+                <span class="badge badge-success">AUTO-PROCESSED</span>
+              </div>
+              <div>
+                <div style="display:flex;gap:4px">
+                  <button class="btn btn-warning btn-sm" style="font-size:10px" onclick="event.stopPropagation();document.getElementById('tab-rollover').style.display='';caTab(document.querySelectorAll('#caTabs .tab-item')[2],'rollover')">Rollover?</button>
+                  <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View GL</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Event 3: Bond coupon -->
+          <div class="event-row" onclick="showEventDetail('bond')">
+            <div class="event-type-stripe" style="background:#2563EB"></div>
+            <div class="event-body">
+              <div>
+                <div class="ev-label">Event Type</div>
+                <span class="badge badge-info" style="font-size:10px">COUPON</span>
+              </div>
+              <div>
+                <div class="ev-label">Instrument / Deal</div>
+                <div class="ev-val" style="font-size:11px">IFB 10yr 2025</div>
+                <div style="font-size:10px;color:var(--text-muted)">KE00IFB1020250 · CBK</div>
+              </div>
+              <div>
+                <div class="ev-label">Face Value Held</div>
+                <div class="ev-val">KES 3,200M</div>
+              </div>
+              <div>
+                <div class="ev-label">Coupon Rate</div>
+                <div class="ev-val">16.00% p.a.</div>
+              </div>
+              <div>
+                <div class="ev-label">Coupon (Semi-annual)</div>
+                <div class="ev-val" style="color:var(--status-success)">KES 187.5M</div>
+              </div>
+              <div>
+                <div class="ev-label">Processing</div>
+                <span class="badge badge-success">AUTO-PROCESSED</span>
+              </div>
+              <div>
+                <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View GL</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Event 4: Overnight borrowing maturity — needs action -->
+          <div class="event-row" onclick="showEventDetail('on')" style="background:rgba(217,119,6,.03)">
+            <div class="event-type-stripe" style="background:var(--status-warning)"></div>
+            <div class="event-body">
+              <div>
+                <div class="ev-label">Event Type</div>
+                <span class="badge badge-warning" style="font-size:10px">MATURITY</span>
+              </div>
+              <div>
+                <div class="ev-label">Instrument / Deal</div>
+                <div class="ev-val" style="font-size:11px">Overnight Borrowing</div>
+                <div style="font-size:10px;color:var(--text-muted)">DEAL-00282 · Equity Bank</div>
+              </div>
+              <div>
+                <div class="ev-label">Principal</div>
+                <div class="ev-val">KES 1,200M</div>
+              </div>
+              <div>
+                <div class="ev-label">Interest (1 day)</div>
+                <div class="ev-val" style="color:var(--status-danger)">−KES 427,397</div>
+              </div>
+              <div>
+                <div class="ev-label">Total Repayment</div>
+                <div class="ev-val" style="color:var(--status-danger)">KES 1,200.43M</div>
+              </div>
+              <div>
+                <div class="ev-label">Processing</div>
+                <span class="badge badge-warning">PENDING</span>
+              </div>
+              <div>
+                <button class="btn btn-primary btn-sm" style="font-size:10px" onclick="event.stopPropagation();processEvent()">Process Now</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Event detail -->
+        <div class="card" id="eventDetailPanel">
+          <div class="card-header"><div class="card-title" id="edTitle">T-Bill 91D Maturity</div><div class="card-subtitle">DEAL-00284 · Auto-processed</div></div>
+          <div style="padding:var(--space-4)">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--space-3)">Processing Steps — FR-15.6</div>
+            <div class="process-step"><div class="ps-num ps-done">✓</div><div><div style="font-weight:600">Maturity date reached</div><div style="color:var(--text-muted);margin-top:2px">System detected maturity from deal schedule at 00:01 AM</div></div></div>
+            <div class="process-step"><div class="ps-num ps-done">✓</div><div><div style="font-weight:600">Position closed</div><div style="color:var(--text-muted);margin-top:2px">T-Bill holding removed from portfolio. HTM book updated.</div></div></div>
+            <div class="process-step"><div class="ps-num ps-done">✓</div><div><div style="font-weight:600">Cash receipt expected</div><div style="color:var(--text-muted);margin-top:2px">KES 517.9M (principal + discount) expected from CBK Settlement Account</div></div></div>
+            <div class="process-step"><div class="ps-num ps-done">✓</div><div><div style="font-weight:600">Accounting entries generated</div><div style="color:var(--text-muted);margin-top:2px">Dr CBK Settlement: 500M · Cr T-Bill Investment: 500M<br>Dr CBK Settlement: 17.9M · Cr Interest Income: 17.9M</div></div></div>
+            <div class="process-step"><div class="ps-num ps-done">✓</div><div><div style="font-weight:600">GL posted to CBS</div><div style="color:var(--text-muted);margin-top:2px">Batch JNL-0825-044 posted · CBS confirmed receipt</div></div></div>
+            <div class="process-step"><div class="ps-num ps-active">!</div><div><div style="font-weight:600;color:var(--brand-primary)">Rollover decision pending</div><div style="color:var(--status-warning);margin-top:2px">KES 517.9M now available for redeployment. Cash position updated. Dealer to decide on rollover.</div></div></div>
+          </div>
+          <div style="padding:var(--space-3) var(--space-4)">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Journal Entries Posted</div>
+            <div style="background:#0A1628;border-radius:var(--radius-md);padding:var(--space-3);font-family:var(--font-mono);font-size:11px;line-height:2;color:#94A3B8">
+              <span style="color:#4ADE80">Dr</span> <span style="color:#E2E8F0">CBK Settlement A/C &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 500,000,000</span><br>
+              <span style="color:#F87171">Cr</span> <span style="color:#E2E8F0">T-Bill HTM Investment &nbsp;&nbsp;&nbsp;&nbsp; 500,000,000</span><br>
+              <span style="color:#94A3B8">—</span><br>
+              <span style="color:#4ADE80">Dr</span> <span style="color:#E2E8F0">CBK Settlement A/C &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 17,900,000</span><br>
+              <span style="color:#F87171">Cr</span> <span style="color:#E2E8F0">Interest / Discount Income &nbsp; 17,900,000</span><br>
+              <span style="color:#60A5FA;font-size:10px">Rule: T_BILL_HTM → MATURITY · FR-16.1</span>
+            </div>
+          </div>
+          <div class="card-footer" style="display:flex;gap:8px;justify-content:flex-end">
+            <a href="26-accounting-gl.html" class="btn btn-ghost btn-sm">View Full GL Batch</a>
+            <a href="03-deal-capture.html" class="btn btn-primary btn-sm">Rollover / Reinvest</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EVENT CALENDAR TAB -->
+    <div class="tab-panel" id="tab-calendar">
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Event Calendar — August / September 2026</div><div class="card-subtitle">All scheduled events across all deals · Click event for detail</div></div>
+          <div style="display:flex;gap:8px">
+            <div style="display:flex;gap:8px;font-size:11px;align-items:center">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(200,16,46,.1);display:inline-block"></span>Maturity</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(37,99,235,.1);display:inline-block"></span>Coupon</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(217,119,6,.1);display:inline-block"></span>Rollover</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(13,115,119,.1);display:inline-block"></span>Settlement</span>
+            </div>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <!-- Calendar header -->
+          <div class="cal-header">
+            <div class="cal-day-h">Wk</div>
+            <div class="cal-day-h">Mon</div><div class="cal-day-h">Tue</div><div class="cal-day-h">Wed</div><div class="cal-day-h">Thu</div><div class="cal-day-h">Fri</div>
+            <div class="cal-day-h">Sat</div><div class="cal-day-h">Sun</div>
+          </div>
+          <!-- Week 1 -->
+          <div class="cal-week">
+            <div class="cal-week-num">34</div>
+            <div class="cal-cell"><div class="cal-date">18</div><div class="cal-event ce-coupon">FXD 5yr Coupon</div></div>
+            <div class="cal-cell"><div class="cal-date">19</div></div>
+            <div class="cal-cell"><div class="cal-date">20</div></div>
+            <div class="cal-cell"><div class="cal-date">21</div></div>
+            <div class="cal-cell"><div class="cal-date">22</div><div class="cal-event ce-maturity">T-Bill 182D</div></div>
+            <div class="cal-cell weekend"><div class="cal-date">23</div></div>
+            <div class="cal-cell weekend"><div class="cal-date">24</div></div>
+          </div>
+          <!-- Week 2 (Today = Tuesday 25 Aug) -->
+          <div class="cal-week">
+            <div class="cal-week-num">35</div>
+            <div class="cal-cell"><div class="cal-date">25</div><div class="cal-event ce-maturity">T-Bill 91D ★</div><div class="cal-event ce-maturity">FD StanChart ★</div><div class="cal-event ce-coupon">IFB Coupon ★</div></div>
+            <div class="cal-cell today"><div class="cal-date"><span class="cal-date today-d">26</span></div><div class="cal-event ce-settlement">Repo Return</div><div class="cal-event ce-settlement">ON Repayment</div></div>
+            <div class="cal-cell"><div class="cal-date">27</div><div class="cal-event ce-settlement">FX Spot settle</div><div class="cal-event ce-coupon">Bond Coupon</div></div>
+            <div class="cal-cell"><div class="cal-date">28</div></div>
+            <div class="cal-cell"><div class="cal-date">29</div><div class="cal-event ce-maturity">FD Equity Bk</div><div class="cal-event ce-rollover">Rollover due</div></div>
+            <div class="cal-cell weekend"><div class="cal-date">30</div></div>
+            <div class="cal-cell weekend"><div class="cal-date">31</div></div>
+          </div>
+          <!-- Week 3 -->
+          <div class="cal-week">
+            <div class="cal-week-num">36</div>
+            <div class="cal-cell"><div class="cal-date">01 Sep</div><div class="cal-event ce-maturity">T-Bill 91D</div></div>
+            <div class="cal-cell"><div class="cal-date">02</div></div>
+            <div class="cal-cell"><div class="cal-date">03</div><div class="cal-event ce-maturity">CP Safaricom</div></div>
+            <div class="cal-cell"><div class="cal-date">04</div></div>
+            <div class="cal-cell"><div class="cal-date">05</div><div class="cal-event ce-coupon">FXD 15yr</div></div>
+            <div class="cal-cell weekend"><div class="cal-date">06</div></div>
+            <div class="cal-cell weekend"><div class="cal-date">07</div></div>
+          </div>
+        </div>
+        <div class="card-footer"><span style="font-size:11px;color:var(--text-muted)">Events auto-generated from deal schedules · ★ = today · Green outline = settlement day</span></div>
+      </div>
+    </div>
+
+    <!-- ROLLOVER DECISIONS TAB -->
+    <div class="tab-panel" id="tab-rollover">
+      <div class="alert alert-warning" style="margin-bottom:var(--space-4)">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="15" height="15"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        <div style="font-size:11px">2 matured deals are awaiting a rollover or reinvestment decision. The proceeds are currently sitting in the CBK Settlement Account as idle cash. Dealer action required to redeploy.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
+
+        <!-- Rollover 1: T-Bill -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">T-Bill 91D — KES 517.9M</div><div class="card-subtitle">DEAL-00284 · Matured today · Proceeds available</div></div>
+            <span class="badge badge-warning">ACTION REQUIRED</span>
+          </div>
+          <div style="padding:var(--space-4)">
+            <div class="field-row"><span class="fk">Original Deal</span><span class="fv">T-Bill 91D — 14.87%</span></div>
+            <div class="field-row"><span class="fk">Principal Received</span><span class="fv" style="color:var(--status-success)">KES 500,000,000</span></div>
+            <div class="field-row"><span class="fk">Discount Income</span><span class="fv" style="color:var(--status-success)">KES 17,900,000</span></div>
+            <div class="field-row"><span class="fk">Total Available</span><span class="fv" style="color:var(--status-success);font-size:14px">KES 517,900,000</span></div>
+            <div class="field-row"><span class="fk">Current 91D Rate</span><span class="fv">14.87%</span></div>
+            <div class="field-row"><span class="fk">Next Auction</span><span class="fv">27 Aug 2026 (Thursday)</span></div>
+            <div class="field-row"><span class="fk">Alternative: 182D Rate</span><span class="fv">15.23% (+36bp)</span></div>
+            <div style="margin-top:var(--space-4)">
+              <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--space-3)">Rollover Options</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn btn-primary" onclick="rollover('tbill91','517.9M at 14.87% · Next 91D auction 27 Aug 2026')">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                  Roll into new T-Bill 91D (next auction)
+                </button>
+                <button class="btn btn-outline" onclick="rollover('tbill182','517.9M at 15.23% · 182-day tenor +36bp premium')">Roll into T-Bill 182D (+36bp)</button>
+                <button class="btn btn-outline" onclick="alert('Opening Deal Capture — Fixed Deposit form pre-populated with KES 517.9M...')">Place as Fixed Deposit</button>
+                <button class="btn btn-ghost" onclick="alert('Proceeds left in CBK Settlement Account as idle cash.\nCash Position updated.')">Leave as Cash (no rollover)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rollover 2: Fixed Deposit -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Fixed Deposit — KES 251.16M</div><div class="card-subtitle">DEAL-00285 · StanChart · Matured today</div></div>
+            <span class="badge badge-warning">ACTION REQUIRED</span>
+          </div>
+          <div style="padding:var(--space-4)">
+            <div class="field-row"><span class="fk">Original Deal</span><span class="fv">FD 91D — 14.50%</span></div>
+            <div class="field-row"><span class="fk">Principal Received</span><span class="fv" style="color:var(--status-success)">KES 250,000,000</span></div>
+            <div class="field-row"><span class="fk">Interest Received</span><span class="fv" style="color:var(--status-success)">KES 1,162,500</span></div>
+            <div class="field-row"><span class="fk">Total Available</span><span class="fv" style="color:var(--status-success);font-size:14px">KES 251,162,500</span></div>
+            <div class="field-row"><span class="fk">StanChart Offered Rate</span><span class="fv">14.60% (+10bp vs prior)</span></div>
+            <div class="field-row"><span class="fk">Market (91D T-Bill)</span><span class="fv">14.87%</span></div>
+            <div class="field-row"><span class="fk">Other: Equity Bk offer</span><span class="fv">14.75%</span></div>
+            <div style="margin-top:var(--space-4)">
+              <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--space-3)">Rollover Options</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn btn-primary" onclick="rollover('fd_stanchart','251.16M at 14.60% with StanChart Kenya · Same counterparty')">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                  Roll with StanChart (14.60%)
+                </button>
+                <button class="btn btn-outline" onclick="rollover('fd_equity','251.16M at 14.75% with Equity Bank · +15bp vs StanChart')">Equity Bank FD — 14.75% (+15bp)</button>
+                <button class="btn btn-outline" onclick="alert('Opening Deal Capture — T-Bill form pre-populated...')">Invest in T-Bill (14.87%)</button>
+                <button class="btn btn-ghost" onclick="alert('Proceeds left as cash.\nCash Position updated.')">Leave as Cash</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRE-MATURITY WITHDRAWALS TAB -->
+    <div class="tab-panel" id="tab-premature">
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Pre-Maturity Withdrawal Requests</div><div class="card-subtitle">FR-15.6 · Early termination · Penalty calculation · Requires Treasurer approval</div></div>
+          <button class="btn btn-primary btn-sm" onclick="alert('New pre-maturity withdrawal request form...')">+ New Request</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Deal ID</th><th>Product</th><th>Counterparty</th><th>Maturity Date</th><th style="text-align:right">Principal</th><th style="text-align:right">Rate</th><th>Break Cost</th><th>Requested By</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr style="background:rgba(217,119,6,.03)">
+                <td class="mono fw-600">DEAL-00271</td>
+                <td><span class="badge badge-neutral">FIXED DEP</span></td>
+                <td style="font-size:12px">Equity Bank</td>
+                <td class="mono text-xs">30/11/2026</td>
+                <td class="text-right mono">KES 400M</td>
+                <td class="mono">14.25%</td>
+                <td style="font-size:12px;color:var(--status-danger)">−KES 1.2M (break cost)</td>
+                <td style="font-size:12px">J. Mwangi</td>
+                <td><span class="badge badge-warning">PENDING APPROVAL</span></td>
+                <td><button class="btn btn-success btn-sm" onclick="alert('Pre-maturity withdrawal approved.\nBreak cost of KES 1.2M accepted.\nDeal closed. Settlement initiated.')">Approve</button></td>
+              </tr>
+              <tr>
+                <td class="mono fw-600">DEAL-00255</td>
+                <td><span class="badge badge-neutral">FIXED DEP</span></td>
+                <td style="font-size:12px">KCB Group</td>
+                <td class="mono text-xs">15/02/2027</td>
+                <td class="text-right mono">KES 200M</td>
+                <td class="mono">14.10%</td>
+                <td style="font-size:12px;color:var(--status-danger)">−KES 2.8M (break cost)</td>
+                <td style="font-size:12px">W. Kamau</td>
+                <td><span class="badge badge-neutral">DRAFT</span></td>
+                <td><button class="btn btn-outline btn-sm">Submit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer"><span style="font-size:11px;color:var(--text-muted)">Break cost = accrued interest already earned by counterparty. Early withdrawal requires Treasurer approval before proceeding.</span></div>
+      </div>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div class="tab-panel" id="tab-history">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Event Processing History</div><div class="card-subtitle">Last 10 processed events · FR-15.6</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Event Type</th><th>Deal</th><th>Instrument</th><th style="text-align:right">Amount</th><th>Processed By</th><th>GL Batch</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="mono text-xs">25/08/2026</td><td><span class="badge badge-primary">MATURITY</span></td><td class="mono text-xs">DEAL-00284</td><td style="font-size:12px">T-Bill 91D</td><td class="text-right mono" style="color:var(--status-success)">+517.9M</td><td style="font-size:12px">System</td><td class="mono text-xs">JNL-0825-044</td><td><span class="badge badge-success">POSTED</span></td></tr>
+              <tr><td class="mono text-xs">25/08/2026</td><td><span class="badge badge-primary">MATURITY</span></td><td class="mono text-xs">DEAL-00285</td><td style="font-size:12px">Fixed Deposit</td><td class="text-right mono" style="color:var(--status-success)">+251.16M</td><td style="font-size:12px">System</td><td class="mono text-xs">JNL-0825-045</td><td><span class="badge badge-success">POSTED</span></td></tr>
+              <tr><td class="mono text-xs">25/08/2026</td><td><span class="badge badge-info">COUPON</span></td><td class="mono text-xs">BOND-0043</td><td style="font-size:12px">IFB 10yr 2025</td><td class="text-right mono" style="color:var(--status-success)">+187.5M</td><td style="font-size:12px">System</td><td class="mono text-xs">JNL-0825-046</td><td><span class="badge badge-success">POSTED</span></td></tr>
+              <tr><td class="mono text-xs">22/08/2026</td><td><span class="badge badge-primary">MATURITY</span></td><td class="mono text-xs">DEAL-00271</td><td style="font-size:12px">T-Bill 182D</td><td class="text-right mono" style="color:var(--status-success)">+1,024.5M</td><td style="font-size:12px">System</td><td class="mono text-xs">JNL-0822-031</td><td><span class="badge badge-success">POSTED</span></td></tr>
+              <tr><td class="mono text-xs">18/08/2026</td><td><span class="badge badge-info">COUPON</span></td><td class="mono text-xs">BOND-0027</td><td style="font-size:12px">FXD 5yr 2024</td><td class="text-right mono" style="color:var(--status-success)">+221.6M</td><td style="font-size:12px">System</td><td class="mono text-xs">JNL-0818-015</td><td><span class="badge badge-success">POSTED</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer"><a href="26-accounting-gl.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View all GL postings →</a></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<script>
+function caTab(el,t){
+  document.querySelectorAll('#caTabs .tab-item').forEach(function(e){e.classList.remove('active')});
+  el.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('tab-'+t).classList.add('active');
+}
+function showEventDetail(id){
+  var titles = {tb:'T-Bill 91D Maturity — DEAL-00284', fd:'Fixed Deposit Maturity — DEAL-00285', bond:'Bond Coupon — IFB 10yr 2025', on:'Overnight Borrowing Maturity — DEAL-00282'};
+  if(titles[id]) document.getElementById('edTitle').textContent = titles[id];
+}
+function processEvent(){
+  alert('Processing Overnight Borrowing maturity DEAL-00282...\n\n✓ Position closed\n✓ Repayment KES 1,200,427,397 debited from CBK account\n✓ GL entries generated and posted\n✓ Cash position updated\n\nRef: JNL-0825-047');
+}
+function rollover(type, detail){
+  alert('Rollover / Reinvestment initiated:\n\n' + detail + '\n\nDeal Capture opened with pre-populated fields.\nDealer must complete and submit for authorisation.');
+  window.location.href='03-deal-capture.html';
+}
+</script>
+</body></html>

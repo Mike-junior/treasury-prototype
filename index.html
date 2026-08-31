@@ -143,14 +143,24 @@ code{background:#F1F5F9;padding:2px 6px;border-radius:4px;font-family:monospace;
     </div>
   </div>
 
-  <!-- SECTION 4: OPERATIONS -->
+  <!-- SECTION 4: BACK OFFICE -->
   <div class="section">
-    <div class="section-title">Operations</div>
+    <div class="section-title">Back Office</div>
     <div class="grid">
       <a href="12-settlement.html" class="card" style="--cc:#2563EB">
         <div class="num">12</div><div class="title">Settlement</div>
         <div class="desc">Settlement queue, SWIFT MT202 preview, lifecycle tracker, upcoming settlements.</div>
-        <div class="fr">FR-15 · Settlement</div><span class="arrow">›</span>
+        <div class="fr">FR-15.1–15.3 · Settlement</div><span class="arrow">›</span>
+      </a>
+      <a href="30-confirmation-matching.html" class="card" style="--cc:#C8102E">
+        <div class="num">30</div><div class="title">Confirmation Matching</div>
+        <div class="desc">Match inbound SWIFT MT300/MT320 counterparty confirmations against booked deals. Mismatch exception queue. Blocks day-end if unresolved.</div>
+        <div class="fr">FR-15.4–15.5 · Confirmation</div><span class="arrow">›</span>
+      </a>
+      <a href="31-corporate-actions.html" class="card" style="--cc:#D97706">
+        <div class="num">31</div><div class="title">Corporate Actions &amp; Events</div>
+        <div class="desc">Automated maturities, coupon payments, rollover decisions, pre-maturity withdrawal workflow. Event calendar view.</div>
+        <div class="fr">FR-15.6 · Events Processing</div><span class="arrow">›</span>
       </a>
       <a href="06-reconciliation.html" class="card" style="--cc:#0D7377">
         <div class="num">06</div><div class="title">Reconciliation (TMS-GL)</div>
@@ -162,9 +172,14 @@ code{background:#F1F5F9;padding:2px 6px;border-radius:4px;font-family:monospace;
         <div class="desc">Nostro positions, projected flows, MT940 import, break management, charge disputes, analytics.</div>
         <div class="fr">FR-10 · Nostro Banking</div><span class="arrow">›</span>
       </a>
+      <a href="26-accounting-gl.html" class="card" style="--cc:#0A1628">
+        <div class="num">26</div><div class="title">Accounting &amp; GL</div>
+        <div class="desc">Configuration-driven rule engine, posting batches, GL monitor, retry queue, rule simulation.</div>
+        <div class="fr">FR-16 · Accounting</div><span class="arrow">›</span>
+      </a>
       <a href="13-day-end.html" class="card" style="--cc:#4B5563">
         <div class="num">13</div><div class="title">Day End Close</div>
-        <div class="desc">5-phase EOD checklist, blocking state, sign-off workflow, date rollover.</div>
+        <div class="desc">5-phase EOD checklist, blocking state (unresolved confirmations/breaks), sign-off, date rollover.</div>
         <div class="fr">FR-20 · Day End</div><span class="arrow">›</span>
       </a>
     </div>
