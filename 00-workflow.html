@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Treasury Operations Workflow — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --fo:#1E3A5F;     /* Front Office — deep blue */
+  --mo:#0D5C3A;     /* Middle Office — deep green */
+  --bo:#7C2D12;     /* Back Office — deep amber/brown */
+  --sys:#1A1A2E;    /* System — near black */
+  --fo-l:#EFF6FF;   --fo-b:#BFDBFE; --fo-t:#1D4ED8;
+  --mo-l:#F0FDF4;   --mo-b:#BBF7D0; --mo-t:#15803D;
+  --bo-l:#FFF7ED;   --bo-b:#FED7AA; --bo-t:#C2410C;
+  --sys-l:#F8FAFC;  --sys-b:#CBD5E0; --sys-t:#334155;
+  --bg:#F1F5F9;
+  --white:#FFFFFF;
+  --border:#E2E8F0;
+  --text:#0F172A;
+  --muted:#64748B;
+  --font:'Inter',sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── HEADER ── */
+.page-header{
+  background:linear-gradient(135deg,#0A1628 0%,#1E3A5F 60%,#0A1628 100%);
+  padding:40px 60px 36px;
+  position:relative;overflow:hidden;
+}
+.page-header::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;}
+.header-inner{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:24px;}
+.header-brand{display:flex;align-items:center;gap:14px;}
+.brand-box{width:44px;height:44px;background:#C8102E;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff;box-shadow:0 4px 20px rgba(200,16,46,.4);flex-shrink:0;}
+.brand-text .name{font-size:16px;font-weight:800;color:#fff;}
+.brand-text .sub{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.5px;text-transform:uppercase;margin-top:2px;}
+.header-title h1{font-size:28px;font-weight:900;color:#fff;line-height:1.15;margin-bottom:6px;}
+.header-title p{font-size:13px;color:rgba(255,255,255,.55);max-width:580px;line-height:1.7;}
+.header-legend{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+.header-nav{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap;}
+.nav-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border:1px solid rgba(255,255,255,.15);border-radius:8px;font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;transition:all .15s;cursor:pointer;background:transparent;}
+.nav-btn:hover{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3);}
+.nav-btn svg{width:13px;height:13px;}
+
+/* ── TABS ── */
+.tabs-wrap{background:#fff;border-bottom:2px solid var(--border);padding:0 60px;display:flex;gap:0;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.tab{padding:14px 22px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s,border-color .15s;}
+.tab:hover{color:var(--text);}
+.tab.active{color:#C8102E;border-bottom-color:#C8102E;}
+.tab-panel{display:none;padding:40px 60px 60px;}
+.tab-panel.active{display:block;}
+
+/* ── SECTION LABELS ── */
+.section-hdr{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+.section-hdr .dot{width:10px;height:10px;border-radius:2px;}
+
+/* ── SWIM LANE DIAGRAM ── */
+.swim{display:grid;grid-template-columns:120px 1fr;gap:0;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:32px;}
+.lane-label{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:16px 12px;}
+.lane-fo .lane-label{background:var(--fo);color:#fff;}
+.lane-mo .lane-label{background:var(--mo);color:#fff;}
+.lane-bo .lane-label{background:var(--bo);color:#fff;}
+.lane-sys .lane-label{background:var(--sys);color:#fff;}
+.lane-content{padding:20px 24px;border-left:3px solid;}
+.lane-fo .lane-content{background:var(--fo-l);border-color:var(--fo-b);}
+.lane-mo .lane-content{background:var(--mo-l);border-color:var(--mo-b);}
+.lane-bo .lane-content{background:var(--bo-l);border-color:var(--bo-b);}
+.lane-sys .lane-content{background:var(--sys-l);border-color:var(--sys-b);}
+
+/* ── STEP CARDS ── */
+.steps-row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;}
+.step{
+  background:#fff;border-radius:10px;padding:14px 16px;
+  min-width:180px;max-width:220px;flex:1;
+  position:relative;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+  transition:box-shadow .15s,transform .15s;
+  cursor:default;
+}
+.step:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);transform:translateY(-2px);}
+.step .s-num{
+  position:absolute;top:-10px;left:14px;
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:900;color:#fff;
+}
+.step-fo .s-num{background:var(--fo-t);}
+.step-mo .s-num{background:var(--mo-t);}
+.step-bo .s-num{background:var(--bo-t);}
+.step-sys .s-num{background:var(--sys-t);}
+.step .s-title{font-size:12px;font-weight:700;margin-top:6px;margin-bottom:4px;line-height:1.3;}
+.step .s-desc{font-size:10px;color:var(--muted);line-height:1.5;}
+.step .s-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-top:6px;letter-spacing:.3px;}
+.step-fo .s-tag{background:var(--fo-b);color:var(--fo-t);}
+.step-mo .s-tag{background:var(--mo-b);color:var(--mo-t);}
+.step-bo .s-tag{background:var(--bo-b);color:var(--bo-t);}
+.step-sys .s-tag{background:var(--sys-b);color:var(--sys-t);}
+.step .s-link{font-size:9px;color:#C8102E;font-weight:600;text-decoration:none;margin-top:5px;display:block;}
+.step .s-link:hover{text-decoration:underline;}
+
+/* Arrow between steps */
+.arrow{display:flex;align-items:center;padding:0 4px;color:var(--muted);font-size:18px;margin-top:16px;}
+
+/* ── DECISION DIAMOND ── */
+.decision{
+  background:#FFFBEB;border:2px solid #FDE68A;border-radius:10px;
+  padding:12px 16px;text-align:center;min-width:160px;max-width:200px;
+  font-size:11px;font-weight:700;color:#92400E;
+}
+.decision svg{width:16px;height:16px;margin:0 auto 4px;display:block;}
+
+/* ── BLOCKING BADGE ── */
+.blocking{background:#FEF2F2;border:1px solid #FECACA;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;color:#DC2626;display:inline-flex;align-items:center;gap:5px;}
+
+/* ── END-TO-END FLOW ── */
+.e2e-wrap{position:relative;}
+.e2e-timeline{display:flex;flex-direction:column;gap:0;}
+.e2e-row{display:grid;grid-template-columns:100px 32px 1fr;gap:0;align-items:stretch;margin-bottom:0;}
+.e2e-office{display:flex;align-items:center;justify-content:flex-end;padding-right:12px;padding-top:16px;}
+.e2e-office-tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;padding:4px 10px;border-radius:12px;white-space:nowrap;}
+.fo-tag{background:var(--fo);color:#fff;}
+.mo-tag{background:var(--mo);color:#fff;}
+.bo-tag{background:var(--bo);color:#fff;}
+.sys-tag{background:var(--sys);color:#fff;}
+.e2e-line{display:flex;flex-direction:column;align-items:center;}
+.e2e-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;margin-top:20px;z-index:2;position:relative;}
+.e2e-vline{flex:1;width:2px;background:var(--border);margin:0 auto;}
+.e2e-content{padding:14px 0 14px 16px;}
+.e2e-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;max-width:700px;transition:box-shadow .15s;}
+.e2e-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);}
+.e2e-card .ec-num{font-size:10px;font-weight:700;color:var(--muted);margin-bottom:4px;}
+.e2e-card .ec-title{font-size:13px;font-weight:800;margin-bottom:4px;}
+.e2e-card .ec-desc{font-size:11px;color:var(--muted);line-height:1.6;}
+.e2e-card .ec-detail{margin-top:8px;font-size:11px;background:var(--bg);border-radius:6px;padding:10px 12px;line-height:1.8;}
+.e2e-card .ec-detail li{color:var(--muted);margin-left:16px;}
+.e2e-card .ec-detail li strong{color:var(--text);}
+.e2e-card .ec-screen{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:10px;font-weight:600;color:#C8102E;text-decoration:none;}
+.e2e-card .ec-screen:hover{text-decoration:underline;}
+.e2e-card .ec-screen svg{width:11px;height:11px;}
+.e2e-card.auto{border-color:var(--sys-b);background:var(--sys-l);}
+.e2e-card.blocking-card{border-color:#FECACA;background:#FEF2F2;}
+
+/* ── ROLE SUMMARY TABLE ── */
+.role-table-wrap{overflow-x:auto;}
+.role-table{width:100%;border-collapse:collapse;font-size:12px;}
+.role-table th{padding:10px 14px;background:var(--bg);text-align:left;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:2px solid var(--border);white-space:nowrap;}
+.role-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+.role-table tr:hover td{background:#FAFAFA;}
+.role-table tr:last-child td{border-bottom:none;}
+.can-yes{color:#15803D;font-weight:700;}
+.can-no{color:#DC2626;font-weight:700;}
+.can-dual{color:#D97706;font-weight:700;}
+.can-na{color:var(--muted);}
+.role-badge{display:inline-block;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:800;}
+
+/* ── RESPONSIBILITY MATRIX ── */
+.matrix-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:32px;}
+.matrix-col{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.matrix-col-hdr{padding:16px 20px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:10px;}
+.matrix-col-hdr svg{width:18px;height:18px;}
+.matrix-item{display:flex;align-items:flex-start;gap:10px;padding:10px 20px;border-bottom:1px solid var(--border);font-size:12px;}
+.matrix-item:last-child{border-bottom:none;}
+.matrix-item .mi-icon{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.matrix-item .mi-text .mt{font-weight:600;color:var(--text);}
+.matrix-item .mi-text .ms{font-size:10px;color:var(--muted);margin-top:1px;line-height:1.4;}
+
+/* ── CONTROLS SUMMARY ── */
+.controls-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.control-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;transition:box-shadow .15s;}
+.control-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);}
+.control-card .cc-type{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.control-card .cc-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+.control-card .cc-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+.control-card .cc-who{font-size:10px;font-weight:600;margin-top:8px;display:flex;align-items:center;gap:5px;}
+
+/* Print */
+@media print{
+  .tabs-wrap,.header-nav,.nav-btn{display:none!important;}
+  .tab-panel{display:block!important;padding:20px!important;}
+  .page-header{padding:20px!important;}
+  body{background:#fff!important;}
+}
+@media (max-width:900px){
+  .tab-panel{padding:24px 20px 40px!important;}
+  .tabs-wrap{padding:0 20px!important;}
+  .matrix-grid{grid-template-columns:1fr!important;}
+  .page-header{padding:24px 20px 20px!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<div class="page-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-brand">
+        <div class="brand-box">E&M</div>
+        <div class="brand-text">
+          <div class="name">E&M Technology House Ltd</div>
+          <div class="sub">Treasury Management System v2.0</div>
+        </div>
+      </div>
+      <div class="header-title" style="margin-top:24px">
+        <h1>Treasury Operations Workflow</h1>
+        <p>Complete breakdown of all actions across Front Office, Middle Office and Back Office — from deal origination through to settlement, reconciliation and day-end close.</p>
+      </div>
+      <div class="header-nav">
+        <a href="index.html" class="nav-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>All Screens</a>
+        <a href="02-dashboard.html" class="nav-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Dashboard</a>
+        <a href="03-deal-capture.html" class="nav-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture</a>
+        <span class="nav-btn" onclick="window.print()"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print / PDF</span>
+      </div>
+    </div>
+    <div class="header-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--fo-t)"></div><span style="color:#fff">Front Office</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--mo-t)"></div><span style="color:#fff">Middle Office</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--bo-t)"></div><span style="color:#fff">Back Office</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--sys-t)"></div><span style="color:#fff">System (Auto)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TABS ══ -->
+<div class="tabs-wrap">
+  <div class="tab active" onclick="switchTab('e2e')">End-to-End Flow</div>
+  <div class="tab" onclick="switchTab('fo')">Front Office</div>
+  <div class="tab" onclick="switchTab('mo')">Middle Office</div>
+  <div class="tab" onclick="switchTab('bo')">Back Office</div>
+  <div class="tab" onclick="switchTab('matrix')">Responsibility Matrix</div>
+  <div class="tab" onclick="switchTab('controls')">Controls &amp; SoD</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 1: END-TO-END FLOW
+══════════════════════════════════════ -->
+<div class="tab-panel active" id="panel-e2e">
+
+  <div style="margin-bottom:32px">
+    <div class="section-hdr"><div class="dot" style="background:#C8102E"></div>End-to-End Deal Lifecycle — FX Spot Example</div>
+    <p style="font-size:12px;color:var(--muted);max-width:700px;line-height:1.7">Follows a single FX Spot deal from the moment the dealer identifies an opportunity through to final GL posting and day-end close. Every step is linked to the relevant screen in the TMS.</p>
+  </div>
+
+  <div class="e2e-timeline">
+
+    <!-- 1 -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag fo-tag">FO</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--fo-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card">
+          <div class="ec-num">STEP 1</div>
+          <div class="ec-title">Identify Opportunity — Cash Position Surplus</div>
+          <div class="ec-desc">Treasurer reviews the cash position worksheet and sees KES 2.5M equivalent in idle USD in the CBK account. Calls Citi N.A. dealing desk for a spot rate.</div>
+          <ul class="ec-detail"><li><strong>Checks:</strong> Cash position worksheet, NOP headroom, counterparty limit availability</li><li><strong>Live rate received:</strong> USD/KES 129.42 from Citi dealer</li></ul>
+          <a href="04-cash-position.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position Screen →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag fo-tag">FO</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--fo-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card">
+          <div class="ec-num">STEP 2</div>
+          <div class="ec-title">Open Deal Capture → FX Spot Tab</div>
+          <div class="ec-desc">Dealer opens Deal Capture. System shows only counterparties and products within the dealer's mandate. Dealer fills in the 4-step wizard.</div>
+          <ul class="ec-detail">
+            <li><strong>Step 1 — Counterparty:</strong> Select portfolio, counterparty (Citi N.A.), deal source (MANUAL). System shows live CTY limit headroom.</li>
+            <li><strong>Step 2 — Trade Details:</strong> Buy KES / Sell USD · Notional USD 2,500,000 · Trade date 25 Aug · Value date auto-derived T+2 = 27 Aug</li>
+            <li><strong>Step 3 — Rate & Settlement:</strong> Enter rate 129.42. System compares to market 129.45 → deviation −3bp ✓ within 10bp tolerance. Select nostro accounts.</li>
+            <li><strong>Step 4 — Review:</strong> Full deal summary shown before submission. Pre-deal limit check results visible.</li>
+          </ul>
+          <a href="03-deal-capture.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture Screen →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 AUTO -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag sys-tag">SYS</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--sys-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card auto">
+          <div class="ec-num">STEP 3 — AUTOMATIC</div>
+          <div class="ec-title">Pre-Deal Limit Check (Synchronous)</div>
+          <div class="ec-desc">On submit, system simultaneously checks all applicable limits before saving the deal. Runs in &lt;500ms.</div>
+          <ul class="ec-detail">
+            <li><strong>CTY Settlement Limit — Citi N.A.:</strong> KES 323.6M / 800M = 40% ✓ PASS</li>
+            <li><strong>CTY Group Limit — Citigroup:</strong> 38% ✓ PASS</li>
+            <li><strong>USD NOP Overnight:</strong> +128.4M / 200M = 64% ✓ PASS</li>
+            <li><strong>Aggregate NOP:</strong> KES 725M / 1,000M = 72% ⚠ WARNING (notifies MO)</li>
+            <li><strong>Dealer Daily Limit — J. Mwangi:</strong> 46% ✓ PASS</li>
+            <li><strong>Result:</strong> 1 warning — deal proceeds, MO alerted</li>
+            <li><strong>If HARD breach:</strong> HTTP 422 returned, deal NOT saved, dealer must remediate</li>
+          </ul>
+          <a href="05-limits-exposure.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits & Exposure Screen →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag sys-tag">SYS</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--sys-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card auto">
+          <div class="ec-num">STEP 4 — AUTOMATIC</div>
+          <div class="ec-title">Deal Saved → PENDING_AUTH · Auth Queue Notified</div>
+          <div class="ec-desc">Deal DEAL-00287 saved with status PENDING_AUTH. Position NOT yet updated. Authoriser notified. SLA timer starts (4 hours).</div>
+          <ul class="ec-detail">
+            <li><strong>Blotter updated</strong> within 3 seconds (FR-05.8)</li>
+            <li><strong>Authoriser (M. Njoki)</strong> receives notification — badge increments to 6</li>
+            <li><strong>Pending deals</strong> included in cash position as a separate "pending" line</li>
+            <li><strong>SLA clock starts:</strong> 4 hours to authorisation before escalation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 MO parallel -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag mo-tag">MO</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--mo-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card">
+          <div class="ec-num">STEP 5 — PARALLEL (Middle Office)</div>
+          <div class="ec-title">Real-Time Limit Monitoring Update</div>
+          <div class="ec-desc">The Aggregate NOP warning fires automatically. Middle Office dashboard updates. Kevin Omondi reviews the breach event.</div>
+          <ul class="ec-detail">
+            <li><strong>Breach event created:</strong> DETECTED → NOTIFIED</li>
+            <li><strong>MO action:</strong> Acknowledge with justification "passive approach to limit — monitoring"</li>
+            <li><strong>If unacknowledged for 4h:</strong> Auto-escalates to Treasurer</li>
+            <li><strong>Independent MTM valuation</strong> runs at 10:30 — does not involve dealer</li>
+          </ul>
+          <a href="05-limits-exposure.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits & Exposure →</a>
+          <a href="23-middle-office.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>Middle Office →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 Authorise -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag fo-tag">FO</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--fo-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card">
+          <div class="ec-num">STEP 6</div>
+          <div class="ec-title">Four-Eyes Authorisation</div>
+          <div class="ec-desc">Mary Njoki (Authoriser L2) opens the Auth Queue. Reviews the deal in full — terms, limit impact, rate justification. Confirms authorisation.</div>
+          <ul class="ec-detail">
+            <li><strong>SoD check (API layer):</strong> authoriser_id ≠ dealer_id ✓ — passes</li>
+            <li><strong>Limit impact panel shown:</strong> NOP at 64% post-deal, no hard breaches</li>
+            <li><strong>Rate check:</strong> 129.42 vs market 129.45 = −3bp, within tolerance — no justification required</li>
+            <li><strong>Authoriser enters notes</strong> and clicks Authorise</li>
+            <li><strong>Result:</strong> Deal status → AUTHORISED (within 2 seconds)</li>
+          </ul>
+          <a href="08-auth-queue.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue Screen →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 Auto post-auth -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag sys-tag">SYS</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--sys-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card auto">
+          <div class="ec-num">STEP 7 — AUTOMATIC (on authorisation)</div>
+          <div class="ec-title">Position Update · SWIFT Generated · Blotter Refreshed</div>
+          <div class="ec-desc">System performs 5 actions simultaneously within 2 seconds of authorisation (FR-07.3).</div>
+          <ul class="ec-detail">
+            <li><strong>Position updated:</strong> USD NOP +2.5M · Portfolio book updated · Cash position updated</li>
+            <li><strong>SWIFT MT202 generated</strong> from Citi N.A. SSI — pre-populated, no manual entry</li>
+            <li><strong>Deal confirmation document</strong> generated (PDF)</li>
+            <li><strong>Deal blotter refreshed</strong> — visible to all permitted roles within 3 seconds</li>
+            <li><strong>Back Office notification</strong> — settlement queue updated</li>
+          </ul>
+          <a href="12-settlement.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>Settlement Screen →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 BO settlement -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag bo-tag">BO</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--bo-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card">
+          <div class="ec-num">STEP 8</div>
+          <div class="ec-title">Back Office — Settlement Instruction Dispatch</div>
+          <div class="ec-desc">Susan Otieno reviews the auto-generated MT202 in the Settlement screen. Verifies SSI details and dispatches via SWIFT.</div>
+          <ul class="ec-detail">
+            <li><strong>MT202 reviewed:</strong> Nostro account, BIC codes, amount, value date all verified</li>
+            <li><strong>Dispatched via SWIFT</strong> to Citi N.A. New York</li>
+            <li><strong>Status:</strong> PENDING → DISPATCHED</li>
+            <li><strong>MT910 acknowledgement received</strong> from Citi → status: ACKNOWLEDGED</li>
+          </ul>
+          <a href="12-settlement.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>Settlement →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 BO confirmation -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag bo-tag">BO</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--bo-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card">
+          <div class="ec-num">STEP 9</div>
+          <div class="ec-title">Deal Confirmation Matching (FR-15.4)</div>
+          <div class="ec-desc">Citi N.A. sends MT300 confirmation. System auto-matches against DEAL-00287 within tolerances.</div>
+          <ul class="ec-detail">
+            <li><strong>Rate match:</strong> Citi confirms 129.42 vs TMS 129.42 = 0bp difference ✓</li>
+            <li><strong>Amount match:</strong> USD 2,500,000 ✓ · Value date 27/08/2026 ✓</li>
+            <li><strong>Result: AUTO-MATCHED</strong> — no action needed</li>
+            <li><strong>If mismatched:</strong> Goes to exception queue, Back Office investigates, may block EOD</li>
+          </ul>
+          <a href="30-confirmation-matching.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/></svg>Confirmation Matching →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 Value date -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag bo-tag">BO</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--bo-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card">
+          <div class="ec-num">STEP 10 — T+2 (27 August)</div>
+          <div class="ec-title">Nostro Reconciliation — MT940 Import</div>
+          <div class="ec-desc">On value date, Citi N.A. credits USD 2,500,000 to the USD Nostro account. MT940 statement arrives at 07:00. System auto-matches.</div>
+          <ul class="ec-detail">
+            <li><strong>MT940 imported</strong> — statement item: $2,500,000 CR · REF: NYC20260827001</li>
+            <li><strong>Auto-matched</strong> against DEAL-00287 ✓</li>
+            <li><strong>KES settlement</strong>: KES 323,550,000 debited from CBK Settlement Account</li>
+            <li><strong>If unmatched:</strong> Break created, ageing clock starts, Back Office investigates</li>
+          </ul>
+          <a href="06-reconciliation.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation →</a>
+          <a href="22-nostro-correspondent.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/></svg>Nostro & Correspondent →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 GL -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag sys-tag">SYS</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--sys-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card auto">
+          <div class="ec-num">STEP 11 — AUTOMATIC</div>
+          <div class="ec-title">Accounting Entries Generated (FR-16)</div>
+          <div class="ec-desc">Rules engine resolves the accounting rule for FX_SPOT → DEAL_SETTLE and generates balanced journal entries.</div>
+          <ul class="ec-detail">
+            <li><strong>Dr</strong> CBK Settlement Account KES 323,550,000</li>
+            <li><strong>Cr</strong> USD Nostro — Citi N.A. USD 2,500,000 (equiv. KES 323,550,000)</li>
+            <li><strong>Rule used:</strong> FX_SPOT / DEAL_SETTLE / FX_TRADING / LE-001 / IFRS 9</li>
+            <li><strong>Batch created</strong> → Back Office reviews and approves → posted to CBS GL</li>
+          </ul>
+          <a href="26-accounting-gl.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Accounting & GL →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 EOD -->
+    <div class="e2e-row">
+      <div class="e2e-office"><span class="e2e-office-tag bo-tag">BO</span></div>
+      <div class="e2e-line"><div class="e2e-dot" style="background:var(--bo-t)"></div><div class="e2e-vline"></div></div>
+      <div class="e2e-content">
+        <div class="e2e-card">
+          <div class="ec-num">STEP 12</div>
+          <div class="ec-title">Day-End Close — Deal Confirmed SETTLED</div>
+          <div class="ec-desc">At EOD, DEAL-00287 is fully settled, reconciled, and GL-posted. It passes all day-end checklist items for this deal.</div>
+          <ul class="ec-detail">
+            <li>✓ Settlement confirmed (MT910 received)</li>
+            <li>✓ Confirmation matched (MT300 matched)</li>
+            <li>✓ Nostro reconciled (MT940 matched)</li>
+            <li>✓ GL entries posted to CBS</li>
+            <li>✓ NOP snapshot captured for CBK NOP daily return</li>
+            <li><strong>Deal status → SETTLED</strong></li>
+          </ul>
+          <a href="13-day-end.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Day End Close →</a>
+          <a href="11-regulatory-reports.html" class="ec-screen"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>NOP Daily Return to CBK →</a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /timeline -->
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 2: FRONT OFFICE
+══════════════════════════════════════ -->
+<div class="tab-panel" id="panel-fo">
+  <div class="section-hdr"><div class="dot" style="background:var(--fo-t)"></div>Front Office — All Actions &amp; Responsibilities</div>
+
+  <div class="swim lane-fo">
+    <div class="lane-label">FRONT OFFICE</div>
+    <div class="lane-content">
+      <div style="font-size:12px;font-weight:700;color:var(--fo-t);margin-bottom:12px">Actors: Dealer · Sales Dealer · Treasurer</div>
+      <div class="steps-row">
+        <div class="step step-fo"><div class="s-num">1</div><div class="s-title">Monitor Live Rates</div><div class="s-desc">Watch FX ticker. Check NOP headroom before calling market.</div><span class="s-tag">FX / NOP Monitor</span><a href="20-fx-nop-monitor.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-fo"><div class="s-num">2</div><div class="s-title">Check Cash Surplus</div><div class="s-desc">Review cash position worksheet. Identify deployment opportunities.</div><span class="s-tag">Cash Position</span><a href="04-cash-position.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-fo"><div class="s-num">3</div><div class="s-title">Sales: Issue Quote</div><div class="s-desc">Sales Dealer applies margin grid to interbank rate. System pre-checks client credit limit before quote is issued.</div><span class="s-tag">Treasury Sales FR-08</span><a href="21-treasury-sales.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-fo"><div class="s-num">4</div><div class="s-title">Capture Deal</div><div class="s-desc">4-step wizard. Select product, counterparty (mandate-filtered), trade details, rate. System auto-derives settlement amounts and value dates.</div><span class="s-tag">Deal Capture FR-05</span><a href="03-deal-capture.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-fo"><div class="s-num">5</div><div class="s-title">Rate Challenge</div><div class="s-desc">If rate deviates &gt;10bp from live market, dealer must enter written justification before submit. Recorded in audit trail permanently.</div><span class="s-tag">FR-05.3</span></div>
+      </div>
+      <div class="steps-row" style="margin-top:16px">
+        <div class="step step-fo"><div class="s-num">6</div><div class="s-title">Submit Deal</div><div class="s-desc">Pre-deal limit check runs automatically. HARD breach blocks. WARNING proceeds with alert. Deal saved as PENDING_AUTH.</div><span class="s-tag">FR-06 Pre-deal check</span></div>
+        <div class="arrow">›</div>
+        <div class="step step-fo"><div class="s-num">7</div><div class="s-title">Monitor Auth Queue</div><div class="s-desc">Track pending authorisations. SLA timer visible. Escalation auto-fires at 4h. Can view but NOT authorise own deals.</div><span class="s-tag">Auth Queue FR-07</span><a href="08-auth-queue.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-fo"><div class="s-num">8</div><div class="s-title">Rollover Decisions</div><div class="s-desc">When a deal matures (T-bill, FD, overnight), Back Office flags it. Dealer decides: rollover, reinvest in different product, or leave as cash.</div><span class="s-tag">Corporate Actions FR-15.6</span><a href="31-corporate-actions.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-fo"><div class="s-num">9</div><div class="s-title">What-If Calculator</div><div class="s-desc">Simulate a deal impact on NOP, limits, duration, PV01 before capturing. Does not create a deal record.</div><span class="s-tag">FR-05.9</span></div>
+        <div class="arrow">›</div>
+        <div class="step step-fo"><div class="s-num">10</div><div class="s-title">Deal Register / Blotter</div><div class="s-desc">Real-time view of all deals, positions, pending auths, intraday P&L. Updates within 3 seconds of any deal event.</div><span class="s-tag">FR-05.8</span><a href="09-deal-register.html" class="s-link">Open screen →</a></div>
+      </div>
+      <div style="margin-top:16px;padding:12px 16px;background:rgba(200,16,46,.06);border:1px solid rgba(200,16,46,.15);border-radius:8px;font-size:11px;color:var(--fo)">
+        <strong>Front Office CANNOT:</strong> Authorise own deals · Run independent valuations · Override market data · Modify limit thresholds · Access nostro statements · Create GL journal entries
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 3: MIDDLE OFFICE
+══════════════════════════════════════ -->
+<div class="tab-panel" id="panel-mo">
+  <div class="section-hdr"><div class="dot" style="background:var(--mo-t)"></div>Middle Office — All Actions &amp; Responsibilities</div>
+
+  <div class="swim lane-mo">
+    <div class="lane-label">MIDDLE OFFICE</div>
+    <div class="lane-content">
+      <div style="font-size:12px;font-weight:700;color:var(--mo-t);margin-bottom:12px">Actors: Middle Office Officer · Treasurer (oversight)</div>
+      <div class="steps-row">
+        <div class="step step-mo"><div class="s-num">1</div><div class="s-title">Configure Limits</div><div class="s-desc">Set CTY, NOP, sector, dealer limits. All changes require dual authorisation before activating. Existing limit stays active until approved.</div><span class="s-tag">Limits FR-06</span><a href="05-limits-exposure.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-mo"><div class="s-num">2</div><div class="s-title">Monitor Real-Time Utilisation</div><div class="s-desc">Watch all limit dimensions in real-time, including impact of PENDING_AUTH deals. Notified on WARNING and HARD breaches.</div><span class="s-tag">FR-06.5</span><a href="05-limits-exposure.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-mo"><div class="s-num">3</div><div class="s-title">Manage Breach Lifecycle</div><div class="s-desc">DETECTED → NOTIFIED → ACKNOWLEDGED (with reason) → REMEDIATION_PLANNED → REMEDIATED → CLOSED. Each step requires the acting user and timestamp.</div><span class="s-tag">FR-06.7</span></div>
+        <div class="arrow">›</div>
+        <div class="step step-mo"><div class="s-num">4</div><div class="s-title">Passive Breach Detection</div><div class="s-desc">Market moves (rate changes, rating downgrades) can cause passive breaches during each valuation run and market data update. Different workflow from active breaches.</div><span class="s-tag">FR-06.6 / FR-06.9</span></div>
+      </div>
+      <div class="steps-row" style="margin-top:16px">
+        <div class="step step-mo"><div class="s-num">5</div><div class="s-title">Run Independent Valuations</div><div class="s-desc">MTM valuation using controlled market data. Produces: clean/dirty price, yield, duration, convexity, PV01, accrued interest, unrealised P&L. Dealers CANNOT call this.</div><span class="s-tag">Valuation FR-14.2</span><a href="23-middle-office.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-mo"><div class="s-num">6</div><div class="s-title">Market Data Control</div><div class="s-desc">Configure source hierarchy. Manage exception queue (stale/spiked rates). Create overrides with justification + source ref. Second MO user must approve every override.</div><span class="s-tag">Market Data FR-18</span><a href="24-market-data.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-mo"><div class="s-num">7</div><div class="s-title">VaR Analytics</div><div class="s-desc">Historical simulation VaR at 95%/99% confidence, 1-day and 10-day horizons. Monitor against VaR limit. CVaR and back-test exception tracking.</div><span class="s-tag">VaR FR-14.4</span><a href="23-middle-office.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-mo"><div class="s-num">8</div><div class="s-title">Stop-Loss Monitoring</div><div class="s-desc">Per-desk and per-dealer stop-loss limits. When threshold is reached, new position-adding deals are blocked via the pre-deal limit check engine.</div><span class="s-tag">FR-14.5</span><a href="23-middle-office.html" class="s-link">Open screen →</a></div>
+      </div>
+      <div class="steps-row" style="margin-top:16px">
+        <div class="step step-mo"><div class="s-num">9</div><div class="s-title">P&L Attribution</div><div class="s-desc">Breakdown of P&L by desk, dealer, instrument: carry income vs MTM movement vs funding cost. Independent of front office inputs.</div><span class="s-tag">FR-14.6</span><a href="23-middle-office.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-mo"><div class="s-num">10</div><div class="s-title">ALM / IRRBB Analytics</div><div class="s-desc">Repricing gap, NII sensitivity, EVE sensitivity, LCR/NSFR ratios. Run stress scenarios. Generate ALCO pack.</div><span class="s-tag">ALM FR-12</span><a href="10-alm.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-mo"><div class="s-num">11</div><div class="s-title">FTP Curve Management</div><div class="s-desc">Create and version FTP curves (matched-maturity, pool, blended). Draft curves invisible outside MO. Treasurer must approve before activation.</div><span class="s-tag">FTP FR-13</span><a href="25-ftp.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-mo"><div class="s-num">12</div><div class="s-title">EOD Valuation Lock</div><div class="s-desc">Lock EOD rates and run final valuation. Snapshot retained for reproducibility. NOP data extracted for CBK NOP daily return.</div><span class="s-tag">FR-20</span><a href="13-day-end.html" class="s-link">Open screen →</a></div>
+      </div>
+      <div style="margin-top:16px;padding:12px 16px;background:rgba(13,92,58,.06);border:1px solid rgba(13,92,58,.2);border-radius:8px;font-size:11px;color:var(--mo)">
+        <strong>Middle Office CANNOT:</strong> Capture or submit deals · Authorise deals · Modify accounting rules · Access nostro accounts directly
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 4: BACK OFFICE
+══════════════════════════════════════ -->
+<div class="tab-panel" id="panel-bo">
+  <div class="section-hdr"><div class="dot" style="background:var(--bo-t)"></div>Back Office — All Actions &amp; Responsibilities</div>
+
+  <div class="swim lane-bo">
+    <div class="lane-label">BACK OFFICE</div>
+    <div class="lane-content">
+      <div style="font-size:12px;font-weight:700;color:var(--bo-t);margin-bottom:12px">Actor: Back Office Officer</div>
+      <div class="steps-row">
+        <div class="step step-bo"><div class="s-num">1</div><div class="s-title">Settlement Instruction Review</div><div class="s-desc">Auto-generated MT202/MT300/MT320 from counterparty SSI. Back Office reviews and dispatches. No manual data entry for routine deals.</div><span class="s-tag">Settlement FR-15.1</span><a href="12-settlement.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-bo"><div class="s-num">2</div><div class="s-title">Track Settlement Status</div><div class="s-desc">Monitor: PENDING → DISPATCHED → ACKNOWLEDGED → CONFIRMED → FAILED. Chase failed instructions. Record root cause on closure.</div><span class="s-tag">FR-15.2 / FR-15.3</span><a href="12-settlement.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-bo"><div class="s-num">3</div><div class="s-title">Confirmation Matching</div><div class="s-desc">Receive MT300/MT320 from counterparties. Auto-match vs TMS deal (±1bp rate, exact date/amount). Mismatches go to exception queue. Unresolved mismatches BLOCK day-end.</div><span class="s-tag">FR-15.4 / FR-15.5</span><a href="30-confirmation-matching.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-bo"><div class="s-num">4</div><div class="s-title">Mismatch Resolution</div><div class="s-desc">Investigate: chase counterparty, accept TMS rate with justification, return deal to dealer for amendment, or mark as calendar difference.</div><span class="s-tag">FR-15.4</span><a href="30-confirmation-matching.html" class="s-link">Open screen →</a></div>
+      </div>
+      <div class="steps-row" style="margin-top:16px">
+        <div class="step step-bo"><div class="s-num">5</div><div class="s-title">Nostro Statement Import</div><div class="s-desc">Import MT940/MT950/camt.053 daily. System auto-matches items. Unmatched items become reconciliation breaks. Aged &gt;2 days escalate.</div><span class="s-tag">Nostro FR-10.4</span><a href="22-nostro-correspondent.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-bo"><div class="s-num">6</div><div class="s-title">Reconciliation Break Management</div><div class="s-desc">Investigate TMS-vs-GL and nostro breaks. Post adjustment journals, raise counterparty queries, mark timing differences. Aged &gt;3 days escalate to Treasurer and block EOD.</div><span class="s-tag">Recon FR-17</span><a href="06-reconciliation.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-bo"><div class="s-num">7</div><div class="s-title">Correspondent Charge Verification</div><div class="s-desc">Match imported bank charges against agreed fee schedule. Variances &gt;15% auto-flagged as disputes. Raise MT399 dispute if needed.</div><span class="s-tag">FR-10.6</span><a href="22-nostro-correspondent.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-bo"><div class="s-num">8</div><div class="s-title">Corporate Actions / Maturities</div><div class="s-desc">System detects T-bill, FD, bond maturity events from deal schedule. Auto-processes: closes position, generates settlement instruction, creates accounting entries.</div><span class="s-tag">FR-15.6</span><a href="31-corporate-actions.html" class="s-link">Open screen →</a></div>
+      </div>
+      <div class="steps-row" style="margin-top:16px">
+        <div class="step step-bo"><div class="s-num">9</div><div class="s-title">Coupon &amp; Interest Processing</div><div class="s-desc">Bond coupons and deposit interest receipts processed automatically on scheduled dates. GL entries generated and posted. Daily interest accruals posted each EOD.</div><span class="s-tag">FR-15.6 / FR-16</span><a href="31-corporate-actions.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-bo"><div class="s-num">10</div><div class="s-title">Pre-Maturity Withdrawals</div><div class="s-desc">Receive early-exit requests. Calculate break cost. Route to Treasurer for approval. Process settlement and close position after approval.</div><span class="s-tag">FR-15.6</span><a href="31-corporate-actions.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-bo"><div class="s-num">11</div><div class="s-title">GL Batch Posting</div><div class="s-desc">Review accounting entry batches generated by the rules engine. Approve balanced batches and post to CBS GL via adapter. Monitor retry queue for failed postings.</div><span class="s-tag">Accounting FR-16</span><a href="26-accounting-gl.html" class="s-link">Open screen →</a></div>
+        <div class="arrow">›</div>
+        <div class="step step-bo"><div class="s-num">12</div><div class="s-title">Day-End Checklist Sign-Off</div><div class="s-desc">Back Office must clear: nostro reconciliation ✓, GL postings ✓, confirmation mismatches ✓, break resolution ✓. Blocking items prevent date rollover.</div><span class="s-tag">EOD FR-20</span><a href="13-day-end.html" class="s-link">Open screen →</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 5: RESPONSIBILITY MATRIX
+══════════════════════════════════════ -->
+<div class="tab-panel" id="panel-matrix">
+  <div class="section-hdr"><div class="dot" style="background:#C8102E"></div>Who Does What — Full Responsibility Matrix</div>
+
+  <div class="matrix-grid">
+    <!-- Front Office column -->
+    <div class="matrix-col">
+      <div class="matrix-col-hdr" style="background:var(--fo-l);color:var(--fo-t);border-bottom:2px solid var(--fo-b)">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Front Office
+      </div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--fo-t)"></div><div class="mi-text"><div class="mt">Deal Origination</div><div class="ms">Monitor rates, identify opportunities, call market</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--fo-t)"></div><div class="mi-text"><div class="mt">Client Quoting (Sales)</div><div class="ms">Issue quotes with margin, credit check, validity</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--fo-t)"></div><div class="mi-text"><div class="mt">Deal Capture</div><div class="ms">FX Spot/Fwd/Swap, FD, Repo, T-Bill, Overnight</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--fo-t)"></div><div class="mi-text"><div class="mt">Rate Justification</div><div class="ms">Written justification for off-market rates &gt;10bp</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--fo-t)"></div><div class="mi-text"><div class="mt">Deal Authorisation</div><div class="ms">Second authoriser only (not own deal — SoD)</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--fo-t)"></div><div class="mi-text"><div class="mt">Rollover Decisions</div><div class="ms">Decide reinvestment on matured deals</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--fo-t)"></div><div class="mi-text"><div class="mt">What-If Simulation</div><div class="ms">Simulate deals without capturing them</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--fo-t)"></div><div class="mi-text"><div class="mt">Cash Position Monitoring</div><div class="ms">View position, deploy surplus, fund deficit</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--fo-t)"></div><div class="mi-text"><div class="mt">FX / NOP Monitoring</div><div class="ms">View real-time NOP across all sources</div></div></div>
+    </div>
+
+    <!-- Middle Office column -->
+    <div class="matrix-col">
+      <div class="matrix-col-hdr" style="background:var(--mo-l);color:var(--mo-t);border-bottom:2px solid var(--mo-b)">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+        Middle Office
+      </div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--mo-t)"></div><div class="mi-text"><div class="mt">Limit Configuration</div><div class="ms">Set and amend all limit thresholds (dual auth)</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--mo-t)"></div><div class="mi-text"><div class="mt">Breach Lifecycle Management</div><div class="ms">Acknowledge, remediate, escalate limit events</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--mo-t)"></div><div class="mi-text"><div class="mt">Independent MTM Valuation</div><div class="ms">Clean/dirty price, duration, PV01, unrealised P&L</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--mo-t)"></div><div class="mi-text"><div class="mt">Market Data Control</div><div class="ms">Source config, exception queue, overrides (dual)</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--mo-t)"></div><div class="mi-text"><div class="mt">VaR Computation</div><div class="ms">Historical simulation 95%/99%, 1d/10d horizons</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--mo-t)"></div><div class="mi-text"><div class="mt">Stop-Loss Enforcement</div><div class="ms">Configure per-desk/dealer; blocks new deals on breach</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--mo-t)"></div><div class="mi-text"><div class="mt">P&L Attribution</div><div class="ms">Carry income vs MTM vs funding cost breakdown</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--mo-t)"></div><div class="mi-text"><div class="mt">ALM / IRRBB Analytics</div><div class="ms">Repricing gap, EVE, LCR/NSFR, stress scenarios</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--mo-t)"></div><div class="mi-text"><div class="mt">FTP Curve Management</div><div class="ms">Create curves (Treasurer approves before activation)</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--mo-t)"></div><div class="mi-text"><div class="mt">EOD Rate Lock</div><div class="ms">Lock closing rates for valuation snapshot</div></div></div>
+    </div>
+
+    <!-- Back Office column -->
+    <div class="matrix-col">
+      <div class="matrix-col-hdr" style="background:var(--bo-l);color:var(--bo-t);border-bottom:2px solid var(--bo-b)">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Back Office
+      </div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--bo-t)"></div><div class="mi-text"><div class="mt">Settlement Dispatch</div><div class="ms">Review auto-generated SWIFT, dispatch, track status</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--bo-t)"></div><div class="mi-text"><div class="mt">Failed Settlement Resolution</div><div class="ms">Investigate, contact counterparty, rebook or cancel</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--bo-t)"></div><div class="mi-text"><div class="mt">Confirmation Matching</div><div class="ms">Match MT300/MT320; investigate mismatches; blocks EOD if unresolved</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--bo-t)"></div><div class="mi-text"><div class="mt">Nostro Statement Import</div><div class="ms">MT940/camt.053 daily import and auto-matching</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--bo-t)"></div><div class="mi-text"><div class="mt">Reconciliation Break Resolution</div><div class="ms">Investigate, post adjustments, escalate aged items</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--bo-t)"></div><div class="mi-text"><div class="mt">Correspondent Charge Verification</div><div class="ms">Match charges vs fee schedule; raise disputes</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--bo-t)"></div><div class="mi-text"><div class="mt">Maturity / Coupon Processing</div><div class="ms">Auto-process scheduled events; generate accounting entries</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--bo-t)"></div><div class="mi-text"><div class="mt">Pre-Maturity Withdrawals</div><div class="ms">Calculate break cost; route for Treasurer approval</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--bo-t)"></div><div class="mi-text"><div class="mt">GL Batch Approval &amp; Posting</div><div class="ms">Review, approve and post accounting batches to CBS</div></div></div>
+      <div class="matrix-item"><div class="mi-icon" style="background:var(--bo-t)"></div><div class="mi-text"><div class="mt">Day-End Checklist Sign-Off</div><div class="ms">Clear all BO blocking items before date rollover</div></div></div>
+    </div>
+  </div>
+
+  <!-- Role table -->
+  <div class="section-hdr" style="margin-top:8px"><div class="dot" style="background:#7C3AED"></div>Capability Matrix by Role</div>
+  <div class="role-table-wrap">
+    <table class="role-table">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th><span class="role-badge" style="background:rgba(37,99,235,.1);color:#1D4ED8">DEALER</span></th>
+          <th><span class="role-badge" style="background:rgba(124,58,237,.1);color:#6D28D9">AUTHORISER</span></th>
+          <th><span class="role-badge" style="background:rgba(13,92,58,.1);color:#15803D">MIDDLE OFFICE</span></th>
+          <th><span class="role-badge" style="background:rgba(124,45,18,.1);color:#C2410C">BACK OFFICE</span></th>
+          <th><span class="role-badge" style="background:rgba(200,16,46,.1);color:#BE123C">TREASURER</span></th>
+          <th><span class="role-badge" style="background:rgba(75,85,99,.1);color:#4B5563">INTERNAL AUDIT</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Capture deals</td><td class="can-yes">✓</td><td class="can-no">✗ SoD</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-yes">✓</td><td class="can-no">✗</td></tr>
+        <tr><td>Authorise own deals</td><td class="can-no">✗ SoD</td><td class="can-no">✗ SoD</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-no">✗ SoD</td><td class="can-no">✗</td></tr>
+        <tr><td>Authorise others' deals</td><td class="can-no">✗</td><td class="can-yes">✓</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-yes">✓</td><td class="can-no">✗</td></tr>
+        <tr><td>Run independent valuation</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-yes">✓</td><td class="can-no">✗</td><td class="can-yes">✓</td><td class="can-na">Read only</td></tr>
+        <tr><td>Override market data</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-dual">✓ dual auth</td><td class="can-no">✗</td><td class="can-dual">✓ dual auth</td><td class="can-no">✗</td></tr>
+        <tr><td>Configure / amend limits</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-dual">✓ dual auth</td><td class="can-no">✗</td><td class="can-dual">✓ dual auth</td><td class="can-no">✗</td></tr>
+        <tr><td>Approve limit changes</td><td class="can-no">✗</td><td class="can-yes">✓</td><td class="can-yes">✓</td><td class="can-no">✗</td><td class="can-yes">✓</td><td class="can-no">✗</td></tr>
+        <tr><td>Settlement dispatch</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-yes">✓</td><td class="can-no">✗</td><td class="can-no">✗</td></tr>
+        <tr><td>Confirm matching / nostro recon</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-yes">✓</td><td class="can-na">Review</td><td class="can-na">Read only</td></tr>
+        <tr><td>Approve GL batches</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-yes">✓</td><td class="can-yes">✓</td><td class="can-no">✗</td></tr>
+        <tr><td>Approve FTP curves</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-dual">Create only</td><td class="can-no">✗</td><td class="can-yes">✓ approve</td><td class="can-no">✗</td></tr>
+        <tr><td>View full audit trail</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-na">Own actions</td><td class="can-na">Own actions</td><td class="can-na">Own actions</td><td class="can-yes">✓ Full 7yr</td></tr>
+        <tr><td>System configuration</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-no">✗</td><td class="can-dual">✓ dual auth</td><td class="can-no">✗</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 6: CONTROLS & SOD
+══════════════════════════════════════ -->
+<div class="tab-panel" id="panel-controls">
+  <div class="section-hdr"><div class="dot" style="background:#C8102E"></div>Key Controls &amp; Segregation of Duties</div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:24px;max-width:700px;line-height:1.7">All controls listed below are enforced at the <strong>API / service layer</strong> — not just the UI. They cannot be bypassed by direct API calls, Postman, or any other method.</p>
+
+  <div class="controls-grid">
+    <div class="control-card">
+      <div class="cc-type" style="color:#C8102E">SoD CONTROL 1</div>
+      <div class="cc-name">No Self-Authorisation</div>
+      <div class="cc-desc">The user who captured (dealer_id) cannot be the user who authorises. Checked on every POST /authorise call. Returns HTTP 403 ERR_SOD_VIOLATION. Attempt logged permanently.</div>
+      <div class="cc-who"><span class="role-badge" style="background:rgba(37,99,235,.1);color:#1D4ED8">DEALER</span> → cannot authorise <span class="role-badge" style="background:rgba(37,99,235,.1);color:#1D4ED8">own deals</span></div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#C8102E">SoD CONTROL 2</div>
+      <div class="cc-name">Dealer Cannot Value</div>
+      <div class="cc-desc">POST /valuation/run returns HTTP 403 for ROLE_DEALER. Dealers cannot see mark-to-market valuations they could use to manipulate book P&L.</div>
+      <div class="cc-who"><span class="role-badge" style="background:rgba(13,92,58,.1);color:#15803D">MIDDLE OFFICE</span> only runs valuations</div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#C8102E">SoD CONTROL 3</div>
+      <div class="cc-name">Dealer Cannot Override Market Data</div>
+      <div class="cc-desc">Market data overrides require ROLE_MIDDLE_OFFICE + secondary approval. No dealer can manipulate the prices used to challenge their own deal rates.</div>
+      <div class="cc-who"><span class="role-badge" style="background:rgba(13,92,58,.1);color:#15803D">MIDDLE OFFICE</span> dual-approval only</div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#7C3AED">PRE-DEAL CONTROL</div>
+      <div class="cc-name">Synchronous Limit Check</div>
+      <div class="cc-desc">Every deal submission triggers a simultaneous check of all applicable limits before the deal is saved. HARD breach → HTTP 422, deal NOT persisted. Cannot be bypassed.</div>
+      <div class="cc-who">Runs on 100% of deal submissions</div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#7C3AED">PRE-DEAL CONTROL</div>
+      <div class="cc-name">Off-Market Rate Challenge</div>
+      <div class="cc-desc">Rate deviation &gt;10bp from live market data requires a written justification before deal can proceed. Justification is stored in the deal record and audit trail permanently.</div>
+      <div class="cc-who">Configurable tolerance (default 10bp)</div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#0D5C3A">OPERATIONAL CONTROL</div>
+      <div class="cc-name">Dual Authorisation for Config Changes</div>
+      <div class="cc-desc">Limit changes, system parameter changes, and market data overrides all require a second authoriser different from the submitter. Changes stay PENDING until approved.</div>
+      <div class="cc-who">All system configuration changes</div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#0D5C3A">OPERATIONAL CONTROL</div>
+      <div class="cc-name">Confirmation Mismatch Blocks EOD</div>
+      <div class="cc-desc">Any unresolved confirmation mismatch (rate, amount, or date difference vs counterparty confirmation) is a blocking item on the day-end close checklist. Cannot roll date with open mismatches.</div>
+      <div class="cc-who">Back Office must resolve same day</div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#0D5C3A">OPERATIONAL CONTROL</div>
+      <div class="cc-name">Aged Nostro Breaks Escalate Automatically</div>
+      <div class="cc-desc">Breaks unresolved for &gt;3 days auto-escalate to Treasurer and become blocking on the day-end checklist. &gt;2 days: escalate to BO manager. Today: investigate same-day.</div>
+      <div class="cc-who">Ageing thresholds configurable</div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#7C2D12">AUDIT CONTROL</div>
+      <div class="cc-name">Immutable Audit Trail — 7 Years</div>
+      <div class="cc-desc">Every action (deal event, config change, login, failed attempt, SoD violation) is recorded with user, timestamp, IP, session ID, and before/after values. Cannot be deleted or modified.</div>
+      <div class="cc-who"><span class="role-badge" style="background:rgba(75,85,99,.1);color:#4B5563">INTERNAL AUDIT</span> has full 7yr read access</div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#7C2D12">AUDIT CONTROL</div>
+      <div class="cc-name">SoD Exceptions Permanently Visible</div>
+      <div class="cc-desc">Any overridden toxic role combination (e.g. Treasurer + Dealer on same entity) is flagged as a Standing Control Exception and permanently visible to Internal Audit — cannot be hidden.</div>
+      <div class="cc-who">Visible to <span class="role-badge" style="background:rgba(75,85,99,.1);color:#4B5563">INTERNAL AUDIT</span> always</div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#7C2D12">REGULATORY CONTROL</div>
+      <div class="cc-name">CBK NOP Daily Return</div>
+      <div class="cc-desc">End-of-day NOP is automatically computed from all exposure sources (FX deals + nostro + FCY investments + accruals) and submitted to CBK by 17:00. Missed submissions flagged.</div>
+      <div class="cc-who">Due daily by 17:00 EAT</div>
+    </div>
+    <div class="control-card">
+      <div class="cc-type" style="color:#7C2D12">REGULATORY CONTROL</div>
+      <div class="cc-name">LCR/NSFR Monitoring</div>
+      <div class="cc-desc">Liquidity Coverage Ratio and Net Stable Funding Ratio computed daily. Alert when approaching regulatory minimum (100%) or internal buffer (125%). Included in CBK monthly prudential return.</div>
+      <div class="cc-who">CBK minimum: 100%</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCRIPT ══ -->
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  var panels = ['e2e','fo','mo','bo','matrix','controls'];
+  var idx = panels.indexOf(id);
+  if (idx >= 0) {
+    document.querySelectorAll('.tab')[idx].classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tabs-wrap').offsetTop - 4, behavior: 'smooth' });
+  }
+}
+</script>
+</body>
+</html>
