@@ -1,419 +1,886 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>User &amp; Role Management — E&M Treasury Management System</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="treasury-design-system.css">
-<style>
-.role-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;margin:2px;}
-.rc-dealer{background:rgba(37,99,235,.1);color:#1D4ED8;}
-.rc-auth{background:rgba(124,58,237,.1);color:#6D28D9;}
-.rc-mo{background:rgba(13,115,119,.1);color:#0D7377;}
-.rc-bo{background:rgba(217,119,6,.1);color:#B45309;}
-.rc-tr{background:rgba(200,16,46,.1);color:#BE123C;}
-.rc-admin{background:rgba(10,22,40,.1);color:#0A1628;}
-.rc-audit{background:rgba(100,100,100,.1);color:#4B5563;}
-.sod-exception{background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-2);}
-.sod-exception .title{font-size:12px;font-weight:700;color:var(--status-danger);}
-.sod-exception .detail{font-size:11px;color:var(--status-danger);margin-top:3px;}
-.user-row{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--surface-divider);cursor:pointer;transition:background .12s;}
-.user-row:hover{background:var(--surface-bg);}
-.user-row:last-child{border-bottom:none;}
-.u-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
-.field-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
-.field-row:last-child{border-bottom:none;}
-.field-row .fk{color:var(--text-muted);}
-.field-row .fv{font-weight:600;}
-.timeline-row{display:flex;gap:var(--space-3);padding:8px 0;border-bottom:1px solid var(--surface-divider);font-size:11px;}
-.timeline-row:last-child{border-bottom:none;}
-.tl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User &amp; Role Management — E&M Treasury Management System</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="treasury-design-system.css">
+  <style>
+    .role-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      margin: 2px;
+    }
+
+    .rc-dealer {
+      background: rgba(37, 99, 235, .1);
+      color: #1D4ED8;
+    }
+
+    .rc-auth {
+      background: rgba(124, 58, 237, .1);
+      color: #6D28D9;
+    }
+
+    .rc-mo {
+      background: rgba(13, 115, 119, .1);
+      color: #0D7377;
+    }
+
+    .rc-bo {
+      background: rgba(217, 119, 6, .1);
+      color: #B45309;
+    }
+
+    .rc-tr {
+      background: rgba(200, 16, 46, .1);
+      color: #BE123C;
+    }
+
+    .rc-admin {
+      background: rgba(10, 22, 40, .1);
+      color: #0A1628;
+    }
+
+    .rc-audit {
+      background: rgba(100, 100, 100, .1);
+      color: #4B5563;
+    }
+
+    .sod-exception {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-2);
+    }
+
+    .sod-exception .title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--status-danger);
+    }
+
+    .sod-exception .detail {
+      font-size: 11px;
+      color: var(--status-danger);
+      margin-top: 3px;
+    }
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--surface-divider);
+      cursor: pointer;
+      transition: background .12s;
+    }
+
+    .user-row:hover {
+      background: var(--surface-bg);
+    }
+
+    .user-row:last-child {
+      border-bottom: none;
+    }
+
+    .u-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--surface-divider);
+      font-size: 12px;
+    }
+
+    .field-row:last-child {
+      border-bottom: none;
+    }
+
+    .field-row .fk {
+      color: var(--text-muted);
+    }
+
+    .field-row .fv {
+      font-weight: 600;
+    }
+
+    .timeline-row {
+      display: flex;
+      gap: var(--space-3);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--surface-divider);
+      font-size: 11px;
+    }
+
+    .timeline-row:last-child {
+      border-bottom: none;
+    }
+
+    .tl-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+  </style>
 </head>
+
 <body>
-<div class="app-shell">
+  <div class="app-shell">
 
-<nav class="sidebar">
-  <div class="sidebar-logo"><div class="sidebar-logo-mark">E&M</div><div class="sidebar-logo-text"><div class="brand">E&M TMS</div><div class="sub">Treasury Platform</div></div></div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Main</div>
-    <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
-    <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Deal Capture<span class="nav-badge">3</span></a>
-    <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Cash Position</a>
-    <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Operations</div>
-    <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Auth Queue<span class="nav-badge">5</span></a>
-    <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Reconciliation<span class="nav-badge warning">4</span></a>
-    <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>Deal Register</a>
-    <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>Settlement</a>
-    <a href="20-fx-nop-monitor.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>FX / NOP Monitor</a>
-    <a href="21-treasury-sales.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Treasury Sales</a>
-    <a href="22-nostro-correspondent.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Nostro &amp; Correspondent</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Analytics</div>
-    <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
-    <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ALM / IRRBB</a>
-    <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Reg. Reports</a>
-    <a href="23-middle-office.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Middle Office</a>
-    <a href="24-market-data.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Market Data</a>
-    <a href="25-ftp.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Funds Transfer Pricing</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">Static Data</div>
-    <a href="15-instrument-master.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Instrument Master</a>
-    <a href="16-counterparty-master.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Counterparty Master</a>
-    <a href="17-static-data-misc.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendars &amp; Brokers</a>
-    <a href="19-product-factory.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>Product Factory</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">System</div>
-    <a href="18-user-management.html" class="nav-item active"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>User &amp; Roles</a>
-    <a href="26-accounting-gl.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Accounting &amp; GL</a>
-    <a href="27-audit-trail.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Audit Trail</a>
-    <a href="28-integration-monitor.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Integration Monitor</a>
-    <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Day End Close</a>
-    <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Configuration</a>
-    <a href="29-tenant-admin.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Tenant Admin</a>
-  </div>
-  <div class="sidebar-footer"><div class="user-mini"><div class="user-avatar">JM</div><div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">Tenant Admin · LE-001</div></div></div></div>
-</nav>
-
-<div class="main-content">
-  <div class="fx-ticker-bar">
-    <div class="fx-tick"><span class="pair">Active Users</span><span class="rate">18</span></div>
-    <div class="fx-tick"><span class="pair">SoD Exceptions</span><span class="rate">1</span><span class="delta" style="color:var(--status-danger)">Audit visible</span></div>
-    <div class="fx-tick"><span class="pair">Suspended</span><span class="rate">2</span></div>
-    <div class="fx-tick"><span class="pair">MFA Non-Compliant</span><span class="rate">0</span><span class="delta" style="color:var(--status-success)">✓</span></div>
-  </div>
-  <div class="topbar">
-    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>System</span><span class="sep"> / </span><span class="current">User &amp; Role Management</span></div>
-    <div class="topbar-spacer"></div>
-    <div class="topbar-actions">
-      <button class="btn btn-outline btn-sm">Export User Report</button>
-      <button class="btn btn-primary btn-sm" onclick="document.getElementById('addUserPanel').style.display=''">+ Add User</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JM</div>
-      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">Tenant Admin</div></div>
-    </div>
-  </div>
-
-  <div class="page-content">
-    <div class="page-header">
-      <div><h1 class="page-title">User &amp; Role Management</h1><p class="page-subtitle">Segregation of Duties (SoD) enforced at service layer · FR-02 · MFA mandatory for Authoriser and above</p></div>
-    </div>
-
-    <div class="tabs" id="umTabs">
-      <div class="tab-item active" onclick="umTab('users')">Users</div>
-      <div class="tab-item" onclick="umTab('roles')">Role Definitions</div>
-      <div class="tab-item" onclick="umTab('sod')">SoD Exceptions <span class="nav-badge" style="margin-left:4px;background:var(--status-danger)">1</span></div>
-      <div class="tab-item" onclick="umTab('mfa')">MFA &amp; Security</div>
-    </div>
-
-    <!-- USERS TAB -->
-    <div class="tab-panel active" id="tab-users">
-      <div style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">
-        <div class="card">
-          <div class="card-header">
-            <div><div class="card-title">User Registry</div><div class="card-subtitle">18 active · All roles time-bound per FR-02.6</div></div>
-            <div style="display:flex;gap:8px">
-              <select class="form-control" style="padding:5px 10px;font-size:11px;width:130px"><option>All Statuses</option><option>Active</option><option>Suspended</option><option>Pending MFA</option></select>
-              <input type="text" class="form-control" style="padding:5px 10px;font-size:11px;width:180px" placeholder="Search name / email…">
-            </div>
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-mark">E&M</div>
+        <div class="sidebar-logo-text">
+          <div class="brand">E&M TMS</div>
+          <div class="sub">Treasury Platform</div>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Main</div>
+        <a href="02-dashboard.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>Dashboard</a>
+        <a href="03-deal-capture.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>Deal Capture<span class="nav-badge">3</span></a>
+        <a href="04-cash-position.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>Cash Position</a>
+        <a href="05-limits-exposure.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>Limits &amp; Exposure<span class="nav-badge warning">2</span></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Operations</div>
+        <a href="08-auth-queue.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>Auth Queue<span class="nav-badge">5</span></a>
+        <a href="06-reconciliation.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="9 11 12 14 22 4" />
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+          </svg>Reconciliation<span class="nav-badge warning">4</span></a>
+        <a href="09-deal-register.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+          </svg>Deal Register</a>
+        <a href="12-settlement.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+          </svg>Settlement</a>
+        <a href="20-fx-nop-monitor.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>FX / NOP Monitor</a>
+        <a href="21-treasury-sales.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>Treasury Sales</a>
+        <a href="22-nostro-correspondent.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="5" width="20" height="14" rx="2" />
+            <line x1="2" y1="10" x2="22" y2="10" />
+          </svg>Nostro &amp; Correspondent</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Analytics</div>
+        <a href="07-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>Reports</a>
+        <a href="10-alm.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path d="M3 3v18h18" />
+            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
+          </svg>ALM / IRRBB</a>
+        <a href="11-regulatory-reports.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>Reg. Reports</a>
+        <a href="23-middle-office.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v4l3 3" />
+          </svg>Middle Office</a>
+        <a href="24-market-data.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>Market Data</a>
+        <a href="25-ftp.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>Funds Transfer Pricing</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Static Data</div>
+        <a href="15-instrument-master.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          </svg>Instrument Master</a>
+        <a href="16-counterparty-master.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+          </svg>Counterparty Master</a>
+        <a href="17-static-data-misc.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>Calendars &amp; Brokers</a>
+        <a href="19-product-factory.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <polygon points="12 2 2 7 12 12 22 7 12 2" />
+            <polyline points="2 17 12 22 22 17" />
+          </svg>Product Factory</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">System</div>
+        <a href="18-user-management.html" class="nav-item active"><svg class="nav-icon" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          </svg>User &amp; Roles</a>
+        <a href="26-accounting-gl.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+          </svg>Accounting &amp; GL</a>
+        <a href="27-audit-trail.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>Audit Trail</a>
+        <a href="28-integration-monitor.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>Integration Monitor</a>
+        <a href="13-day-end.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>Day End Close</a>
+        <a href="14-configuration.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+          </svg>Configuration</a>
+        <a href="29-tenant-admin.html" class="nav-item"><svg class="nav-icon" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M3 9h18M9 21V9" />
+          </svg>Tenant Admin</a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-mini">
+          <div class="user-avatar">JM</div>
+          <div class="user-mini-info">
+            <div class="name">Mike Agola</div>
+            <div class="role">Tenant Admin · LE-001</div>
           </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-content">
+      <div class="fx-ticker-bar">
+        <div class="fx-tick"><span class="pair">Active Users</span><span class="rate">18</span></div>
+        <div class="fx-tick"><span class="pair">SoD Exceptions</span><span class="rate">1</span><span class="delta"
+            style="color:var(--status-danger)">Audit visible</span></div>
+        <div class="fx-tick"><span class="pair">Suspended</span><span class="rate">2</span></div>
+        <div class="fx-tick"><span class="pair">MFA Non-Compliant</span><span class="rate">0</span><span class="delta"
+            style="color:var(--status-success)">✓</span></div>
+      </div>
+      <div class="topbar">
+        <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span
+            class="sep"> / </span><span>System</span><span class="sep"> / </span><span class="current">User &amp; Role
+            Management</span></div>
+        <div class="topbar-spacer"></div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm">Export User Report</button>
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('addUserPanel').style.display=''">+
+            Add User</button>
+        </div>
+        <div
+          style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+          <div
+            style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">
+            JM</div>
           <div>
-            <div class="user-row" onclick="showUser('jm')">
-              <div class="u-avatar" style="background:var(--brand-primary)">JM</div>
-              <div style="flex:1">
-                <div style="font-size:13px;font-weight:700">James Mwangi</div>
-                <div style="font-size:11px;color:var(--text-muted)">j.mwangi@emtechhouse.com · Last login: 25 Aug 2026 08:55</div>
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
-                <span class="role-chip rc-tr">TREASURER</span>
-                <span class="role-chip rc-dealer">DEALER</span>
-                <span class="role-chip rc-admin">TENANT_ADMIN</span>
-              </div>
-              <span class="badge badge-success">ACTIVE</span>
-            </div>
-            <div class="user-row" onclick="showUser('mn')">
-              <div class="u-avatar" style="background:#7C3AED">MN</div>
-              <div style="flex:1">
-                <div style="font-size:13px;font-weight:700">Mary Njoki</div>
-                <div style="font-size:11px;color:var(--text-muted)">m.njoki@emtechhouse.com · Last login: 25 Aug 2026 09:00</div>
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
-                <span class="role-chip rc-auth">AUTHORISER L2</span>
-              </div>
-              <span class="badge badge-success">ACTIVE</span>
-            </div>
-            <div class="user-row" onclick="showUser('ko')">
-              <div class="u-avatar" style="background:#0D7377">KO</div>
-              <div style="flex:1">
-                <div style="font-size:13px;font-weight:700">Kevin Omondi</div>
-                <div style="font-size:11px;color:var(--text-muted)">k.omondi@emtechhouse.com · Last login: 25 Aug 2026 08:47</div>
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
-                <span class="role-chip rc-mo">MIDDLE OFFICE</span>
-              </div>
-              <span class="badge badge-success">ACTIVE</span>
-            </div>
-            <div class="user-row" onclick="showUser('wk')">
-              <div class="u-avatar" style="background:#2563EB">WK</div>
-              <div style="flex:1">
-                <div style="font-size:13px;font-weight:700">Wanjiru Kamau</div>
-                <div style="font-size:11px;color:var(--text-muted)">w.kamau@emtechhouse.com · Last login: 25 Aug 2026 09:05</div>
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
-                <span class="role-chip rc-dealer">DEALER (MM)</span>
-              </div>
-              <span class="badge badge-success">ACTIVE</span>
-            </div>
-            <div class="user-row" onclick="showUser('so')">
-              <div class="u-avatar" style="background:#D97706">SO</div>
-              <div style="flex:1">
-                <div style="font-size:13px;font-weight:700">Susan Otieno</div>
-                <div style="font-size:11px;color:var(--text-muted)">s.otieno@emtechhouse.com · Last login: 25 Aug 2026 08:30</div>
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
-                <span class="role-chip rc-bo">BACK OFFICE</span>
-              </div>
-              <span class="badge badge-success">ACTIVE</span>
-            </div>
-            <div class="user-row" onclick="showUser('po')">
-              <div class="u-avatar" style="background:#6B7280">PO</div>
-              <div style="flex:1">
-                <div style="font-size:13px;font-weight:700">Peter Otieno</div>
-                <div style="font-size:11px;color:var(--text-muted)">p.otieno@emtechhouse.com · Last login: 24 Aug 2026 17:20</div>
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
-                <span class="role-chip rc-dealer">DEALER (JNR)</span>
-              </div>
-              <span class="badge badge-success">ACTIVE</span>
-            </div>
-            <div class="user-row" style="opacity:.6">
-              <div class="u-avatar" style="background:#9E9E9E">XU</div>
-              <div style="flex:1">
-                <div style="font-size:13px;font-weight:700">Former Staff</div>
-                <div style="font-size:11px;color:var(--text-muted)">Last login: 01 Jun 2026 · Inactive 85 days — auto-suspended</div>
-              </div>
-              <div style="max-width:200px"><span class="role-chip rc-dealer">DEALER</span></div>
-              <span class="badge badge-danger">SUSPENDED</span>
-            </div>
+            <div style="font-size:12px;font-weight:600">Mike Agola</div>
+            <div style="font-size:10px;color:var(--text-muted)">Tenant Admin</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">User &amp; Role Management</h1>
+            <p class="page-subtitle">Segregation of Duties (SoD) enforced at service layer · FR-02 · MFA mandatory for
+              Authoriser and above</p>
           </div>
         </div>
 
-        <!-- User detail -->
-        <div class="card" id="userDetail">
-          <div class="card-header">
-            <div>
-              <div style="display:flex;align-items:center;gap:10px">
-                <div class="u-avatar" style="background:var(--brand-primary);width:40px;height:40px;font-size:13px">JM</div>
+        <div class="tabs" id="umTabs">
+          <div class="tab-item active" onclick="umTab('users')">Users</div>
+          <div class="tab-item" onclick="umTab('roles')">Role Definitions</div>
+          <div class="tab-item" onclick="umTab('sod')">SoD Exceptions <span class="nav-badge"
+              style="margin-left:4px;background:var(--status-danger)">1</span></div>
+          <div class="tab-item" onclick="umTab('mfa')">MFA &amp; Security</div>
+        </div>
+
+        <!-- USERS TAB -->
+        <div class="tab-panel active" id="tab-users">
+          <div style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">
+            <div class="card">
+              <div class="card-header">
                 <div>
-                  <div style="font-size:14px;font-weight:800">James Mwangi</div>
-                  <div style="font-size:11px;color:var(--text-muted)">j.mwangi@emtechhouse.com</div>
+                  <div class="card-title">User Registry</div>
+                  <div class="card-subtitle">18 active · All roles time-bound per FR-02.6</div>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <select class="form-control" style="padding:5px 10px;font-size:11px;width:130px">
+                    <option>All Statuses</option>
+                    <option>Active</option>
+                    <option>Suspended</option>
+                    <option>Pending MFA</option>
+                  </select>
+                  <input type="text" class="form-control" style="padding:5px 10px;font-size:11px;width:180px"
+                    placeholder="Search name / email…">
                 </div>
               </div>
-            </div>
-            <span class="badge badge-success">ACTIVE</span>
-          </div>
-          <div class="tabs" id="uTabs" style="margin:0 var(--space-4)">
-            <div class="tab-item active" onclick="uTab('profile')">Profile</div>
-            <div class="tab-item" onclick="uTab('roles')">Roles</div>
-            <div class="tab-item" onclick="uTab('activity')">Activity</div>
-          </div>
-          <div style="padding:var(--space-4)">
-            <div id="ut-profile">
-              <div class="field-row"><span class="fk">Full Name</span><span class="fv">James Mwangi</span></div>
-              <div class="field-row"><span class="fk">Email</span><span class="fv">j.mwangi@emtechhouse.com</span></div>
-              <div class="field-row"><span class="fk">Staff ID</span><span class="fv">EMP-001</span></div>
-              <div class="field-row"><span class="fk">Department</span><span class="fv">Treasury</span></div>
-              <div class="field-row"><span class="fk">Legal Entity</span><span class="fv">LE-001 Kenya</span></div>
-              <div class="field-row"><span class="fk">Status</span><span class="fv" style="color:var(--status-success)">ACTIVE</span></div>
-              <div class="field-row"><span class="fk">MFA Enrolled</span><span class="fv" style="color:var(--status-success)">✓ TOTP App</span></div>
-              <div class="field-row"><span class="fk">Last Login</span><span class="fv">25/08/2026 08:55 EAT</span></div>
-              <div class="field-row"><span class="fk">Created</span><span class="fv">01/01/2026 by Tenant Admin</span></div>
-              <div class="field-row"><span class="fk">IdP Federation</span><span class="fv">Google Workspace SSO</span></div>
-            </div>
-            <div id="ut-roles" style="display:none">
-              <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--space-3)">Active Role Assignments</div>
-              <div style="background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);padding:var(--space-3);margin-bottom:8px">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <div><span class="role-chip rc-tr">TREASURER</span></div>
-                  <span class="badge badge-success">Active</span>
-                </div>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Valid: 01/01/2026 — 31/12/2026 · LE-001 · MFA required</div>
-              </div>
-              <div style="background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);padding:var(--space-3);margin-bottom:8px">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <div><span class="role-chip rc-dealer">DEALER (FX + MM)</span></div>
-                  <span class="badge badge-success">Active</span>
-                </div>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Valid: 01/01/2026 — 31/12/2026 · Mandate: FX + MM · Daily limit: KES 5,000M</div>
-              </div>
-              <div style="background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);padding:var(--space-3);margin-bottom:var(--space-3)">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <div><span class="role-chip rc-admin">TENANT_ADMIN</span></div>
-                  <span class="badge badge-success">Active</span>
-                </div>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Valid: 01/01/2026 — No expiry · Full configuration access</div>
-              </div>
-              <div class="alert alert-warning" style="margin-bottom:var(--space-3)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
-                <div style="font-size:11px"><strong>SoD Note:</strong> TREASURER + DEALER on the same entity is a standing exception (approved 01/01/2026). James cannot authorise his own deals — this is enforced at the API layer.</div>
-              </div>
-              <button class="btn btn-primary btn-sm">+ Assign New Role</button>
-            </div>
-            <div id="ut-activity" style="display:none">
-              <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--space-3)">Recent Activity (last 7 days)</div>
-              <div class="timeline-row"><div class="tl-dot" style="background:var(--status-success)"></div><div><div style="font-weight:600">LOGIN</div><div style="color:var(--text-muted)">25/08/2026 08:55 — MFA passed · IP 41.90.x.x</div></div></div>
-              <div class="timeline-row"><div class="tl-dot" style="background:#2563EB"></div><div><div style="font-weight:600">DEAL_SUBMIT</div><div style="color:var(--text-muted)">25/08/2026 09:12 — DEAL-00287 FX Spot USD</div></div></div>
-              <div class="timeline-row"><div class="tl-dot" style="background:#0D7377"></div><div><div style="font-weight:600">REG_SUBMIT</div><div style="color:var(--text-muted)">24/08/2026 16:45 — NOP Daily Return to CBK</div></div></div>
-              <div class="timeline-row"><div class="tl-dot" style="background:var(--status-success)"></div><div><div style="font-weight:600">LOGIN</div><div style="color:var(--text-muted)">24/08/2026 08:30 — MFA passed</div></div></div>
-              <div class="timeline-row"><div class="tl-dot" style="background:#7C3AED"></div><div><div style="font-weight:600">CONFIG_CHANGE</div><div style="color:var(--text-muted)">23/08/2026 14:20 — Updated ZAR NOP limit</div></div></div>
-            </div>
-          </div>
-          <div class="card-footer" style="display:flex;gap:8px;justify-content:flex-end">
-            <button class="btn btn-danger btn-sm" onclick="alert('Suspend user? All active sessions will be terminated immediately.')">Suspend</button>
-            <button class="btn btn-primary btn-sm">Edit Profile</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Add user panel -->
-      <div class="card" id="addUserPanel" style="display:none;margin-top:var(--space-4)">
-        <div class="card-header"><div class="card-title">Add New User</div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('addUserPanel').style.display='none'">✕</button></div>
-        <div class="card-body">
-          <div class="form-grid-3">
-            <div class="form-group"><label class="form-label">Full Name *</label><input type="text" class="form-control" placeholder="Jane Doe"></div>
-            <div class="form-group"><label class="form-label">Staff Email *</label><input type="text" class="form-control" placeholder="j.doe@emtechhouse.com"></div>
-            <div class="form-group"><label class="form-label">Staff ID</label><input type="text" class="form-control" placeholder="EMP-019"></div>
-            <div class="form-group"><label class="form-label">Initial Role *</label>
-              <select class="form-control" id="newRoleSelect" onchange="checkSoD()">
-                <option>ROLE_DEALER</option><option>ROLE_AUTHORISER</option><option>ROLE_MIDDLE_OFFICE</option><option>ROLE_BACK_OFFICE</option><option>ROLE_TREASURER</option><option>ROLE_INTERNAL_AUDIT</option>
-              </select>
-            </div>
-            <div class="form-group"><label class="form-label">Legal Entity *</label><select class="form-control"><option>LE-001 Kenya</option><option>LE-002 Uganda</option></select></div>
-            <div class="form-group"><label class="form-label">Role Valid From *</label><input type="date" class="form-control" value="2026-09-01"></div>
-            <div class="form-group"><label class="form-label">Role Valid To</label><input type="date" class="form-control" placeholder="Leave blank = no expiry"></div>
-            <div class="form-group"><label class="form-label">MFA Required</label>
-              <select class="form-control"><option>Yes (mandatory for this role)</option><option>No</option></select>
-            </div>
-          </div>
-          <div class="alert alert-info" style="margin-top:var(--space-3)" id="sodWarnBox" style="display:none">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
-            <div style="font-size:11px">MFA will be enforced for this role at next login. A provisioning email will be sent automatically via Keycloak.</div>
-          </div>
-        </div>
-        <div class="card-footer" style="display:flex;justify-content:flex-end;gap:8px">
-          <button class="btn btn-outline btn-sm" onclick="document.getElementById('addUserPanel').style.display='none'">Cancel</button>
-          <button class="btn btn-primary btn-sm" onclick="alert('User created. Provisioning email sent.\nRef: USR-019')">Create User &amp; Send Invite</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ROLES TAB -->
-    <div class="tab-panel" id="tab-roles">
-      <div class="card">
-        <div class="card-header"><div class="card-title">Role Definitions</div><div class="card-subtitle">System-defined roles · Permissions enforced at API layer · Cannot be deleted</div></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Role Code</th><th>Display Name</th><th>Key Permissions</th><th>MFA Required</th><th>SoD Restrictions</th><th>Users</th></tr></thead>
-            <tbody>
-              <tr><td><span class="role-chip rc-dealer">ROLE_DEALER</span></td><td style="font-size:12px;font-weight:600">Front Office Dealer</td><td style="font-size:11px;color:var(--text-muted)">Deal capture · Blotter view · Draft save</td><td><span class="badge badge-neutral">Optional</span></td><td style="font-size:11px;color:var(--status-danger)">Cannot authorise own deals · Cannot value</td><td class="mono">4</td></tr>
-              <tr><td><span class="role-chip rc-auth">ROLE_AUTHORISER</span></td><td style="font-size:12px;font-weight:600">Deal Authoriser (L2)</td><td style="font-size:11px;color:var(--text-muted)">Authorise / reject deals · View all limits</td><td><span class="badge badge-danger">Mandatory</span></td><td style="font-size:11px;color:var(--status-danger)">Cannot capture deals · Cannot authorise own</td><td class="mono">2</td></tr>
-              <tr><td><span class="role-chip rc-mo">ROLE_MIDDLE_OFFICE</span></td><td style="font-size:12px;font-weight:600">Middle Office</td><td style="font-size:11px;color:var(--text-muted)">Valuation runs · Limit management · Breach lifecycle</td><td><span class="badge badge-danger">Mandatory</span></td><td style="font-size:11px;color:var(--status-danger)">Cannot capture or authorise deals</td><td class="mono">1</td></tr>
-              <tr><td><span class="role-chip rc-bo">ROLE_BACK_OFFICE</span></td><td style="font-size:12px;font-weight:600">Back Office</td><td style="font-size:11px;color:var(--text-muted)">Settlement · Reconciliation · Confirmations</td><td><span class="badge badge-neutral">Optional</span></td><td style="font-size:11px;color:var(--text-muted)">Read-only on front office data</td><td class="mono">1</td></tr>
-              <tr><td><span class="role-chip rc-tr">ROLE_TREASURER</span></td><td style="font-size:12px;font-weight:600">Treasurer</td><td style="font-size:11px;color:var(--text-muted)">Full treasury access · Day-end · ALCO · Limit override</td><td><span class="badge badge-danger">Mandatory</span></td><td style="font-size:11px;color:var(--status-warning)">Cannot authorise own deals (SoD)</td><td class="mono">1</td></tr>
-              <tr><td><span class="role-chip rc-audit">ROLE_INTERNAL_AUDIT</span></td><td style="font-size:12px;font-weight:600">Internal Audit</td><td style="font-size:11px;color:var(--text-muted)">Full read · Audit trail · SoD exceptions · No write access</td><td><span class="badge badge-danger">Mandatory</span></td><td style="font-size:11px;color:var(--text-muted)">Read-only on all modules</td><td class="mono">1</td></tr>
-              <tr><td><span class="role-chip rc-admin">ROLE_TENANT_ADMIN</span></td><td style="font-size:12px;font-weight:600">Tenant Administrator</td><td style="font-size:11px;color:var(--text-muted)">User management · Static data · Configuration</td><td><span class="badge badge-danger">Mandatory</span></td><td style="font-size:11px;color:var(--status-danger)">Cannot capture or authorise deals</td><td class="mono">1</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- SOD EXCEPTIONS TAB -->
-    <div class="tab-panel" id="tab-sod">
-      <div class="alert alert-warning" style="margin-bottom:var(--space-4)">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
-        <div>SoD exceptions are <strong>permanently visible</strong> to Internal Audit and cannot be deleted. Each exception requires a recorded justification. The enforcement rule remains active — e.g. a Dealer who also holds Treasurer cannot still authorise their own deals (FR-02.3).</div>
-      </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">Standing Control Exceptions</div><div class="card-subtitle">Toxic role combinations approved with justification · Visible to Internal Audit</div></div>
-        <div style="padding:var(--space-4)">
-          <div class="sod-exception">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start">
               <div>
-                <div class="title">ROLE_TREASURER + ROLE_DEALER — James Mwangi</div>
-                <div class="detail">Toxic combination: Treasurer could potentially authorise own deals. SoD enforcement remains active at API layer.</div>
+                <div class="user-row" onclick="showUser('jm')">
+                  <div class="u-avatar" style="background:var(--brand-primary)">JM</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:700">Mike Agola</div>
+                    <div style="font-size:11px;color:var(--text-muted)">j.mwangi@emtechhouse.com · Last login: 25 Aug
+                      2026 08:55</div>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
+                    <span class="role-chip rc-tr">TREASURER</span>
+                    <span class="role-chip rc-dealer">DEALER</span>
+                    <span class="role-chip rc-admin">TENANT_ADMIN</span>
+                  </div>
+                  <span class="badge badge-success">ACTIVE</span>
+                </div>
+                <div class="user-row" onclick="showUser('mn')">
+                  <div class="u-avatar" style="background:#7C3AED">MN</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:700">Mary Njoki</div>
+                    <div style="font-size:11px;color:var(--text-muted)">m.njoki@emtechhouse.com · Last login: 25 Aug
+                      2026 09:00</div>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
+                    <span class="role-chip rc-auth">AUTHORISER L2</span>
+                  </div>
+                  <span class="badge badge-success">ACTIVE</span>
+                </div>
+                <div class="user-row" onclick="showUser('ko')">
+                  <div class="u-avatar" style="background:#0D7377">KO</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:700">Kevin Omondi</div>
+                    <div style="font-size:11px;color:var(--text-muted)">k.omondi@emtechhouse.com · Last login: 25 Aug
+                      2026 08:47</div>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
+                    <span class="role-chip rc-mo">MIDDLE OFFICE</span>
+                  </div>
+                  <span class="badge badge-success">ACTIVE</span>
+                </div>
+                <div class="user-row" onclick="showUser('wk')">
+                  <div class="u-avatar" style="background:#2563EB">WK</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:700">Wanjiru Kamau</div>
+                    <div style="font-size:11px;color:var(--text-muted)">w.kamau@emtechhouse.com · Last login: 25 Aug
+                      2026 09:05</div>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
+                    <span class="role-chip rc-dealer">DEALER (MM)</span>
+                  </div>
+                  <span class="badge badge-success">ACTIVE</span>
+                </div>
+                <div class="user-row" onclick="showUser('so')">
+                  <div class="u-avatar" style="background:#D97706">SO</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:700">Susan Otieno</div>
+                    <div style="font-size:11px;color:var(--text-muted)">s.otieno@emtechhouse.com · Last login: 25 Aug
+                      2026 08:30</div>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
+                    <span class="role-chip rc-bo">BACK OFFICE</span>
+                  </div>
+                  <span class="badge badge-success">ACTIVE</span>
+                </div>
+                <div class="user-row" onclick="showUser('po')">
+                  <div class="u-avatar" style="background:#6B7280">PO</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:700">Peter Otieno</div>
+                    <div style="font-size:11px;color:var(--text-muted)">p.otieno@emtechhouse.com · Last login: 24 Aug
+                      2026 17:20</div>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:2px;max-width:200px">
+                    <span class="role-chip rc-dealer">DEALER (JNR)</span>
+                  </div>
+                  <span class="badge badge-success">ACTIVE</span>
+                </div>
+                <div class="user-row" style="opacity:.6">
+                  <div class="u-avatar" style="background:#9E9E9E">XU</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:700">Former Staff</div>
+                    <div style="font-size:11px;color:var(--text-muted)">Last login: 01 Jun 2026 · Inactive 85 days —
+                      auto-suspended</div>
+                  </div>
+                  <div style="max-width:200px"><span class="role-chip rc-dealer">DEALER</span></div>
+                  <span class="badge badge-danger">SUSPENDED</span>
+                </div>
               </div>
-              <span class="badge badge-danger">ACTIVE EXCEPTION</span>
             </div>
-            <div style="margin-top:var(--space-3);font-size:11px;display:flex;flex-direction:column;gap:4px">
-              <div><span style="color:var(--text-muted)">Justification:</span> <span style="font-weight:600">Small treasury team — Treasurer must act as dealer coverage. API-level SoD enforcement confirmed by IT Audit.</span></div>
-              <div><span style="color:var(--text-muted)">Approved By:</span> <span style="font-weight:600">Board Risk Committee — Ref: BRC-2026-01</span></div>
-              <div><span style="color:var(--text-muted)">Approved Date:</span> <span class="mono fw-600">01/01/2026</span></div>
-              <div><span style="color:var(--text-muted)">Review Date:</span> <span class="mono fw-600">31/12/2026</span></div>
-              <div><span style="color:var(--text-muted)">Compensating Control:</span> <span style="font-weight:600">API blocks self-authorisation. All trades cross-checked in monthly audit.</span></div>
-            </div>
-            <div style="margin-top:var(--space-3);display:flex;gap:8px">
-              <button class="btn btn-outline btn-sm">View Audit Evidence</button>
-              <button class="btn btn-danger btn-sm">Revoke Exception</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- MFA TAB -->
-    <div class="tab-panel" id="tab-mfa">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
-        <div class="card">
-          <div class="card-header"><div class="card-title">MFA Compliance Status</div><div class="card-subtitle">FR-02.2 — Mandatory for Authoriser and above</div></div>
-          <div style="padding:var(--space-4)">
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md)"><span>ROLE_AUTHORISER (2 users)</span><span style="color:var(--status-success);font-weight:700">✓ All enrolled</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md)"><span>ROLE_TREASURER (1 user)</span><span style="color:var(--status-success);font-weight:700">✓ All enrolled</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md)"><span>ROLE_MIDDLE_OFFICE (1 user)</span><span style="color:var(--status-success);font-weight:700">✓ All enrolled</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md)"><span>ROLE_TENANT_ADMIN (1 user)</span><span style="color:var(--status-success);font-weight:700">✓ All enrolled</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md)"><span>ROLE_DEALER (4 users)</span><span style="color:var(--text-muted);font-weight:600">Optional · 3/4 enrolled</span></div>
+            <!-- User detail -->
+            <div class="card" id="userDetail">
+              <div class="card-header">
+                <div>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <div class="u-avatar" style="background:var(--brand-primary);width:40px;height:40px;font-size:13px">
+                      JM</div>
+                    <div>
+                      <div style="font-size:14px;font-weight:800">Mike Agola</div>
+                      <div style="font-size:11px;color:var(--text-muted)">j.mwangi@emtechhouse.com</div>
+                    </div>
+                  </div>
+                </div>
+                <span class="badge badge-success">ACTIVE</span>
+              </div>
+              <div class="tabs" id="uTabs" style="margin:0 var(--space-4)">
+                <div class="tab-item active" onclick="uTab('profile')">Profile</div>
+                <div class="tab-item" onclick="uTab('roles')">Roles</div>
+                <div class="tab-item" onclick="uTab('activity')">Activity</div>
+              </div>
+              <div style="padding:var(--space-4)">
+                <div id="ut-profile">
+                  <div class="field-row"><span class="fk">Full Name</span><span class="fv">Mike Agola</span></div>
+                  <div class="field-row"><span class="fk">Email</span><span class="fv">j.mwangi@emtechhouse.com</span>
+                  </div>
+                  <div class="field-row"><span class="fk">Staff ID</span><span class="fv">EMP-001</span></div>
+                  <div class="field-row"><span class="fk">Department</span><span class="fv">Treasury</span></div>
+                  <div class="field-row"><span class="fk">Legal Entity</span><span class="fv">LE-001 Kenya</span></div>
+                  <div class="field-row"><span class="fk">Status</span><span class="fv"
+                      style="color:var(--status-success)">ACTIVE</span></div>
+                  <div class="field-row"><span class="fk">MFA Enrolled</span><span class="fv"
+                      style="color:var(--status-success)">✓ TOTP App</span></div>
+                  <div class="field-row"><span class="fk">Last Login</span><span class="fv">25/08/2026 08:55 EAT</span>
+                  </div>
+                  <div class="field-row"><span class="fk">Created</span><span class="fv">01/01/2026 by Tenant
+                      Admin</span></div>
+                  <div class="field-row"><span class="fk">IdP Federation</span><span class="fv">Google Workspace
+                      SSO</span></div>
+                </div>
+                <div id="ut-roles" style="display:none">
+                  <div
+                    style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--space-3)">
+                    Active Role Assignments</div>
+                  <div
+                    style="background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);padding:var(--space-3);margin-bottom:8px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                      <div><span class="role-chip rc-tr">TREASURER</span></div>
+                      <span class="badge badge-success">Active</span>
+                    </div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Valid: 01/01/2026 — 31/12/2026 ·
+                      LE-001 · MFA required</div>
+                  </div>
+                  <div
+                    style="background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);padding:var(--space-3);margin-bottom:8px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                      <div><span class="role-chip rc-dealer">DEALER (FX + MM)</span></div>
+                      <span class="badge badge-success">Active</span>
+                    </div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Valid: 01/01/2026 — 31/12/2026 ·
+                      Mandate: FX + MM · Daily limit: KES 5,000M</div>
+                  </div>
+                  <div
+                    style="background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);padding:var(--space-3);margin-bottom:var(--space-3)">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                      <div><span class="role-chip rc-admin">TENANT_ADMIN</span></div>
+                      <span class="badge badge-success">Active</span>
+                    </div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Valid: 01/01/2026 — No expiry ·
+                      Full configuration access</div>
+                  </div>
+                  <div class="alert alert-warning" style="margin-bottom:var(--space-3)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path
+                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                      <line x1="12" y1="9" x2="12" y2="13" />
+                    </svg>
+                    <div style="font-size:11px"><strong>SoD Note:</strong> TREASURER + DEALER on the same entity is a
+                      standing exception (approved 01/01/2026). James cannot authorise his own deals — this is enforced
+                      at the API layer.</div>
+                  </div>
+                  <button class="btn btn-primary btn-sm">+ Assign New Role</button>
+                </div>
+                <div id="ut-activity" style="display:none">
+                  <div
+                    style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--space-3)">
+                    Recent Activity (last 7 days)</div>
+                  <div class="timeline-row">
+                    <div class="tl-dot" style="background:var(--status-success)"></div>
+                    <div>
+                      <div style="font-weight:600">LOGIN</div>
+                      <div style="color:var(--text-muted)">25/08/2026 08:55 — MFA passed · IP 41.90.x.x</div>
+                    </div>
+                  </div>
+                  <div class="timeline-row">
+                    <div class="tl-dot" style="background:#2563EB"></div>
+                    <div>
+                      <div style="font-weight:600">DEAL_SUBMIT</div>
+                      <div style="color:var(--text-muted)">25/08/2026 09:12 — DEAL-00287 FX Spot USD</div>
+                    </div>
+                  </div>
+                  <div class="timeline-row">
+                    <div class="tl-dot" style="background:#0D7377"></div>
+                    <div>
+                      <div style="font-weight:600">REG_SUBMIT</div>
+                      <div style="color:var(--text-muted)">24/08/2026 16:45 — NOP Daily Return to CBK</div>
+                    </div>
+                  </div>
+                  <div class="timeline-row">
+                    <div class="tl-dot" style="background:var(--status-success)"></div>
+                    <div>
+                      <div style="font-weight:600">LOGIN</div>
+                      <div style="color:var(--text-muted)">24/08/2026 08:30 — MFA passed</div>
+                    </div>
+                  </div>
+                  <div class="timeline-row">
+                    <div class="tl-dot" style="background:#7C3AED"></div>
+                    <div>
+                      <div style="font-weight:600">CONFIG_CHANGE</div>
+                      <div style="color:var(--text-muted)">23/08/2026 14:20 — Updated ZAR NOP limit</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer" style="display:flex;gap:8px;justify-content:flex-end">
+                <button class="btn btn-danger btn-sm"
+                  onclick="alert('Suspend user? All active sessions will be terminated immediately.')">Suspend</button>
+                <button class="btn btn-primary btn-sm">Edit Profile</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add user panel -->
+          <div class="card" id="addUserPanel" style="display:none;margin-top:var(--space-4)">
+            <div class="card-header">
+              <div class="card-title">Add New User</div><button class="btn btn-ghost btn-sm"
+                onclick="document.getElementById('addUserPanel').style.display='none'">✕</button>
+            </div>
+            <div class="card-body">
+              <div class="form-grid-3">
+                <div class="form-group"><label class="form-label">Full Name *</label><input type="text"
+                    class="form-control" placeholder="Jane Doe"></div>
+                <div class="form-group"><label class="form-label">Staff Email *</label><input type="text"
+                    class="form-control" placeholder="j.doe@emtechhouse.com"></div>
+                <div class="form-group"><label class="form-label">Staff ID</label><input type="text"
+                    class="form-control" placeholder="EMP-019"></div>
+                <div class="form-group"><label class="form-label">Initial Role *</label>
+                  <select class="form-control" id="newRoleSelect" onchange="checkSoD()">
+                    <option>ROLE_DEALER</option>
+                    <option>ROLE_AUTHORISER</option>
+                    <option>ROLE_MIDDLE_OFFICE</option>
+                    <option>ROLE_BACK_OFFICE</option>
+                    <option>ROLE_TREASURER</option>
+                    <option>ROLE_INTERNAL_AUDIT</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Legal Entity *</label><select class="form-control">
+                    <option>LE-001 Kenya</option>
+                    <option>LE-002 Uganda</option>
+                  </select></div>
+                <div class="form-group"><label class="form-label">Role Valid From *</label><input type="date"
+                    class="form-control" value="2026-09-01"></div>
+                <div class="form-group"><label class="form-label">Role Valid To</label><input type="date"
+                    class="form-control" placeholder="Leave blank = no expiry"></div>
+                <div class="form-group"><label class="form-label">MFA Required</label>
+                  <select class="form-control">
+                    <option>Yes (mandatory for this role)</option>
+                    <option>No</option>
+                  </select>
+                </div>
+              </div>
+              <div class="alert alert-info" style="margin-top:var(--space-3)" id="sodWarnBox" style="display:none">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                </svg>
+                <div style="font-size:11px">MFA will be enforced for this role at next login. A provisioning email will
+                  be sent automatically via Keycloak.</div>
+              </div>
+            </div>
+            <div class="card-footer" style="display:flex;justify-content:flex-end;gap:8px">
+              <button class="btn btn-outline btn-sm"
+                onclick="document.getElementById('addUserPanel').style.display='none'">Cancel</button>
+              <button class="btn btn-primary btn-sm"
+                onclick="alert('User created. Provisioning email sent.\nRef: USR-019')">Create User &amp; Send
+                Invite</button>
             </div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">Security Settings</div></div>
-          <div style="padding:var(--space-4)">
-            <div class="field-row"><span class="fk">Auto-suspend after inactivity</span><span class="fv">90 days</span></div>
-            <div class="field-row"><span class="fk">Session timeout</span><span class="fv">30 minutes</span></div>
-            <div class="field-row"><span class="fk">Password policy</span><span class="fv">12 chars · Complexity</span></div>
-            <div class="field-row"><span class="fk">MFA method</span><span class="fv">TOTP (Authenticator App)</span></div>
-            <div class="field-row"><span class="fk">IdP Federation</span><span class="fv">Google Workspace OIDC</span></div>
-            <div class="field-row"><span class="fk">Role expiry alert</span><span class="fv">7 days before</span></div>
-            <div style="margin-top:var(--space-3)"><button class="btn btn-outline btn-sm">Edit Security Policy</button></div>
+
+        <!-- ROLES TAB -->
+        <div class="tab-panel" id="tab-roles">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Role Definitions</div>
+              <div class="card-subtitle">System-defined roles · Permissions enforced at API layer · Cannot be deleted
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Role Code</th>
+                    <th>Display Name</th>
+                    <th>Key Permissions</th>
+                    <th>MFA Required</th>
+                    <th>SoD Restrictions</th>
+                    <th>Users</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="role-chip rc-dealer">ROLE_DEALER</span></td>
+                    <td style="font-size:12px;font-weight:600">Front Office Dealer</td>
+                    <td style="font-size:11px;color:var(--text-muted)">Deal capture · Blotter view · Draft save</td>
+                    <td><span class="badge badge-neutral">Optional</span></td>
+                    <td style="font-size:11px;color:var(--status-danger)">Cannot authorise own deals · Cannot value</td>
+                    <td class="mono">4</td>
+                  </tr>
+                  <tr>
+                    <td><span class="role-chip rc-auth">ROLE_AUTHORISER</span></td>
+                    <td style="font-size:12px;font-weight:600">Deal Authoriser (L2)</td>
+                    <td style="font-size:11px;color:var(--text-muted)">Authorise / reject deals · View all limits</td>
+                    <td><span class="badge badge-danger">Mandatory</span></td>
+                    <td style="font-size:11px;color:var(--status-danger)">Cannot capture deals · Cannot authorise own
+                    </td>
+                    <td class="mono">2</td>
+                  </tr>
+                  <tr>
+                    <td><span class="role-chip rc-mo">ROLE_MIDDLE_OFFICE</span></td>
+                    <td style="font-size:12px;font-weight:600">Middle Office</td>
+                    <td style="font-size:11px;color:var(--text-muted)">Valuation runs · Limit management · Breach
+                      lifecycle</td>
+                    <td><span class="badge badge-danger">Mandatory</span></td>
+                    <td style="font-size:11px;color:var(--status-danger)">Cannot capture or authorise deals</td>
+                    <td class="mono">1</td>
+                  </tr>
+                  <tr>
+                    <td><span class="role-chip rc-bo">ROLE_BACK_OFFICE</span></td>
+                    <td style="font-size:12px;font-weight:600">Back Office</td>
+                    <td style="font-size:11px;color:var(--text-muted)">Settlement · Reconciliation · Confirmations</td>
+                    <td><span class="badge badge-neutral">Optional</span></td>
+                    <td style="font-size:11px;color:var(--text-muted)">Read-only on front office data</td>
+                    <td class="mono">1</td>
+                  </tr>
+                  <tr>
+                    <td><span class="role-chip rc-tr">ROLE_TREASURER</span></td>
+                    <td style="font-size:12px;font-weight:600">Treasurer</td>
+                    <td style="font-size:11px;color:var(--text-muted)">Full treasury access · Day-end · ALCO · Limit
+                      override</td>
+                    <td><span class="badge badge-danger">Mandatory</span></td>
+                    <td style="font-size:11px;color:var(--status-warning)">Cannot authorise own deals (SoD)</td>
+                    <td class="mono">1</td>
+                  </tr>
+                  <tr>
+                    <td><span class="role-chip rc-audit">ROLE_INTERNAL_AUDIT</span></td>
+                    <td style="font-size:12px;font-weight:600">Internal Audit</td>
+                    <td style="font-size:11px;color:var(--text-muted)">Full read · Audit trail · SoD exceptions · No
+                      write access</td>
+                    <td><span class="badge badge-danger">Mandatory</span></td>
+                    <td style="font-size:11px;color:var(--text-muted)">Read-only on all modules</td>
+                    <td class="mono">1</td>
+                  </tr>
+                  <tr>
+                    <td><span class="role-chip rc-admin">ROLE_TENANT_ADMIN</span></td>
+                    <td style="font-size:12px;font-weight:600">Tenant Administrator</td>
+                    <td style="font-size:11px;color:var(--text-muted)">User management · Static data · Configuration
+                    </td>
+                    <td><span class="badge badge-danger">Mandatory</span></td>
+                    <td style="font-size:11px;color:var(--status-danger)">Cannot capture or authorise deals</td>
+                    <td class="mono">1</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOD EXCEPTIONS TAB -->
+        <div class="tab-panel" id="tab-sod">
+          <div class="alert alert-warning" style="margin-bottom:var(--space-4)">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+            </svg>
+            <div>SoD exceptions are <strong>permanently visible</strong> to Internal Audit and cannot be deleted. Each
+              exception requires a recorded justification. The enforcement rule remains active — e.g. a Dealer who also
+              holds Treasurer cannot still authorise their own deals (FR-02.3).</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Standing Control Exceptions</div>
+              <div class="card-subtitle">Toxic role combinations approved with justification · Visible to Internal Audit
+              </div>
+            </div>
+            <div style="padding:var(--space-4)">
+              <div class="sod-exception">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                  <div>
+                    <div class="title">ROLE_TREASURER + ROLE_DEALER — Mike Agola</div>
+                    <div class="detail">Toxic combination: Treasurer could potentially authorise own deals. SoD
+                      enforcement remains active at API layer.</div>
+                  </div>
+                  <span class="badge badge-danger">ACTIVE EXCEPTION</span>
+                </div>
+                <div style="margin-top:var(--space-3);font-size:11px;display:flex;flex-direction:column;gap:4px">
+                  <div><span style="color:var(--text-muted)">Justification:</span> <span style="font-weight:600">Small
+                      treasury team — Treasurer must act as dealer coverage. API-level SoD enforcement confirmed by IT
+                      Audit.</span></div>
+                  <div><span style="color:var(--text-muted)">Approved By:</span> <span style="font-weight:600">Board
+                      Risk Committee — Ref: BRC-2026-01</span></div>
+                  <div><span style="color:var(--text-muted)">Approved Date:</span> <span
+                      class="mono fw-600">01/01/2026</span></div>
+                  <div><span style="color:var(--text-muted)">Review Date:</span> <span
+                      class="mono fw-600">31/12/2026</span></div>
+                  <div><span style="color:var(--text-muted)">Compensating Control:</span> <span
+                      style="font-weight:600">API blocks self-authorisation. All trades cross-checked in monthly
+                      audit.</span></div>
+                </div>
+                <div style="margin-top:var(--space-3);display:flex;gap:8px">
+                  <button class="btn btn-outline btn-sm">View Audit Evidence</button>
+                  <button class="btn btn-danger btn-sm">Revoke Exception</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MFA TAB -->
+        <div class="tab-panel" id="tab-mfa">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">MFA Compliance Status</div>
+                <div class="card-subtitle">FR-02.2 — Mandatory for Authoriser and above</div>
+              </div>
+              <div style="padding:var(--space-4)">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div
+                    style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md)">
+                    <span>ROLE_AUTHORISER (2 users)</span><span style="color:var(--status-success);font-weight:700">✓
+                      All enrolled</span></div>
+                  <div
+                    style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md)">
+                    <span>ROLE_TREASURER (1 user)</span><span style="color:var(--status-success);font-weight:700">✓ All
+                      enrolled</span></div>
+                  <div
+                    style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md)">
+                    <span>ROLE_MIDDLE_OFFICE (1 user)</span><span style="color:var(--status-success);font-weight:700">✓
+                      All enrolled</span></div>
+                  <div
+                    style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md)">
+                    <span>ROLE_TENANT_ADMIN (1 user)</span><span style="color:var(--status-success);font-weight:700">✓
+                      All enrolled</span></div>
+                  <div
+                    style="display:flex;justify-content:space-between;font-size:12px;padding:8px;background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md)">
+                    <span>ROLE_DEALER (4 users)</span><span style="color:var(--text-muted);font-weight:600">Optional ·
+                      3/4 enrolled</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Security Settings</div>
+              </div>
+              <div style="padding:var(--space-4)">
+                <div class="field-row"><span class="fk">Auto-suspend after inactivity</span><span class="fv">90
+                    days</span></div>
+                <div class="field-row"><span class="fk">Session timeout</span><span class="fv">30 minutes</span></div>
+                <div class="field-row"><span class="fk">Password policy</span><span class="fv">12 chars ·
+                    Complexity</span></div>
+                <div class="field-row"><span class="fk">MFA method</span><span class="fv">TOTP (Authenticator
+                    App)</span></div>
+                <div class="field-row"><span class="fk">IdP Federation</span><span class="fv">Google Workspace
+                    OIDC</span></div>
+                <div class="field-row"><span class="fk">Role expiry alert</span><span class="fv">7 days before</span>
+                </div>
+                <div style="margin-top:var(--space-3)"><button class="btn btn-outline btn-sm">Edit Security
+                    Policy</button></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-</div>
-<script>
-function umTab(t){
-  var tabs=['users','roles','sod','mfa'];
-  tabs.forEach(function(id,i){ document.getElementById('tab-'+id).classList.remove('active'); document.querySelectorAll('#umTabs .tab-item')[i].classList.remove('active'); });
-  document.getElementById('tab-'+t).classList.add('active');
-  document.querySelectorAll('#umTabs .tab-item')[tabs.indexOf(t)].classList.add('active');
-}
-function uTab(t){
-  ['profile','roles','activity'].forEach(function(id){ document.getElementById('ut-'+id).style.display=id===t?'':'none'; });
-  document.querySelectorAll('#uTabs .tab-item').forEach(function(el,i){ el.classList.remove('active'); });
-  document.querySelectorAll('#uTabs .tab-item')[{profile:0,roles:1,activity:2}[t]].classList.add('active');
-}
-function showUser(id){}
-</script>
+  <script>
+    function umTab(t) {
+      var tabs = ['users', 'roles', 'sod', 'mfa'];
+      tabs.forEach(function (id, i) { document.getElementById('tab-' + id).classList.remove('active'); document.querySelectorAll('#umTabs .tab-item')[i].classList.remove('active'); });
+      document.getElementById('tab-' + t).classList.add('active');
+      document.querySelectorAll('#umTabs .tab-item')[tabs.indexOf(t)].classList.add('active');
+    }
+    function uTab(t) {
+      ['profile', 'roles', 'activity'].forEach(function (id) { document.getElementById('ut-' + id).style.display = id === t ? '' : 'none'; });
+      document.querySelectorAll('#uTabs .tab-item').forEach(function (el, i) { el.classList.remove('active'); });
+      document.querySelectorAll('#uTabs .tab-item')[{ profile: 0, roles: 1, activity: 2 }[t]].classList.add('active');
+    }
+    function showUser(id) { }
+  </script>
 </body>
+
 </html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Confirmation Matching — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="treasury-design-system.css">
+<style>
+.conf-card{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);margin-bottom:var(--space-3);overflow:hidden;transition:box-shadow .15s;}
+.conf-card:hover{box-shadow:var(--shadow-md);}
+.conf-card.matched{border-left:3px solid var(--status-success);}
+.conf-card.mismatch{border-left:3px solid var(--status-danger);}
+.conf-card.pending{border-left:3px solid var(--status-warning);}
+.conf-card.unmatched{border-left:3px solid var(--text-muted);}
+.ch{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--surface-divider);}
+.cb{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--surface-divider);}
+.cb-side{padding:var(--space-3) var(--space-4);}
+.cb-side .side-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--space-2);}
+.cf{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12px;border-bottom:1px solid var(--surface-divider);}
+.cf:last-child{border-bottom:none;}
+.cf .ck{color:var(--text-muted);}
+.cf .cv{font-weight:600;font-family:var(--font-mono);}
+.cf .cv.diff{color:var(--status-danger);font-weight:800;}
+.cf .cv.ok{color:var(--status-success);}
+.cfoot{display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);background:var(--surface-bg);}
+.swift-preview{background:#0A1628;border-radius:var(--radius-md);padding:var(--space-3);font-family:var(--font-mono);font-size:11px;line-height:1.9;color:#94A3B8;margin-top:var(--space-3);}
+.sp .sf{color:#60A5FA;}
+.sp .sv{color:#E2E8F0;}
+.sp .sd{color:#4ADE80;}
+.stat-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.stat-row:last-child{border-bottom:none;}
+.stat-row .sk{color:var(--text-muted);}
+.stat-row .sv{font-weight:700;font-family:var(--font-mono);}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<div id="sidebar-root"></div><script src="sidebar-include.js"></script>
+<div class="main-content">
+  <div class="fx-ticker-bar">
+    <div class="fx-tick"><span class="pair">Confs Received Today</span><span class="rate">38</span></div>
+    <div class="fx-tick"><span class="pair">Auto-Matched</span><span class="rate">34</span><span class="delta up">89.5%</span></div>
+    <div class="fx-tick"><span class="pair">Mismatches</span><span class="rate">2</span><span class="delta" style="color:var(--status-danger)">blocking</span></div>
+    <div class="fx-tick"><span class="pair">Unmatched</span><span class="rate">2</span><span class="delta" style="color:var(--status-warning)">exception queue</span></div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span>Back Office</span><span class="sep"> / </span><span class="current">Confirmation Matching</span></div>
+    <div class="topbar-spacer"></div>
+    <div class="live-badge">Live</div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm">Import SWIFT MT300</button>
+      <button class="btn btn-outline btn-sm">Import MT320</button>
+      <button class="btn btn-primary btn-sm" onclick="autoMatch()">Run Auto-Match</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:#0D7377;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">SO</div>
+      <div><div style="font-size:12px;font-weight:600">Susan Otieno</div><div style="font-size:10px;color:var(--text-muted)">Back Office · 25 Aug 2026</div></div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div><h1 class="page-title">Deal Confirmation Matching</h1>
+        <p class="page-subtitle">Back Office · Match inbound counterparty confirmations against booked deals · Mismatches block day-end close · FR-15.4 &amp; 15.5</p></div>
+    </div>
+
+    <!-- Alert: mismatches block day-end -->
+    <div class="alert alert-danger" style="margin-bottom:var(--space-4)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+      <div><strong>2 unresolved confirmation mismatches</strong> will block today's day-end close checklist (FR-15.5). Investigate and resolve before EOD. <a href="13-day-end.html" style="color:var(--status-danger);font-weight:700;margin-left:8px">View Day-End →</a></div>
+    </div>
+
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+      <div class="kpi-card" style="--kpi-accent:var(--status-success)"><div class="kpi-label">Auto-Matched</div><div class="kpi-value" style="color:var(--status-success)">34</div><div class="kpi-meta">No manual intervention</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-danger)"><div class="kpi-label">Mismatches</div><div class="kpi-value" style="color:var(--status-danger)">2</div><div class="kpi-meta">Rate / amount diff &gt;1bp</div></div>
+      <div class="kpi-card" style="--kpi-accent:var(--status-warning)"><div class="kpi-label">Unmatched</div><div class="kpi-value" style="color:var(--status-warning)">2</div><div class="kpi-meta">No TMS deal found</div></div>
+      <div class="kpi-card" style="--kpi-accent:#2563EB"><div class="kpi-label">Pending (awaiting conf.)</div><div class="kpi-value">3</div><div class="kpi-meta">Instructions sent, no reply</div></div>
+      <div class="kpi-card" style="--kpi-accent:#0D7377"><div class="kpi-label">Match Rate</div><div class="kpi-value">89.5%</div><div class="kpi-meta">Auto-matched today</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--space-4);align-items:start">
+
+      <!-- Confirmation queue -->
+      <div>
+        <div class="tabs" id="cTabs">
+          <div class="tab-item active" onclick="ctab(this,'all')">All (38)</div>
+          <div class="tab-item" onclick="ctab(this,'mismatch')">Mismatches (2)</div>
+          <div class="tab-item" onclick="ctab(this,'unmatched')">Unmatched (2)</div>
+          <div class="tab-item" onclick="ctab(this,'pending')">Pending (3)</div>
+          <div class="tab-item" onclick="ctab(this,'matched')">Matched (31)</div>
+        </div>
+
+        <!-- MISMATCH 1: Rate difference -->
+        <div class="conf-card mismatch">
+          <div class="ch">
+            <span class="badge badge-danger">MISMATCH</span>
+            <span class="mono fw-600">CONF-MT300-0825-001</span>
+            <span style="flex:1;font-size:12px">Stanbic Kenya — FX Forward EUR/KES · DEAL-00286</span>
+            <span style="font-size:11px;color:var(--status-danger);font-weight:600">⚑ Blocking EOD</span>
+          </div>
+          <div class="cb">
+            <!-- TMS side -->
+            <div class="cb-side" style="border-right:1px solid var(--surface-divider)">
+              <div class="side-label" style="color:var(--status-info)">TMS Booked Deal (DEAL-00286)</div>
+              <div class="cf"><span class="ck">Product</span><span class="cv">FX Forward</span></div>
+              <div class="cf"><span class="ck">Counterparty</span><span class="cv">Stanbic Kenya</span></div>
+              <div class="cf"><span class="ck">Buy CCY</span><span class="cv">KES</span></div>
+              <div class="cf"><span class="ck">Sell CCY</span><span class="cv">EUR</span></div>
+              <div class="cf"><span class="ck">Notional</span><span class="cv">EUR 1,000,000</span></div>
+              <div class="cf"><span class="ck">All-In Rate</span><span class="cv ok">140.85</span></div>
+              <div class="cf"><span class="ck">Value Date</span><span class="cv ok">25/11/2026</span></div>
+              <div class="cf"><span class="ck">Settlement</span><span class="cv">KES 140,850,000</span></div>
+            </div>
+            <!-- Counterparty confirmation -->
+            <div class="cb-side">
+              <div class="side-label" style="color:var(--status-danger)">Counterparty Confirmation (MT300)</div>
+              <div class="cf"><span class="ck">Product</span><span class="cv">FX Forward</span></div>
+              <div class="cf"><span class="ck">Counterparty</span><span class="cv">E&amp;M TMS (FNB)</span></div>
+              <div class="cf"><span class="ck">Buy CCY</span><span class="cv">KES</span></div>
+              <div class="cf"><span class="ck">Sell CCY</span><span class="cv">EUR</span></div>
+              <div class="cf"><span class="ck">Notional</span><span class="cv">EUR 1,000,000</span></div>
+              <div class="cf"><span class="ck">Rate</span><span class="cv diff">140.80 ← DIFFERS by 5bp</span></div>
+              <div class="cf"><span class="ck">Value Date</span><span class="cv ok">25/11/2026</span></div>
+              <div class="cf"><span class="ck">Settlement</span><span class="cv diff">KES 140,800,000 ← −50,000</span></div>
+            </div>
+          </div>
+          <!-- Analysis box -->
+          <div style="padding:var(--space-3) var(--space-4);background:var(--danger-bg);border-top:1px solid var(--danger-border)">
+            <div style="font-size:11px;font-weight:700;color:var(--status-danger);margin-bottom:4px">Mismatch Analysis — FR-15.4</div>
+            <div style="font-size:11px;color:var(--status-danger)">
+              Rate difference: <strong>5bp</strong> (TMS: 140.85 vs Conf: 140.80). Exceeds 1bp tolerance (AC-15.2).<br>
+              Settlement amount difference: <strong>KES 50,000</strong>. Counterparty likely using a different forward point calculation.<br>
+              Action required: Contact Stanbic Kenya operations desk to agree corrected rate before value date.
+            </div>
+          </div>
+          <div class="cfoot">
+            <span style="font-size:11px;color:var(--text-muted)">Received: 25/08/2026 10:15 AM via SWIFT · Ref: SBK-FX-2026-08-25-0041</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm" onclick="showSwift('mt300_1')">View MT300 SWIFT</button>
+              <button class="btn btn-outline btn-sm" onclick="alert('Chase email sent to Stanbic Kenya ops: ops@stanbic.co.ke\nRef: MISMATCH-2026-0825-001')">Chase Counterparty</button>
+              <button class="btn btn-warning btn-sm" onclick="alert('Mismatch accepted with justification.\nReason logged to audit trail.\nSettlement will proceed at TMS rate 140.85.')">Accept TMS Rate</button>
+              <button class="btn btn-danger btn-sm" onclick="alert('Deal DEAL-00286 returned to dealer for rate amendment.\nDealer notified: j.mwangi@emtechhouse.com')">Amend Deal</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MISMATCH 2: Value date difference -->
+        <div class="conf-card mismatch">
+          <div class="ch">
+            <span class="badge badge-danger">MISMATCH</span>
+            <span class="mono fw-600">CONF-MT320-0825-002</span>
+            <span style="flex:1;font-size:12px">StanChart Kenya — Fixed Deposit KES · DEAL-00285</span>
+            <span style="font-size:11px;color:var(--status-danger);font-weight:600">⚑ Blocking EOD</span>
+          </div>
+          <div class="cb">
+            <div class="cb-side" style="border-right:1px solid var(--surface-divider)">
+              <div class="side-label" style="color:var(--status-info)">TMS Booked Deal (DEAL-00285)</div>
+              <div class="cf"><span class="ck">Product</span><span class="cv">Fixed Deposit (Placement)</span></div>
+              <div class="cf"><span class="ck">Principal</span><span class="cv ok">KES 250,000,000</span></div>
+              <div class="cf"><span class="ck">Rate</span><span class="cv ok">14.50% p.a.</span></div>
+              <div class="cf"><span class="ck">Maturity Date</span><span class="cv ok">24/11/2026</span></div>
+              <div class="cf"><span class="ck">Settlement Amt</span><span class="cv">KES 251,162,500</span></div>
+            </div>
+            <div class="cb-side">
+              <div class="side-label" style="color:var(--status-danger)">Counterparty Confirmation (MT320)</div>
+              <div class="cf"><span class="ck">Product</span><span class="cv">Fixed Deposit</span></div>
+              <div class="cf"><span class="ck">Principal</span><span class="cv ok">KES 250,000,000</span></div>
+              <div class="cf"><span class="ck">Rate</span><span class="cv ok">14.50% p.a.</span></div>
+              <div class="cf"><span class="ck">Maturity Date</span><span class="cv diff">25/11/2026 ← DIFFERS by 1 day</span></div>
+              <div class="cf"><span class="ck">Settlement Amt</span><span class="cv diff">KES 251,163,356 ← +856 diff</span></div>
+            </div>
+          </div>
+          <div style="padding:var(--space-3) var(--space-4);background:var(--danger-bg);border-top:1px solid var(--danger-border)">
+            <div style="font-size:11px;color:var(--status-danger)"><strong>Maturity date differs by 1 business day.</strong> Likely cause: different holiday calendar (24 Nov 2026 may be a holiday in StanChart's system). Settlement amount difference of KES 856 is the extra day's accrual. Verify with StanChart ops.</div>
+          </div>
+          <div class="cfoot">
+            <span style="font-size:11px;color:var(--text-muted)">Received: 25/08/2026 09:30 AM via SWIFT · Ref: SCB-FD-2026-08-25-0012</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm">View MT320 SWIFT</button>
+              <button class="btn btn-outline btn-sm" onclick="alert('Chase email sent to StanChart Treasury Ops.')">Chase Counterparty</button>
+              <button class="btn btn-warning btn-sm" onclick="alert('Marking as timing difference — calendar mismatch.\nLogged to audit trail.\nMaturity confirmed at TMS date 24/11/2026.')">Mark as Calendar Diff</button>
+              <button class="btn btn-danger btn-sm">Amend Deal</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- UNMATCHED: No TMS deal found -->
+        <div class="conf-card unmatched">
+          <div class="ch">
+            <span class="badge badge-warning">UNMATCHED</span>
+            <span class="mono fw-600">CONF-MT300-0825-003</span>
+            <span style="flex:1;font-size:12px">Barclays Kenya — FX Spot · No TMS deal found</span>
+            <span style="font-size:11px;color:var(--status-warning)">Manual resolution required</span>
+          </div>
+          <div class="cb">
+            <div class="cb-side" style="border-right:1px solid var(--surface-divider)">
+              <div class="side-label" style="color:var(--text-muted)">Inbound Confirmation</div>
+              <div class="cf"><span class="ck">Product</span><span class="cv">FX Spot</span></div>
+              <div class="cf"><span class="ck">Counterparty</span><span class="cv">FNB Kenya (us)</span></div>
+              <div class="cf"><span class="ck">Pair</span><span class="cv">USD/KES</span></div>
+              <div class="cf"><span class="ck">Notional</span><span class="cv">USD 200,000</span></div>
+              <div class="cf"><span class="ck">Rate</span><span class="cv">129.40</span></div>
+              <div class="cf"><span class="ck">Value Date</span><span class="cv">27/08/2026</span></div>
+              <div class="cf"><span class="ck">Their Ref</span><span class="cv">BAR-FX-2026-0447</span></div>
+            </div>
+            <div class="cb-side">
+              <div class="side-label" style="color:var(--status-warning)">TMS Search Result</div>
+              <div style="padding:var(--space-4);text-align:center;color:var(--text-muted)">
+                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto var(--space-2)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div style="font-size:12px;font-weight:600">No matching deal found</div>
+                <div style="font-size:11px;margin-top:4px">No PENDING_AUTH or AUTHORISED deal matches Barclays Kenya · USD 200,000 · Rate ≈129.40 · Value 27/08/2026</div>
+              </div>
+            </div>
+          </div>
+          <div class="cfoot">
+            <span style="font-size:11px;color:var(--text-muted)">Received: 25/08/2026 11:05 AM · Ref: BAR-FX-2026-0447</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-outline btn-sm" onclick="alert('Linking confirmation to existing deal...\nSelect deal from list.')">Link to Existing Deal</button>
+              <button class="btn btn-warning btn-sm" onclick="alert('Escalated to Treasurer.\nPossible rogue trade or confirmation sent in error.')">Escalate to Treasurer</button>
+              <button class="btn btn-ghost btn-sm" onclick="alert('Confirmation rejected and returned to Barclays Kenya.\nSwift MT399 generated.')">Reject &amp; Return</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MATCHED example -->
+        <div class="conf-card matched" style="opacity:.8">
+          <div class="ch">
+            <span class="badge badge-success">MATCHED</span>
+            <span class="mono fw-600">CONF-MT202-0825-004</span>
+            <span style="flex:1;font-size:12px">Citi N.A. — FX Spot USD/KES · DEAL-00287</span>
+            <span style="font-size:11px;color:var(--status-success)">✓ Auto-matched 09:33 AM</span>
+          </div>
+          <div class="cb">
+            <div class="cb-side" style="border-right:1px solid var(--surface-divider)">
+              <div class="side-label" style="color:var(--status-success)">TMS Deal (DEAL-00287)</div>
+              <div class="cf"><span class="ck">Notional</span><span class="cv">USD 2,500,000</span></div>
+              <div class="cf"><span class="ck">Rate</span><span class="cv ok">129.42</span></div>
+              <div class="cf"><span class="ck">Value Date</span><span class="cv ok">27/08/2026</span></div>
+              <div class="cf"><span class="ck">Settlement</span><span class="cv">KES 323,550,000</span></div>
+            </div>
+            <div class="cb-side">
+              <div class="side-label" style="color:var(--status-success)">Counterparty Confirmation</div>
+              <div class="cf"><span class="ck">Notional</span><span class="cv">USD 2,500,000</span></div>
+              <div class="cf"><span class="ck">Rate</span><span class="cv ok">129.42 ✓</span></div>
+              <div class="cf"><span class="ck">Value Date</span><span class="cv ok">27/08/2026 ✓</span></div>
+              <div class="cf"><span class="ck">Settlement</span><span class="cv">KES 323,550,000 ✓</span></div>
+            </div>
+          </div>
+          <div class="cfoot">
+            <span style="font-size:11px;color:var(--status-success)">✓ All fields match · Auto-matched · No action required</span>
+            <button class="btn btn-ghost btn-sm">View Detail</button>
+          </div>
+        </div>
+
+        <!-- PENDING: Waiting for counterparty confirmation -->
+        <div class="conf-card pending">
+          <div class="ch">
+            <span class="badge badge-warning">AWAITING CONF.</span>
+            <span class="mono fw-600">DEAL-00283</span>
+            <span style="flex:1;font-size:12px">DTBK — Repo KES · Settlement instruction sent, no confirmation received</span>
+            <span style="font-size:11px;color:var(--status-warning)">Chase required if not received by 14:00</span>
+          </div>
+          <div style="padding:var(--space-3) var(--space-4);display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);font-size:12px">
+            <div><div style="color:var(--text-muted);font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">Deal</div><div class="fw-600">Repo KES</div></div>
+            <div><div style="color:var(--text-muted);font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">Principal</div><div class="fw-600 mono">KES 800M</div></div>
+            <div><div style="color:var(--text-muted);font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">Value Date</div><div class="fw-600 mono">26/08/2026</div></div>
+            <div><div style="color:var(--text-muted);font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">Instruction Sent</div><div class="fw-600 mono">09:35 AM</div></div>
+          </div>
+          <div class="cfoot">
+            <span style="font-size:11px;color:var(--text-muted)">SWIFT RTGS instruction sent · Awaiting MT910 acknowledgement from DTBK</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-outline btn-sm" onclick="alert('Chase email sent to DTBK Treasury Ops.\nRef: DEAL-00283')">Chase DTBK</button>
+              <button class="btn btn-ghost btn-sm">Resend Instruction</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right panel -->
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+
+        <!-- Summary stats -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Today's Summary</div><div class="card-subtitle">25 Aug 2026</div></div>
+          <div style="padding:var(--space-4)">
+            <div class="stat-row"><span class="sk">Confirmations received</span><span class="sv">38</span></div>
+            <div class="stat-row"><span class="sk">Auto-matched (STP)</span><span class="sv" style="color:var(--status-success)">34 (89.5%)</span></div>
+            <div class="stat-row"><span class="sk">Manually resolved</span><span class="sv">0</span></div>
+            <div class="stat-row"><span class="sk">Mismatches outstanding</span><span class="sv" style="color:var(--status-danger)">2 ⚑ blocking EOD</span></div>
+            <div class="stat-row"><span class="sk">Unmatched outstanding</span><span class="sv" style="color:var(--status-warning)">2</span></div>
+            <div class="stat-row"><span class="sk">Awaiting confirmation</span><span class="sv" style="color:#2563EB">3 deals</span></div>
+            <div class="stat-row" style="padding-top:8px;margin-top:4px;border-top:2px solid var(--surface-divider)">
+              <span style="font-weight:700">EOD Clearance Status</span>
+              <span class="badge badge-danger">BLOCKED</span>
+            </div>
+          </div>
+          <div class="card-footer"><a href="13-day-end.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View day-end checklist →</a></div>
+        </div>
+
+        <!-- Matching rules -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Auto-Match Rules</div><div class="card-subtitle">FR-15.4 · Tolerance thresholds</div></div>
+          <div style="padding:var(--space-4)">
+            <div class="stat-row"><span class="sk">Rate tolerance (FX)</span><span class="sv">±1 bp</span></div>
+            <div class="stat-row"><span class="sk">Rate tolerance (MM)</span><span class="sv">±1 bp</span></div>
+            <div class="stat-row"><span class="sk">Amount tolerance</span><span class="sv">±KES 100</span></div>
+            <div class="stat-row"><span class="sk">Date tolerance</span><span class="sv">Exact match required</span></div>
+            <div class="stat-row"><span class="sk">Counterparty match</span><span class="sv">SWIFT BIC exact</span></div>
+            <div class="stat-row"><span class="sk">Product type match</span><span class="sv">Required</span></div>
+          </div>
+          <div class="card-footer"><a href="14-configuration.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">Edit tolerance settings →</a></div>
+        </div>
+
+        <!-- SWIFT preview -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">SWIFT MT300 Preview</div><div class="card-subtitle">CONF-MT300-0825-001</div></div>
+          <div class="card-body" style="padding:var(--space-3)">
+            <div class="swift-preview sp">
+<span class="sf">{1:</span><span class="sv">F01SBICKENA0AXXX0001000041}</span>
+<span class="sf">{2:</span><span class="sv">I300EMTEKENA0XXXXN}</span>
+<span class="sf">{4:</span>
+<span class="sf">:15A:</span>
+<span class="sf">:20:</span><span class="sv">SBK-FX-2026-08-25-0041</span>
+<span class="sf">:21:</span><span class="sv">DEAL-00286</span>
+<span class="sf">:22A:</span><span class="sv">NEWT</span>
+<span class="sf">:94A:</span><span class="sv">BILA</span>
+<span class="sf">:17T:</span><span class="sv">N</span>
+<span class="sf">:17U:</span><span class="sv">N</span>
+<span class="sf">:82A:</span><span class="sv">SBICKENA0XXX</span>
+<span class="sf">:87A:</span><span class="sv">EMTEKENA0XXX</span>
+<span class="sf">:15B:</span>
+<span class="sf">:30T:</span><span class="sv">20260825</span>
+<span class="sf">:30V:</span><span class="sv">20261125</span>
+<span class="sf">:36:</span><span class="sv"><span class="sd">140,80</span> ← TMS has 140.85</span>
+<span class="sf">:33B:</span><span class="sv">EUR1000000,</span>
+<span class="sf">:53A:</span><span class="sv">SBICKENA0XXX</span>
+<span class="sf">:57A:</span><span class="sv">EMTEKENA0XXX</span>
+<span class="sf">:58A:</span><span class="sv">CBKKENA0XXX</span>
+<span class="sf">-}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Month history -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Match Rate Trend</div><div class="card-subtitle">Last 5 business days</div></div>
+          <div style="padding:var(--space-4)">
+            <div style="display:flex;align-items:flex-end;gap:4px;height:60px;margin-bottom:var(--space-3)">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:95%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">19</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:100%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">20</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:92%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">21</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:97%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">22</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:var(--brand-primary);height:89%"></div><div style="font-size:9px;color:var(--brand-primary);font-weight:700;margin-top:3px">25★</div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)">
+              <span>19 Aug: 95%</span><span>20 Aug: 100%</span><span>25 Aug: 89.5%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+function ctab(el,t){document.querySelectorAll('#cTabs .tab-item').forEach(function(e){e.classList.remove('active')});el.classList.add('active');}
+function autoMatch(){alert('Auto-match complete.\n34 matched · 2 mismatches · 2 unmatched\n\nMismatches routed to exception queue.\nBack Office notified.');}
+</script>
+</body></html>

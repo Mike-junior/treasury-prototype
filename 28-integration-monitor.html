@@ -1,165 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Integration Monitor — E&M TMS</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="treasury-design-system.css">
-<style>
-.adapter-card{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);padding:var(--space-4);position:relative;overflow:hidden;}
-.adapter-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--ac,var(--status-success));}
-.adapter-card .aname{font-size:13px;font-weight:700;}
-.adapter-card .atype{font-size:10px;color:var(--text-muted);margin-bottom:var(--space-3);}
-.adapter-stat{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;}
-.adapter-stat .ask{color:var(--text-muted);}
-.adapter-stat .asv{font-weight:700;font-family:var(--font-mono);}
-.msg-row{display:flex;gap:var(--space-3);padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;}
-.msg-row:last-child{border-bottom:none;}
-.msg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
-.throughput-bar{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--surface-divider);font-size:12px;}
-.throughput-bar:last-child{border-bottom:none;}
-.tp-track{flex:1;height:6px;background:var(--surface-divider);border-radius:3px;overflow:hidden;}
-.tp-fill{height:100%;border-radius:3px;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Integration Monitor — E&M TMS</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="treasury-design-system.css">
+  <style>
+    .adapter-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .adapter-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--ac, var(--status-success));
+    }
+
+    .adapter-card .aname {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .adapter-card .atype {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: var(--space-3);
+    }
+
+    .adapter-stat {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .adapter-stat .ask {
+      color: var(--text-muted);
+    }
+
+    .adapter-stat .asv {
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+
+    .msg-row {
+      display: flex;
+      gap: var(--space-3);
+      padding: 9px var(--space-4);
+      border-bottom: 1px solid var(--surface-divider);
+      font-size: 12px;
+    }
+
+    .msg-row:last-child {
+      border-bottom: none;
+    }
+
+    .msg-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .throughput-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--surface-divider);
+      font-size: 12px;
+    }
+
+    .throughput-bar:last-child {
+      border-bottom: none;
+    }
+
+    .tp-track {
+      flex: 1;
+      height: 6px;
+      background: var(--surface-divider);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .tp-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+  </style>
 </head>
+
 <body>
-<div class="app-shell">
-<div id="sidebar-root"></div><script src="sidebar-include.js"></script>
-<div class="main-content">
-  <div class="fx-ticker-bar">
-    <div class="fx-tick"><span class="pair">Adapters Online</span><span class="rate">5/6</span><span class="delta" style="color:var(--status-warning)">1 down</span></div>
-    <div class="fx-tick"><span class="pair">Messages Today</span><span class="rate">4,284</span></div>
-    <div class="fx-tick"><span class="pair">Error Rate</span><span class="rate">0.02%</span><span class="delta up">✓ Low</span></div>
-    <div class="fx-tick"><span class="pair">Retry Queue</span><span class="rate">1</span><span class="delta" style="color:var(--status-warning)">pending</span></div>
-  </div>
-  <div class="topbar">
-    <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Integration Monitor</span></div>
-    <div class="topbar-spacer"></div>
-    <div class="live-badge">Live</div>
-    <div class="topbar-actions">
-      <button class="btn btn-outline btn-sm">View All Logs</button>
-      <button class="btn btn-primary btn-sm" onclick="alert('All adapters reconnect attempt triggered.')">Reconnect All</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JM</div>
-      <div><div style="font-size:12px;font-weight:600">James Mwangi</div><div style="font-size:10px;color:var(--text-muted)">System Admin · 25 Aug 2026</div></div>
-    </div>
-  </div>
-
-  <div class="page-content">
-    <div class="page-header">
-      <div><h1 class="page-title">Integration Monitor</h1>
-        <p class="page-subtitle">Adapter health · Message throughput · Error rates · Retry queues · FR-24 · 6 integration adapters</p></div>
-    </div>
-
-    <!-- Adapter health grid -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-bottom:var(--space-4)">
-
-      <div class="adapter-card" style="--ac:var(--status-success)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)"><div><div class="aname">CBS GL Adapter</div><div class="atype">OUTBOUND · REST/ISO 20022 → Core Banking GL</div></div><span class="badge badge-success">ONLINE</span></div>
-        <div class="adapter-stat"><span class="ask">Status</span><span class="asv" style="color:var(--status-success)">Connected</span></div>
-        <div class="adapter-stat"><span class="ask">Messages today</span><span class="asv">289</span></div>
-        <div class="adapter-stat"><span class="ask">Success rate</span><span class="asv" style="color:var(--status-success)">99.7%</span></div>
-        <div class="adapter-stat"><span class="ask">Avg response</span><span class="asv">142ms</span></div>
-        <div class="adapter-stat"><span class="ask">Last message</span><span class="asv">10:31:05</span></div>
-        <div class="adapter-stat"><span class="ask">Retry queue</span><span class="asv" style="color:var(--status-warning)">1 item</span></div>
-        <div class="util-bar-track" style="margin-top:8px;height:4px"><div class="util-bar-fill" style="width:99.7%"></div></div>
-        <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3);width:100%" onclick="alert('CBS GL Adapter: 289 messages · 288 success · 1 retry\nLast error: Timeout JNL-0825-141')">View Logs</button>
+  <div class="app-shell">
+    <div id="sidebar-root"></div>
+    <script src="sidebar-include.js"></script>
+    <div class="main-content">
+      <div class="fx-ticker-bar">
+        <div class="fx-tick"><span class="pair">Adapters Online</span><span class="rate">5/6</span><span class="delta"
+            style="color:var(--status-warning)">1 down</span></div>
+        <div class="fx-tick"><span class="pair">Messages Today</span><span class="rate">4,284</span></div>
+        <div class="fx-tick"><span class="pair">Error Rate</span><span class="rate">0.02%</span><span class="delta up">✓
+            Low</span></div>
+        <div class="fx-tick"><span class="pair">Retry Queue</span><span class="rate">1</span><span class="delta"
+            style="color:var(--status-warning)">pending</span></div>
       </div>
-
-      <div class="adapter-card" style="--ac:var(--status-success)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)"><div><div class="aname">SWIFT Settlement Adapter</div><div class="atype">OUTBOUND · MT202/MT300/MT320 → SWIFT network</div></div><span class="badge badge-success">ONLINE</span></div>
-        <div class="adapter-stat"><span class="ask">Status</span><span class="asv" style="color:var(--status-success)">Connected</span></div>
-        <div class="adapter-stat"><span class="ask">Messages today</span><span class="asv">38</span></div>
-        <div class="adapter-stat"><span class="ask">Success rate</span><span class="asv" style="color:var(--status-success)">100%</span></div>
-        <div class="adapter-stat"><span class="ask">Avg response</span><span class="asv">380ms</span></div>
-        <div class="adapter-stat"><span class="ask">Last message</span><span class="asv">09:33:11</span></div>
-        <div class="adapter-stat"><span class="ask">Pending ACKs</span><span class="asv" style="color:var(--status-success)">0</span></div>
-        <div class="util-bar-track" style="margin-top:8px;height:4px"><div class="util-bar-fill" style="width:100%"></div></div>
-        <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3);width:100%">View Logs</button>
-      </div>
-
-      <div class="adapter-card" style="--ac:var(--status-danger)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)"><div><div class="aname">STP Dealing Platform</div><div class="atype">INBOUND · FIX protocol ← Bloomberg FX GO</div></div><span class="badge badge-danger">OFFLINE</span></div>
-        <div class="adapter-stat"><span class="ask">Status</span><span class="asv" style="color:var(--status-danger)">Disconnected</span></div>
-        <div class="adapter-stat"><span class="ask">Last connected</span><span class="asv" style="color:var(--status-danger)">10:30 AM</span></div>
-        <div class="adapter-stat"><span class="ask">Reconnect attempts</span><span class="asv">3 (max 5)</span></div>
-        <div class="adapter-stat"><span class="ask">Next retry</span><span class="asv">10:55 AM</span></div>
-        <div class="adapter-stat"><span class="ask">Deals missed</span><span class="asv" style="color:var(--status-warning)">0 (fallback: manual)</span></div>
-        <div class="util-bar-track" style="margin-top:8px;height:4px"><div class="util-bar-fill danger" style="width:40%"></div></div>
-        <button class="btn btn-danger btn-sm" style="margin-top:var(--space-3);width:100%" onclick="alert('Attempting manual reconnect to Bloomberg FX GO...')">Reconnect Now</button>
-      </div>
-
-      <div class="adapter-card" style="--ac:var(--status-success)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)"><div><div class="aname">Market Data Adapter</div><div class="atype">INBOUND · Reuters/Bloomberg/CBK → Market Data store</div></div><span class="badge badge-success">ONLINE</span></div>
-        <div class="adapter-stat"><span class="ask">Reuters feed</span><span class="asv" style="color:var(--status-success)">✓ Active</span></div>
-        <div class="adapter-stat"><span class="ask">Bloomberg feed</span><span class="asv" style="color:var(--status-success)">✓ Active</span></div>
-        <div class="adapter-stat"><span class="ask">CBK feed</span><span class="asv" style="color:var(--status-success)">✓ Active (09:00)</span></div>
-        <div class="adapter-stat"><span class="ask">Rates loaded today</span><span class="asv">2,847</span></div>
-        <div class="adapter-stat"><span class="ask">Exceptions</span><span class="asv" style="color:var(--status-warning)">2 in queue</span></div>
-        <div class="util-bar-track" style="margin-top:8px;height:4px"><div class="util-bar-fill" style="width:99%"></div></div>
-        <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3);width:100%"><a href="24-market-data.html" style="color:inherit;text-decoration:none">View Exception Queue</a></button>
-      </div>
-
-      <div class="adapter-card" style="--ac:var(--status-success)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)"><div><div class="aname">Correspondent Statement Adapter</div><div class="atype">INBOUND · MT940/MT950/camt.053 ← Nostro banks</div></div><span class="badge badge-success">ONLINE</span></div>
-        <div class="adapter-stat"><span class="ask">Statements today</span><span class="asv">3 files</span></div>
-        <div class="adapter-stat"><span class="ask">Items loaded</span><span class="asv">75</span></div>
-        <div class="adapter-stat"><span class="ask">Auto-matched</span><span class="asv" style="color:var(--status-success)">70 (93.3%)</span></div>
-        <div class="adapter-stat"><span class="ask">Breaks created</span><span class="asv" style="color:var(--status-danger)">4</span></div>
-        <div class="adapter-stat"><span class="ask">Last import</span><span class="asv">07:10 AM</span></div>
-        <div class="util-bar-track" style="margin-top:8px;height:4px"><div class="util-bar-fill" style="width:93%"></div></div>
-        <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3);width:100%"><a href="22-nostro-correspondent.html" style="color:inherit;text-decoration:none">View Breaks</a></button>
-      </div>
-
-      <div class="adapter-card" style="--ac:var(--status-success)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)"><div><div class="aname">Core Banking Feed</div><div class="atype">INBOUND · Account balances ← CBS</div></div><span class="badge badge-success">ONLINE</span></div>
-        <div class="adapter-stat"><span class="ask">Last sync</span><span class="asv" style="color:var(--status-success)">08:00 AM today</span></div>
-        <div class="adapter-stat"><span class="ask">Accounts synced</span><span class="asv">284</span></div>
-        <div class="adapter-stat"><span class="ask">Sync frequency</span><span class="asv">Hourly</span></div>
-        <div class="adapter-stat"><span class="ask">Next sync</span><span class="asv">11:00 AM</span></div>
-        <div class="adapter-stat"><span class="ask">Discrepancies</span><span class="asv" style="color:var(--status-success)">0</span></div>
-        <div class="util-bar-track" style="margin-top:8px;height:4px"><div class="util-bar-fill" style="width:100%"></div></div>
-        <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3);width:100%">View Sync Log</button>
-      </div>
-    </div>
-
-    <!-- Message throughput -->
-    <div style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">
-      <div class="card">
-        <div class="card-header"><div class="card-title">Message Throughput — Today</div><div class="card-subtitle">All adapters combined · Hourly breakdown</div></div>
-        <div style="padding:var(--space-4)">
-          <div style="display:flex;align-items:flex-end;gap:3px;height:80px;margin-bottom:var(--space-3)">
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:80%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">07</div></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:95%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">08</div></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:100%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">09</div></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:85%"></div><div style="font-size:9px;color:var(--text-muted);margin-top:3px">10</div></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center"><div style="width:100%;border-radius:2px 2px 0 0;background:var(--brand-primary);opacity:.4;height:30%"></div><div style="font-size:9px;color:var(--brand-primary);margin-top:3px;font-weight:700">11★</div></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:7px">
-            <div class="throughput-bar"><span style="width:150px">CBS GL Adapter</span><div class="tp-track"><div class="tp-fill" style="width:68%;background:#0A1628"></div></div><span class="mono text-xs fw-600" style="width:40px;text-align:right">289</span></div>
-            <div class="throughput-bar"><span style="width:150px">Market Data</span><div class="tp-track"><div class="tp-fill" style="width:67%;background:#0D7377"></div></div><span class="mono text-xs fw-600" style="width:40px;text-align:right">2,847</span></div>
-            <div class="throughput-bar"><span style="width:150px">SWIFT</span><div class="tp-track"><div class="tp-fill" style="width:1%;background:#2563EB"></div></div><span class="mono text-xs fw-600" style="width:40px;text-align:right">38</span></div>
-            <div class="throughput-bar"><span style="width:150px">Statements</span><div class="tp-track"><div class="tp-fill" style="width:2%;background:#7C3AED"></div></div><span class="mono text-xs fw-600" style="width:40px;text-align:right">75</span></div>
-            <div class="throughput-bar"><span style="width:150px">Core Banking</span><div class="tp-track"><div class="tp-fill" style="width:6%;background:#D97706"></div></div><span class="mono text-xs fw-600" style="width:40px;text-align:right">284</span></div>
+      <div class="topbar">
+        <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span
+            class="sep"> / </span><span class="current">Integration Monitor</span></div>
+        <div class="topbar-spacer"></div>
+        <div class="live-badge">Live</div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm">View All Logs</button>
+          <button class="btn btn-primary btn-sm" onclick="alert('All adapters reconnect attempt triggered.')">Reconnect
+            All</button>
+        </div>
+        <div
+          style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+          <div
+            style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">
+            JM</div>
+          <div>
+            <div style="font-size:12px;font-weight:600">Mike Agola</div>
+            <div style="font-size:10px;color:var(--text-muted)">System Admin · 25 Aug 2026</div>
           </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">Recent Events</div><div class="card-subtitle">Last 10 integration events</div></div>
-        <div>
-          <div class="msg-row"><div class="msg-dot" style="background:var(--status-success)"></div><div style="flex:1"><span class="mono fw-600">CBS GL</span> Batch BATCH-0825-001 posted OK</div><div class="mono text-xs">10:31</div></div>
-          <div class="msg-row"><div class="msg-dot" style="background:var(--status-success)"></div><div style="flex:1"><span class="mono fw-600">SWIFT</span> MT202 sent · NYC20260825001</div><div class="mono text-xs">09:33</div></div>
-          <div class="msg-row"><div class="msg-dot" style="background:var(--status-danger)"></div><div style="flex:1"><span class="mono fw-600">CBS GL</span> JNL-0825-141 timeout — retry 1/3</div><div class="mono text-xs">10:30</div></div>
-          <div class="msg-row"><div class="msg-dot" style="background:var(--status-danger)"></div><div style="flex:1"><span class="mono fw-600">STP FX GO</span> Connection lost · reconnecting</div><div class="mono text-xs">10:30</div></div>
-          <div class="msg-row"><div class="msg-dot" style="background:var(--status-success)"></div><div style="flex:1"><span class="mono fw-600">Market Data</span> Reuters feed reconnected after 2min gap</div><div class="mono text-xs">10:12</div></div>
-          <div class="msg-row"><div class="msg-dot" style="background:var(--status-success)"></div><div style="flex:1"><span class="mono fw-600">SWIFT</span> MT910 ACK received from Citi NY</div><div class="mono text-xs">10:15</div></div>
-          <div class="msg-row"><div class="msg-dot" style="background:var(--status-success)"></div><div style="flex:1"><span class="mono fw-600">CBS Feed</span> Balance sync complete · 284 accounts</div><div class="mono text-xs">08:00</div></div>
-          <div class="msg-row"><div class="msg-dot" style="background:var(--status-success)"></div><div style="flex:1"><span class="mono fw-600">Statements</span> MT940 Barclays GBP imported · 15 items</div><div class="mono text-xs">07:10</div></div>
+
+      <div class="page-content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Integration Monitor</h1>
+            <p class="page-subtitle">Adapter health · Message throughput · Error rates · Retry queues · FR-24 · 6
+              integration adapters</p>
+          </div>
+        </div>
+
+        <!-- Adapter health grid -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-bottom:var(--space-4)">
+
+          <div class="adapter-card" style="--ac:var(--status-success)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)">
+              <div>
+                <div class="aname">CBS GL Adapter</div>
+                <div class="atype">OUTBOUND · REST/ISO 20022 → Core Banking GL</div>
+              </div><span class="badge badge-success">ONLINE</span>
+            </div>
+            <div class="adapter-stat"><span class="ask">Status</span><span class="asv"
+                style="color:var(--status-success)">Connected</span></div>
+            <div class="adapter-stat"><span class="ask">Messages today</span><span class="asv">289</span></div>
+            <div class="adapter-stat"><span class="ask">Success rate</span><span class="asv"
+                style="color:var(--status-success)">99.7%</span></div>
+            <div class="adapter-stat"><span class="ask">Avg response</span><span class="asv">142ms</span></div>
+            <div class="adapter-stat"><span class="ask">Last message</span><span class="asv">10:31:05</span></div>
+            <div class="adapter-stat"><span class="ask">Retry queue</span><span class="asv"
+                style="color:var(--status-warning)">1 item</span></div>
+            <div class="util-bar-track" style="margin-top:8px;height:4px">
+              <div class="util-bar-fill" style="width:99.7%"></div>
+            </div>
+            <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3);width:100%"
+              onclick="alert('CBS GL Adapter: 289 messages · 288 success · 1 retry\nLast error: Timeout JNL-0825-141')">View
+              Logs</button>
+          </div>
+
+          <div class="adapter-card" style="--ac:var(--status-success)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)">
+              <div>
+                <div class="aname">SWIFT Settlement Adapter</div>
+                <div class="atype">OUTBOUND · MT202/MT300/MT320 → SWIFT network</div>
+              </div><span class="badge badge-success">ONLINE</span>
+            </div>
+            <div class="adapter-stat"><span class="ask">Status</span><span class="asv"
+                style="color:var(--status-success)">Connected</span></div>
+            <div class="adapter-stat"><span class="ask">Messages today</span><span class="asv">38</span></div>
+            <div class="adapter-stat"><span class="ask">Success rate</span><span class="asv"
+                style="color:var(--status-success)">100%</span></div>
+            <div class="adapter-stat"><span class="ask">Avg response</span><span class="asv">380ms</span></div>
+            <div class="adapter-stat"><span class="ask">Last message</span><span class="asv">09:33:11</span></div>
+            <div class="adapter-stat"><span class="ask">Pending ACKs</span><span class="asv"
+                style="color:var(--status-success)">0</span></div>
+            <div class="util-bar-track" style="margin-top:8px;height:4px">
+              <div class="util-bar-fill" style="width:100%"></div>
+            </div>
+            <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3);width:100%">View Logs</button>
+          </div>
+
+          <div class="adapter-card" style="--ac:var(--status-danger)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)">
+              <div>
+                <div class="aname">STP Dealing Platform</div>
+                <div class="atype">INBOUND · FIX protocol ← Bloomberg FX GO</div>
+              </div><span class="badge badge-danger">OFFLINE</span>
+            </div>
+            <div class="adapter-stat"><span class="ask">Status</span><span class="asv"
+                style="color:var(--status-danger)">Disconnected</span></div>
+            <div class="adapter-stat"><span class="ask">Last connected</span><span class="asv"
+                style="color:var(--status-danger)">10:30 AM</span></div>
+            <div class="adapter-stat"><span class="ask">Reconnect attempts</span><span class="asv">3 (max 5)</span>
+            </div>
+            <div class="adapter-stat"><span class="ask">Next retry</span><span class="asv">10:55 AM</span></div>
+            <div class="adapter-stat"><span class="ask">Deals missed</span><span class="asv"
+                style="color:var(--status-warning)">0 (fallback: manual)</span></div>
+            <div class="util-bar-track" style="margin-top:8px;height:4px">
+              <div class="util-bar-fill danger" style="width:40%"></div>
+            </div>
+            <button class="btn btn-danger btn-sm" style="margin-top:var(--space-3);width:100%"
+              onclick="alert('Attempting manual reconnect to Bloomberg FX GO...')">Reconnect Now</button>
+          </div>
+
+          <div class="adapter-card" style="--ac:var(--status-success)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)">
+              <div>
+                <div class="aname">Market Data Adapter</div>
+                <div class="atype">INBOUND · Reuters/Bloomberg/CBK → Market Data store</div>
+              </div><span class="badge badge-success">ONLINE</span>
+            </div>
+            <div class="adapter-stat"><span class="ask">Reuters feed</span><span class="asv"
+                style="color:var(--status-success)">✓ Active</span></div>
+            <div class="adapter-stat"><span class="ask">Bloomberg feed</span><span class="asv"
+                style="color:var(--status-success)">✓ Active</span></div>
+            <div class="adapter-stat"><span class="ask">CBK feed</span><span class="asv"
+                style="color:var(--status-success)">✓ Active (09:00)</span></div>
+            <div class="adapter-stat"><span class="ask">Rates loaded today</span><span class="asv">2,847</span></div>
+            <div class="adapter-stat"><span class="ask">Exceptions</span><span class="asv"
+                style="color:var(--status-warning)">2 in queue</span></div>
+            <div class="util-bar-track" style="margin-top:8px;height:4px">
+              <div class="util-bar-fill" style="width:99%"></div>
+            </div>
+            <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3);width:100%"><a
+                href="24-market-data.html" style="color:inherit;text-decoration:none">View Exception Queue</a></button>
+          </div>
+
+          <div class="adapter-card" style="--ac:var(--status-success)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)">
+              <div>
+                <div class="aname">Correspondent Statement Adapter</div>
+                <div class="atype">INBOUND · MT940/MT950/camt.053 ← Nostro banks</div>
+              </div><span class="badge badge-success">ONLINE</span>
+            </div>
+            <div class="adapter-stat"><span class="ask">Statements today</span><span class="asv">3 files</span></div>
+            <div class="adapter-stat"><span class="ask">Items loaded</span><span class="asv">75</span></div>
+            <div class="adapter-stat"><span class="ask">Auto-matched</span><span class="asv"
+                style="color:var(--status-success)">70 (93.3%)</span></div>
+            <div class="adapter-stat"><span class="ask">Breaks created</span><span class="asv"
+                style="color:var(--status-danger)">4</span></div>
+            <div class="adapter-stat"><span class="ask">Last import</span><span class="asv">07:10 AM</span></div>
+            <div class="util-bar-track" style="margin-top:8px;height:4px">
+              <div class="util-bar-fill" style="width:93%"></div>
+            </div>
+            <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3);width:100%"><a
+                href="22-nostro-correspondent.html" style="color:inherit;text-decoration:none">View Breaks</a></button>
+          </div>
+
+          <div class="adapter-card" style="--ac:var(--status-success)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-2)">
+              <div>
+                <div class="aname">Core Banking Feed</div>
+                <div class="atype">INBOUND · Account balances ← CBS</div>
+              </div><span class="badge badge-success">ONLINE</span>
+            </div>
+            <div class="adapter-stat"><span class="ask">Last sync</span><span class="asv"
+                style="color:var(--status-success)">08:00 AM today</span></div>
+            <div class="adapter-stat"><span class="ask">Accounts synced</span><span class="asv">284</span></div>
+            <div class="adapter-stat"><span class="ask">Sync frequency</span><span class="asv">Hourly</span></div>
+            <div class="adapter-stat"><span class="ask">Next sync</span><span class="asv">11:00 AM</span></div>
+            <div class="adapter-stat"><span class="ask">Discrepancies</span><span class="asv"
+                style="color:var(--status-success)">0</span></div>
+            <div class="util-bar-track" style="margin-top:8px;height:4px">
+              <div class="util-bar-fill" style="width:100%"></div>
+            </div>
+            <button class="btn btn-outline btn-sm" style="margin-top:var(--space-3);width:100%">View Sync Log</button>
+          </div>
+        </div>
+
+        <!-- Message throughput -->
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Message Throughput — Today</div>
+              <div class="card-subtitle">All adapters combined · Hourly breakdown</div>
+            </div>
+            <div style="padding:var(--space-4)">
+              <div style="display:flex;align-items:flex-end;gap:3px;height:80px;margin-bottom:var(--space-3)">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+                  <div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:80%"></div>
+                  <div style="font-size:9px;color:var(--text-muted);margin-top:3px">07</div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+                  <div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:95%"></div>
+                  <div style="font-size:9px;color:var(--text-muted);margin-top:3px">08</div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+                  <div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:100%"></div>
+                  <div style="font-size:9px;color:var(--text-muted);margin-top:3px">09</div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+                  <div style="width:100%;border-radius:2px 2px 0 0;background:#0D7377;height:85%"></div>
+                  <div style="font-size:9px;color:var(--text-muted);margin-top:3px">10</div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+                  <div
+                    style="width:100%;border-radius:2px 2px 0 0;background:var(--brand-primary);opacity:.4;height:30%">
+                  </div>
+                  <div style="font-size:9px;color:var(--brand-primary);margin-top:3px;font-weight:700">11★</div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div class="throughput-bar"><span style="width:150px">CBS GL Adapter</span>
+                  <div class="tp-track">
+                    <div class="tp-fill" style="width:68%;background:#0A1628"></div>
+                  </div><span class="mono text-xs fw-600" style="width:40px;text-align:right">289</span>
+                </div>
+                <div class="throughput-bar"><span style="width:150px">Market Data</span>
+                  <div class="tp-track">
+                    <div class="tp-fill" style="width:67%;background:#0D7377"></div>
+                  </div><span class="mono text-xs fw-600" style="width:40px;text-align:right">2,847</span>
+                </div>
+                <div class="throughput-bar"><span style="width:150px">SWIFT</span>
+                  <div class="tp-track">
+                    <div class="tp-fill" style="width:1%;background:#2563EB"></div>
+                  </div><span class="mono text-xs fw-600" style="width:40px;text-align:right">38</span>
+                </div>
+                <div class="throughput-bar"><span style="width:150px">Statements</span>
+                  <div class="tp-track">
+                    <div class="tp-fill" style="width:2%;background:#7C3AED"></div>
+                  </div><span class="mono text-xs fw-600" style="width:40px;text-align:right">75</span>
+                </div>
+                <div class="throughput-bar"><span style="width:150px">Core Banking</span>
+                  <div class="tp-track">
+                    <div class="tp-fill" style="width:6%;background:#D97706"></div>
+                  </div><span class="mono text-xs fw-600" style="width:40px;text-align:right">284</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent Events</div>
+              <div class="card-subtitle">Last 10 integration events</div>
+            </div>
+            <div>
+              <div class="msg-row">
+                <div class="msg-dot" style="background:var(--status-success)"></div>
+                <div style="flex:1"><span class="mono fw-600">CBS GL</span> Batch BATCH-0825-001 posted OK</div>
+                <div class="mono text-xs">10:31</div>
+              </div>
+              <div class="msg-row">
+                <div class="msg-dot" style="background:var(--status-success)"></div>
+                <div style="flex:1"><span class="mono fw-600">SWIFT</span> MT202 sent · NYC20260825001</div>
+                <div class="mono text-xs">09:33</div>
+              </div>
+              <div class="msg-row">
+                <div class="msg-dot" style="background:var(--status-danger)"></div>
+                <div style="flex:1"><span class="mono fw-600">CBS GL</span> JNL-0825-141 timeout — retry 1/3</div>
+                <div class="mono text-xs">10:30</div>
+              </div>
+              <div class="msg-row">
+                <div class="msg-dot" style="background:var(--status-danger)"></div>
+                <div style="flex:1"><span class="mono fw-600">STP FX GO</span> Connection lost · reconnecting</div>
+                <div class="mono text-xs">10:30</div>
+              </div>
+              <div class="msg-row">
+                <div class="msg-dot" style="background:var(--status-success)"></div>
+                <div style="flex:1"><span class="mono fw-600">Market Data</span> Reuters feed reconnected after 2min gap
+                </div>
+                <div class="mono text-xs">10:12</div>
+              </div>
+              <div class="msg-row">
+                <div class="msg-dot" style="background:var(--status-success)"></div>
+                <div style="flex:1"><span class="mono fw-600">SWIFT</span> MT910 ACK received from Citi NY</div>
+                <div class="mono text-xs">10:15</div>
+              </div>
+              <div class="msg-row">
+                <div class="msg-dot" style="background:var(--status-success)"></div>
+                <div style="flex:1"><span class="mono fw-600">CBS Feed</span> Balance sync complete · 284 accounts</div>
+                <div class="mono text-xs">08:00</div>
+              </div>
+              <div class="msg-row">
+                <div class="msg-dot" style="background:var(--status-success)"></div>
+                <div style="flex:1"><span class="mono fw-600">Statements</span> MT940 Barclays GBP imported · 15 items
+                </div>
+                <div class="mono text-xs">07:10</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-</div>
-</body></html>
+</body>
+
+</html>

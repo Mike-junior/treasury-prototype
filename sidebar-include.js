@@ -138,7 +138,7 @@
   html += '<div class="sidebar-footer">'
     + '<div class="user-mini">'
     + '<div class="user-avatar">JM</div>'
-    + '<div class="user-mini-info"><div class="name">James Mwangi</div><div class="role">Treasurer · LE-001</div></div>'
+    + '<div class="user-mini-info"><div class="name">Mike Agola</div><div class="role">Treasurer · LE-001</div></div>'
     + '</div></div>';
 
   // Inject
