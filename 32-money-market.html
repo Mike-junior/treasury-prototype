@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Money Market &amp; Fixed Income — E&amp;M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="treasury-design-system.css"/>
+<style>
+.pt-chip{padding:6px 14px;border-radius:var(--radius-full);font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--surface-border);background:var(--surface-card);color:var(--text-muted);transition:all .15s;}
+.pt-chip:hover{border-color:var(--brand-secondary);color:var(--brand-secondary);}
+.pt-chip.active{background:var(--brand-secondary);color:#fff;border-color:var(--brand-secondary);}
+.mm-row{display:grid;grid-template-columns:24px 110px 90px 1fr 110px 90px 90px 80px 90px;gap:4px;padding:10px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center;cursor:pointer;transition:background .1s;}
+.mm-row:hover{background:var(--surface-bg);}
+.mm-row.hdr{background:var(--surface-bg);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;cursor:default;}
+.mm-row.hdr:hover{background:var(--surface-bg);}
+.exp-btn{color:var(--text-muted);font-size:14px;transition:transform .15s;}
+.open .exp-btn{transform:rotate(90deg);color:var(--brand-primary);}
+.mm-exp{display:none;background:linear-gradient(0deg,var(--surface-bg) 0%,#fff 100%);border-bottom:1px solid var(--surface-divider);padding:var(--space-4) var(--space-5) var(--space-4) 56px;}
+.mm-exp.open{display:block;animation:fadeSlide .18s ease;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.mm-exp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--space-3);margin-bottom:var(--space-3);}
+.mm-ef{display:flex;flex-direction:column;gap:2px;}
+.mm-el{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;}
+.mm-ev{font-size:12px;font-family:var(--font-mono);font-weight:600;color:var(--text-primary);}
+.mm-ev.pos{color:var(--status-success);}
+.mm-ev.neg{color:var(--status-danger);}
+.mm-ev.warn{color:var(--status-warning);}
+.accrual-bar{display:flex;gap:3px;align-items:flex-end;height:44px;}
+.accrual-day{flex:1;border-radius:2px 2px 0 0;background:var(--brand-teal);opacity:.6;}
+.accrual-day.today{opacity:1;background:var(--brand-primary);}
+.accrual-day.past{background:var(--surface-divider);opacity:1;}
+.ladder-row{display:grid;grid-template-columns:100px 1fr 100px 100px 80px;gap:8px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center;}
+.ladder-row.hdr{background:var(--surface-bg);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;}
+.ladder-row:last-child{border-bottom:none;}
+.lbar{height:8px;border-radius:4px;}
+.pnl-row{display:flex;justify-content:space-between;align-items:center;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;}
+.pnl-row:last-child{border-bottom:none;}
+.pnl-row .pk{color:var(--text-muted);}
+.pnl-row .pv{font-family:var(--font-mono);font-weight:700;}
+.pnl-row.sub .pk{padding-left:14px;font-size:11px;}
+.pnl-row.sect{background:var(--surface-bg);}
+.pnl-row.sect .pk{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
+.pnl-row.total{background:rgba(13,115,119,.05);}
+.pnl-row.total .pk{font-weight:700;color:var(--text-primary);}
+.rq-row{display:flex;gap:12px;padding:12px var(--space-4);border-bottom:1px solid var(--surface-divider);align-items:flex-start;cursor:pointer;transition:background .1s;}
+.rq-row:hover{background:var(--surface-bg);}
+.rq-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.rq-body .rt{font-size:12px;font-weight:700;}
+.rq-body .rd{font-size:11px;color:var(--text-muted);margin-top:3px;}
+.rq-right{margin-left:auto;text-align:right;flex-shrink:0;}
+.rq-right .ra{font-size:13px;font-weight:800;font-family:var(--font-mono);}
+.rq-right .rb{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.cfg-row{display:grid;grid-template-columns:230px 1fr 120px 100px;gap:8px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center;}
+.cfg-row.hdr{background:var(--surface-bg);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;}
+.cfg-row:last-child{border-bottom:none;}
+.tab-panel{display:none;} .tab-panel.active{display:block;}
+</style>
+</head>
+<body>
+<div class="app-shell">
+<div id="sidebar-root"></div>
+<script src="sidebar-include.js"></script>
+<div class="main-content">
+
+<!-- ── FX TICKER ──────────────────────────────────────────── -->
+<div class="fx-ticker-bar">
+  <div class="fx-tick"><span class="pair">CBR</span><span class="rate">13.00%</span><span class="delta" style="color:#94A3B8">unch</span></div>
+  <div class="fx-tick"><span class="pair">91-Day TB</span><span class="rate">14.87%</span><span class="delta up">▲+5bp</span></div>
+  <div class="fx-tick"><span class="pair">182-Day TB</span><span class="rate">15.23%</span><span class="delta up">▲+3bp</span></div>
+  <div class="fx-tick"><span class="pair">364-Day TB</span><span class="rate">16.10%</span><span class="delta" style="color:#94A3B8">unch</span></div>
+  <div class="fx-tick"><span class="pair">5Y T-Bond</span><span class="rate">17.25%</span><span class="delta down">▼−2bp</span></div>
+  <div class="fx-tick"><span class="pair">10Y T-Bond</span><span class="rate">17.90%</span><span class="delta" style="color:#94A3B8">unch</span></div>
+  <div class="fx-tick"><span class="pair">Repo Rate</span><span class="rate">13.25%</span><span class="delta" style="color:#94A3B8">unch</span></div>
+  <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲+0.23</span></div>
+  <div class="fx-tick"><span class="pair">Maturities Today</span><span class="rate">KES 750M</span><span class="delta" style="color:var(--status-danger)">2 deals</span></div>
+</div>
+<!-- ── TOPBAR ────────────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">Money Market &amp; Fixed Income</span></div>
+  <div class="topbar-spacer"></div>
+  <div class="live-badge">Live</div>
+  <div class="topbar-actions">
+    <button class="btn btn-outline btn-sm" onclick="alert('Maturity schedule — next 30 days PDF…')">Maturity Report</button>
+    <a href="03-deal-capture.html" class="btn btn-primary btn-sm">+ New MM Deal</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+    <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">MA</div>
+    <div><div style="font-size:12px;font-weight:600">Mike Agola</div><div style="font-size:10px;color:var(--text-muted)">Treasurer · 25 Aug 2026</div></div>
+  </div>
+</div>
+<div class="page-content">
+<!-- ── PAGE HEADER ─────────────────────────────────────────── -->
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Money Market &amp; Fixed Income</h1>
+    <p class="page-subtitle">Fixed Deposits · T-Bills · T-Bonds · Overnight · Repos · Commercial Paper — Positions, Accruals, Maturity Ladder &amp; P&amp;L Attribution</p>
+  </div>
+  <div class="page-actions">
+    <button class="btn btn-outline btn-sm" onclick="alert('Running daily accrual batch for all active positions (FR-16)…')">Run Accruals</button>
+    <button class="btn btn-outline btn-sm" style="position:relative" onclick="alert('Rollover queue: DEAL-00285 (Fixed Dep), DEAL-00284 (T-Bill), and DEAL-00280 (O/N) all maturing today. Open deal capture for each…')">
+      Rollover Queue &nbsp;<span style="background:var(--brand-primary);color:#fff;padding:1px 6px;border-radius:10px;font-size:10px">3</span>
+    </button>
+  </div>
+</div>
+
+<!-- ── KPI ROW ──────────────────────────────────────────────── -->
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+  <div class="kpi-card" style="--kpi-accent:var(--brand-teal)">
+    <div class="kpi-label">Total MM Portfolio</div>
+    <div class="kpi-value mono">18.4B</div>
+    <div class="kpi-meta"><span class="kpi-delta up">▲2.1%</span>&nbsp;vs last month</div>
+  </div>
+  <div class="kpi-card" style="--kpi-accent:#2563EB">
+    <div class="kpi-label">Govt Securities</div>
+    <div class="kpi-value mono">9.7B</div>
+    <div class="kpi-meta">T-Bills 4.2B · Bonds 5.5B</div>
+  </div>
+  <div class="kpi-card" style="--kpi-accent:var(--brand-primary)">
+    <div class="kpi-label">Fixed Deposits</div>
+    <div class="kpi-value mono">5.2B</div>
+    <div class="kpi-meta">8 active · avg 14.3% p.a.</div>
+  </div>
+  <div class="kpi-card" style="--kpi-accent:#7C3AED">
+    <div class="kpi-label">Repo Book (Net)</div>
+    <div class="kpi-value mono">1.8B</div>
+    <div class="kpi-meta">Repo 2.6B · Rev 800M</div>
+  </div>
+  <div class="kpi-card" style="--kpi-accent:var(--status-warning)">
+    <div class="kpi-label">Maturities (7 Days)</div>
+    <div class="kpi-value" style="color:var(--status-warning)">8</div>
+    <div class="kpi-meta" style="color:var(--status-warning)">KES 2.15B maturing</div>
+  </div>
+  <div class="kpi-card" style="--kpi-accent:var(--status-success)">
+    <div class="kpi-label">Accrued Income MTD</div>
+    <div class="kpi-value mono" style="color:var(--status-success)">+187M</div>
+    <div class="kpi-meta">All instruments · FR-16</div>
+  </div>
+</div>
+<!-- ── TWO-COLUMN LAYOUT ────────────────────────────────────── -->
+<div style="display:grid;grid-template-columns:1fr 300px;gap:var(--space-4);align-items:start">
+<!-- LEFT: main tabbed content ──────────────────────────────── -->
+<div>
+  <div class="tabs" style="margin-bottom:0;border-bottom:2px solid var(--surface-border)">
+    <div class="tab-item active" onclick="switchTab('positions',this)">Active Positions</div>
+    <div class="tab-item" onclick="switchTab('maturity',this)">Maturity Ladder</div>
+    <div class="tab-item" onclick="switchTab('pnl',this)">P&amp;L &amp; Accruals</div>
+    <div class="tab-item" onclick="switchTab('rollover',this)">Rollover Queue <span style="background:var(--brand-primary);color:#fff;padding:1px 6px;border-radius:10px;font-size:10px;margin-left:3px">3</span></div>
+    <div class="tab-item" onclick="switchTab('config',this)">Configurables</div>
+  </div>
+
+  <!-- ══ TAB 1: ACTIVE POSITIONS ═════════════════════════════ -->
+  <div class="tab-panel active card" id="tp-positions" style="border-top:none;border-top-left-radius:0;border-top-right-radius:0">
+    <div class="card-header" style="flex-wrap:wrap;gap:8px">
+      <div><div class="card-title">Active MM &amp; Fixed Income Positions</div><div class="card-subtitle">Click any row to expand full deal economics, accrual detail and actions</div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <div class="pt-chip active" onclick="filterPT('all',this)">All (14)</div>
+        <div class="pt-chip" onclick="filterPT('fd',this)">Fixed Dep (8)</div>
+        <div class="pt-chip" onclick="filterPT('tb',this)">T-Bill (3)</div>
+        <div class="pt-chip" onclick="filterPT('bond',this)">T-Bond (2)</div>
+        <div class="pt-chip" onclick="filterPT('on',this)">Overnight (1)</div>
+        <div class="pt-chip" onclick="filterPT('repo',this)">Repo (2)</div>
+        <div class="pt-chip" onclick="filterPT('cp',this)">Comm. Paper (1)</div>
+      </div>
+    </div>
+    <div class="mm-row hdr"><span></span><span>Deal ID</span><span>Type</span><span>Counterparty</span><span style="text-align:right">Principal (KES)</span><span style="text-align:right">Rate</span><span>Maturity</span><span>Days Left</span><span>Status</span></div>
+
+    <!-- ── DEAL 1: Fixed Deposit ────────────────────────────── -->
+    <div class="mm-row" id="r1" onclick="tog('1')"><span class="exp-btn">▶</span><span class="mono fw-700">DEAL-00285</span><span><span class="badge" style="background:#e6f7f7;color:var(--brand-teal);border:1px solid #b2e0e0">FIXED DEP</span></span><span>StanChart Kenya</span><span style="text-align:right" class="mono fw-700">250,000,000</span><span style="text-align:right" class="mono fw-700" style="color:var(--brand-teal)">14.50%</span><span class="mono" style="color:var(--status-danger);font-weight:700">25 Aug ★</span><span><span class="badge badge-danger">TODAY</span></span><span><span class="badge badge-danger">MATURED</span></span></div>
+    <div class="mm-exp" id="e1">
+      <div class="mm-exp-grid">
+        <div class="mm-ef"><div class="mm-el">Principal</div><div class="mm-ev">250,000,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Rate p.a.</div><div class="mm-ev pos">14.50%</div></div>
+        <div class="mm-ef"><div class="mm-el">Day Count</div><div class="mm-ev">Actual/365</div></div>
+        <div class="mm-ef"><div class="mm-el">Tenor</div><div class="mm-ev">91 days</div></div>
+        <div class="mm-ef"><div class="mm-el">Trade Date</div><div class="mm-ev">25 May 2026</div></div>
+        <div class="mm-ef"><div class="mm-el">Maturity Date</div><div class="mm-ev neg">25 Aug 2026 ★</div></div>
+        <div class="mm-ef"><div class="mm-el">Daily Accrual</div><div class="mm-ev pos">99,315 / day</div></div>
+        <div class="mm-ef"><div class="mm-el">Total Interest</div><div class="mm-ev pos">+9,060,274</div></div>
+        <div class="mm-ef"><div class="mm-el">Total Settlement</div><div class="mm-ev pos">259,060,274</div></div>
+        <div class="mm-ef"><div class="mm-el">Settlement Acct</div><div class="mm-ev">RTGS-001-KES</div></div>
+        <div class="mm-ef"><div class="mm-el">Book</div><div class="mm-ev">Placement &amp; Deposit</div></div>
+        <div class="mm-ef"><div class="mm-el">Rollover</div><div class="mm-ev warn">Pending Decision</div></div>
+      </div>
+      <div class="alert alert-warning" style="margin-bottom:var(--space-3)">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        <div style="flex:1"><strong>Matured today — rollover decision required.</strong> Proceeds KES 259,060,274 idle. Options: Roll FD · Switch to T-Bill · Deploy overnight · Leave in CBK account.</div>
+        <a href="03-deal-capture.html" class="btn btn-sm btn-warning" style="margin-left:auto;flex-shrink:0">Capture Rollover →</a>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Daily Accrual Pattern (last 7 days · KES 99,315 / day)</div>
+        <div class="accrual-bar"><div class="accrual-day past" style="height:100%"></div><div class="accrual-day past" style="height:100%"></div><div class="accrual-day past" style="height:100%"></div><div class="accrual-day past" style="height:100%"></div><div class="accrual-day past" style="height:100%"></div><div class="accrual-day past" style="height:100%"></div><div class="accrual-day today" style="height:100%"></div></div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:4px">Formula: Principal × Rate / 365 = 250,000,000 × 14.50% / 365 = 99,315 per day · Day count: Actual/365 · Total life: 91 days</div>
+      </div>
+    </div>
+
+    <!-- ── DEAL 2: T-Bill 91-Day ─────────────────────────────── -->
+    <div class="mm-row" id="r2" onclick="tog('2')"><span class="exp-btn">▶</span><span class="mono fw-700">DEAL-00284</span><span><span class="badge badge-info">T-BILL 91D</span></span><span>CBK Direct</span><span style="text-align:right" class="mono fw-700">500,000,000</span><span style="text-align:right;font-family:var(--font-mono);font-weight:700;color:#2563EB">14.87%</span><span class="mono" style="color:var(--status-danger);font-weight:700">25 Aug ★</span><span><span class="badge badge-danger">TODAY</span></span><span><span class="badge badge-danger">MATURED</span></span></div>
+    <div class="mm-exp" id="e2">
+      <div class="mm-exp-grid">
+        <div class="mm-ef"><div class="mm-el">Face Value</div><div class="mm-ev">500,000,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Purchase Yield</div><div class="mm-ev pos">14.87% p.a.</div></div>
+        <div class="mm-ef"><div class="mm-el">Day Count</div><div class="mm-ev">Actual/365</div></div>
+        <div class="mm-ef"><div class="mm-el">Tenor</div><div class="mm-ev">91 days</div></div>
+        <div class="mm-ef"><div class="mm-el">Issue Date</div><div class="mm-ev">25 May 2026</div></div>
+        <div class="mm-ef"><div class="mm-el">Maturity Date</div><div class="mm-ev neg">25 Aug 2026 ★</div></div>
+        <div class="mm-ef"><div class="mm-el">Purchase Price</div><div class="mm-ev">96.42% (Discount)</div></div>
+        <div class="mm-ef"><div class="mm-el">Purchase Amount</div><div class="mm-ev">482,100,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Redemption (Face)</div><div class="mm-ev pos">500,000,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Discount Earned</div><div class="mm-ev pos">+17,900,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Book</div><div class="mm-ev">HTM (Amortised Cost)</div></div>
+        <div class="mm-ef"><div class="mm-el">CBK IPS Ref</div><div class="mm-ev">IPS/2026/0525/91</div></div>
+      </div>
+      <div class="alert alert-info" style="margin-bottom:var(--space-3)">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+        <div><strong>T-Bill Pricing (Discount Instrument):</strong> T-Bills are issued at a <em>discount</em> to face value — no periodic coupon. The investor buys at KES 482.1M and receives KES 500M at maturity. The KES 17.9M discount is the total interest income, accreted daily over 91 days (KES 196,703 / day). Book: HTM → Amortised Cost → no MTM impact on P&amp;L.</div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Daily Accretion (KES 196,703 / day)</div>
+        <div class="accrual-bar"><div class="accrual-day past" style="height:100%;background:#2563EB;opacity:.6"></div><div class="accrual-day past" style="height:100%;background:#2563EB;opacity:.6"></div><div class="accrual-day past" style="height:100%;background:#2563EB;opacity:.6"></div><div class="accrual-day past" style="height:100%;background:#2563EB;opacity:.6"></div><div class="accrual-day past" style="height:100%;background:#2563EB;opacity:.6"></div><div class="accrual-day past" style="height:100%;background:#2563EB;opacity:.6"></div><div class="accrual-day today" style="height:100%;background:#2563EB"></div></div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:4px">Formula: Total Discount / Tenor = 17,900,000 / 91 = 196,703 per day · GL: Dr Discount Receivable / Cr Interest Income</div>
+      </div>
+    </div>
+
+    <!-- ── DEAL 3: Repo ──────────────────────────────────────── -->
+    <div class="mm-row" id="r3" onclick="tog('3')"><span class="exp-btn">▶</span><span class="mono fw-700">DEAL-00283</span><span><span class="badge" style="background:#f5f3ff;color:#7C3AED;border:1px solid #ddd6fe">REPO</span></span><span>DTBK</span><span style="text-align:right" class="mono fw-700">800,000,000</span><span style="text-align:right;font-family:var(--font-mono);font-weight:700;color:#7C3AED">13.25%</span><span class="mono">26 Aug 2026</span><span><span class="badge badge-warning">1 day</span></span><span><span class="badge badge-success">AUTHORISED</span></span></div>
+    <div class="mm-exp" id="e3">
+      <div class="mm-exp-grid">
+        <div class="mm-ef"><div class="mm-el">Type</div><div class="mm-ev">REPO (Sell &amp; Buyback)</div></div>
+        <div class="mm-ef"><div class="mm-el">Cash Borrowed</div><div class="mm-ev">800,000,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Repo Rate</div><div class="mm-ev pos">13.25% p.a.</div></div>
+        <div class="mm-ef"><div class="mm-el">Collateral</div><div class="mm-ev">T-Bond IFB/2025/10</div></div>
+        <div class="mm-ef"><div class="mm-el">Face Value (Coll.)</div><div class="mm-ev">1,000,000,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Haircut</div><div class="mm-ev warn">20% (adj. 800M)</div></div>
+        <div class="mm-ef"><div class="mm-el">Start Date</div><div class="mm-ev">25 Aug 2026</div></div>
+        <div class="mm-ef"><div class="mm-el">End Date</div><div class="mm-ev neg">26 Aug 2026</div></div>
+        <div class="mm-ef"><div class="mm-el">Tenor</div><div class="mm-ev">Overnight (1 day)</div></div>
+        <div class="mm-ef"><div class="mm-el">Repo Interest</div><div class="mm-ev pos">+290,411</div></div>
+        <div class="mm-ef"><div class="mm-el">Repurchase Amt</div><div class="mm-ev">800,290,411</div></div>
+        <div class="mm-ef"><div class="mm-el">Collateral Status</div><div class="mm-ev warn">LIEN MARKED</div></div>
+      </div>
+      <div class="alert alert-info" style="margin-bottom:var(--space-3)">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+        <div><strong>Repo mechanics:</strong> Bank sells T-Bond IFB/2025/10 to DTBK today for KES 800M, and agrees to buy it back tomorrow for KES 800,290,411. The bond is <strong>lien-marked</strong> — it cannot be pledged for another repo until this one closes. Haircut of 20% gives DTBK a buffer if collateral value falls. <br/><strong>Accounting:</strong> Start: Dr Cash 800M / Cr Repo Liability 800M. End: Dr Repo Liability 800M + Dr Interest Expense 290K / Cr Cash 800.29M.</div>
+      </div>
+    </div>
+
+    <!-- ── DEAL 4: T-Bond 5Y ─────────────────────────────────── -->
+    <div class="mm-row" id="r4" onclick="tog('4')"><span class="exp-btn">▶</span><span class="mono fw-700">DEAL-00271</span><span><span class="badge" style="background:rgba(200,16,46,.07);color:var(--brand-primary);border:1px solid rgba(200,16,46,.2)">T-BOND 5Y</span></span><span>CBK Primary</span><span style="text-align:right" class="mono fw-700">2,500,000,000</span><span style="text-align:right;font-family:var(--font-mono);font-weight:700;color:var(--brand-primary)">17.25%</span><span class="mono">14 Aug 2031</span><span><span class="badge badge-success">1,815d</span></span><span><span class="badge badge-success">HTM</span></span></div>
+    <div class="mm-exp" id="e4">
+      <div class="mm-exp-grid">
+        <div class="mm-ef"><div class="mm-el">Instrument</div><div class="mm-ev">FXD1/2026/5YR</div></div>
+        <div class="mm-ef"><div class="mm-el">Face Value</div><div class="mm-ev">2,500,000,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Coupon Rate</div><div class="mm-ev pos">17.25% p.a.</div></div>
+        <div class="mm-ef"><div class="mm-el">Coupon Frequency</div><div class="mm-ev">Semi-annual</div></div>
+        <div class="mm-ef"><div class="mm-el">Day Count</div><div class="mm-ev">Actual/365</div></div>
+        <div class="mm-ef"><div class="mm-el">Book</div><div class="mm-ev">HTM (Amortised Cost)</div></div>
+        <div class="mm-ef"><div class="mm-el">Issue Date</div><div class="mm-ev">14 Aug 2026</div></div>
+        <div class="mm-ef"><div class="mm-el">Maturity Date</div><div class="mm-ev">14 Aug 2031</div></div>
+        <div class="mm-ef"><div class="mm-el">Daily Accrual</div><div class="mm-ev pos">1,182,740 / day</div></div>
+        <div class="mm-ef"><div class="mm-el">Accrued to Date</div><div class="mm-ev pos">+20,993,151</div></div>
+        <div class="mm-ef"><div class="mm-el">Next Coupon Date</div><div class="mm-ev" style="color:#2563EB">14 Feb 2027</div></div>
+        <div class="mm-ef"><div class="mm-el">Next Coupon Amt</div><div class="mm-ev pos">+215,625,000</div></div>
+      </div>
+      <div class="alert alert-success" style="margin-bottom:var(--space-3)">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+        <div><strong>HTM Bond — Amortised Cost:</strong> Not marked to market. Price moves do NOT hit P&amp;L or OCI. Daily income = Face × Rate / 365 = KES 1,182,740. Semi-annual coupons processed as corporate actions by Back Office on scheduled dates. Transfer out of HTM before maturity requires IFRS justification and impacts the entire HTM portfolio.</div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Remaining Coupon Schedule</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-md);padding:7px;text-align:center"><div style="font-size:9px;color:var(--text-muted)">14 Feb 2027</div><div style="font-size:11px;font-weight:700;font-family:var(--font-mono);color:var(--status-success)">215.6M</div></div>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-md);padding:7px;text-align:center"><div style="font-size:9px;color:var(--text-muted)">14 Aug 2027</div><div style="font-size:11px;font-weight:700;font-family:var(--font-mono);color:var(--status-success)">215.6M</div></div>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-md);padding:7px;text-align:center"><div style="font-size:9px;color:var(--text-muted)">14 Feb–Aug 2028</div><div style="font-size:11px;font-weight:700;font-family:var(--font-mono);color:var(--status-success)">431.3M</div></div>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-md);padding:7px;text-align:center"><div style="font-size:9px;color:var(--text-muted)">2029–2030</div><div style="font-size:11px;font-weight:700;font-family:var(--font-mono);color:var(--status-success)">862.5M</div></div>
+          <div style="background:#dbeafe;border:1px solid #bfdbfe;border-radius:var(--radius-md);padding:7px;text-align:center"><div style="font-size:9px;color:var(--text-muted)">14 Aug 2031 (Final)</div><div style="font-size:11px;font-weight:700;font-family:var(--font-mono);color:#1d4ed8">2,715.6M</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DEAL 5: Overnight Borrowing ───────────────────────── -->
+    <div class="mm-row" id="r5" onclick="tog('5')"><span class="exp-btn">▶</span><span class="mono fw-700">DEAL-00282</span><span><span class="badge" style="background:#fffbeb;color:#D97706;border:1px solid #fde68a">O/N BORROW</span></span><span>Equity Bank</span><span style="text-align:right" class="mono fw-700">1,200,000,000</span><span style="text-align:right;font-family:var(--font-mono);font-weight:700;color:#D97706">13.00%</span><span class="mono">26 Aug 2026</span><span><span class="badge badge-warning">1 day</span></span><span><span class="badge badge-success">AUTHORISED</span></span></div>
+    <div class="mm-exp" id="e5">
+      <div class="mm-exp-grid">
+        <div class="mm-ef"><div class="mm-el">Direction</div><div class="mm-ev">BORROWING</div></div>
+        <div class="mm-ef"><div class="mm-el">Principal</div><div class="mm-ev">1,200,000,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Rate (vs CBR)</div><div class="mm-ev" style="color:#D97706">13.00% = CBR</div></div>
+        <div class="mm-ef"><div class="mm-el">Day Count</div><div class="mm-ev">Actual/365</div></div>
+        <div class="mm-ef"><div class="mm-el">Trade Date</div><div class="mm-ev">25 Aug 2026</div></div>
+        <div class="mm-ef"><div class="mm-el">Value Date (same-day)</div><div class="mm-ev">25 Aug 2026</div></div>
+        <div class="mm-ef"><div class="mm-el">Maturity Date (T+1)</div><div class="mm-ev neg">26 Aug 2026</div></div>
+        <div class="mm-ef"><div class="mm-el">1-Day Interest</div><div class="mm-ev neg">−427,397</div></div>
+        <div class="mm-ef"><div class="mm-el">Repayment Amount</div><div class="mm-ev neg">1,200,427,397</div></div>
+        <div class="mm-ef"><div class="mm-el">Settlement Acct</div><div class="mm-ev">CBK-RTGS-001</div></div>
+        <div class="mm-ef"><div class="mm-el">Book</div><div class="mm-ev">Borrowing Book</div></div>
+        <div class="mm-ef"><div class="mm-el">Rate Ref</div><div class="mm-ev">CBR = 13.00%</div></div>
+      </div>
+      <div class="alert alert-info">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+        <div><strong>Overnight borrowing mechanics:</strong> Same-day value date (T+0), repayment T+1. Rate benchmarked against CBR (13.00%). Frequently used to fund short-term liquidity shortfalls identified from the Cash Position Worksheet. Interest = 1,200,000,000 × 13.00% / 365 = KES 427,397. GL: Dr Cash / Cr Borrowing Liability at start; reversed + interest at maturity.</div>
+      </div>
+    </div>
+
+    <!-- ── DEAL 6: Commercial Paper ──────────────────────────── -->
+    <div class="mm-row" id="r6" onclick="tog('6')"><span class="exp-btn">▶</span><span class="mono fw-700">DEAL-00265</span><span><span class="badge" style="background:#e0f7fa;color:#0891B2;border:1px solid #b2ebf2">COMM. PAPER</span></span><span>Safaricom PLC</span><span style="text-align:right" class="mono fw-700">200,000,000</span><span style="text-align:right;font-family:var(--font-mono);font-weight:700;color:#0891B2">15.50%</span><span class="mono">31 Aug 2026</span><span><span class="badge badge-warning">6 days</span></span><span><span class="badge badge-success">AUTHORISED</span></span></div>
+    <div class="mm-exp" id="e6">
+      <div class="mm-exp-grid">
+        <div class="mm-ef"><div class="mm-el">Issuer</div><div class="mm-ev">Safaricom PLC</div></div>
+        <div class="mm-ef"><div class="mm-el">Face Value</div><div class="mm-ev">200,000,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Yield</div><div class="mm-ev pos">15.50% p.a.</div></div>
+        <div class="mm-ef"><div class="mm-el">Type</div><div class="mm-ev">Discount (no coupon)</div></div>
+        <div class="mm-ef"><div class="mm-el">Tenor</div><div class="mm-ev">90 days</div></div>
+        <div class="mm-ef"><div class="mm-el">Issue Date</div><div class="mm-ev">02 Jun 2026</div></div>
+        <div class="mm-ef"><div class="mm-el">Maturity Date</div><div class="mm-ev" style="color:#D97706">31 Aug 2026</div></div>
+        <div class="mm-ef"><div class="mm-el">Purchase Amount</div><div class="mm-ev">192,175,342</div></div>
+        <div class="mm-ef"><div class="mm-el">Redemption</div><div class="mm-ev pos">200,000,000</div></div>
+        <div class="mm-ef"><div class="mm-el">Accreted to Date</div><div class="mm-ev pos">+6,986,301</div></div>
+        <div class="mm-ef"><div class="mm-el">Issuer Rating</div><div class="mm-ev">BBB+ (GCR)</div></div>
+        <div class="mm-ef"><div class="mm-el">Book</div><div class="mm-ev">AFS</div></div>
+      </div>
+      <div class="alert alert-warning">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        <div><strong>CP Credit Risk Note:</strong> Commercial paper is unsecured short-term corporate debt. Credit limit utilisation: Safaricom Group limit KES 500M, current exposure KES 200M (40%). No secondary market liquidity guarantee. Counterparty credit checked at deal capture (FR-06). AFS book → fair value changes go to OCI, not P&amp;L, until sold or impaired.</div>
+      </div>
+    </div>
+    <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:11px;color:var(--text-muted)">Showing 6 of 14 active positions · Sorted by maturity date</span>
+      <button class="btn btn-outline btn-sm" onclick="alert('Loading all 14 positions…')">View All 14 →</button>
+    </div>
+  </div>
+
+  <!-- ══ TAB 2: MATURITY LADDER ══════════════════════════════ -->
+  <div class="tab-panel card" id="tp-maturity" style="border-top:none;border-top-left-radius:0;border-top-right-radius:0">
+    <div class="card-header">
+      <div><div class="card-title">Maturity Ladder — Next 30 Days</div><div class="card-subtitle">All MM &amp; Fixed Income instruments · Inflows (proceeds) vs Outflows (repayments) · KES</div></div>
+      <span class="badge badge-warning">KES 2.15B due this week</span>
+    </div>
+    <div class="card-body" style="padding-bottom:0">
+      <!-- Simple visual bar chart for 10 days -->
+      <div style="display:flex;align-items:flex-end;gap:6px;height:100px;margin-bottom:8px;padding:0 4px">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;background:var(--brand-primary);border-radius:3px 3px 0 0;height:100%" title="750M maturities"></div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700">25 Aug</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;background:var(--status-warning);border-radius:3px 3px 0 0;height:84%" title="800M maturities"></div>
+          <div style="font-size:9px;color:var(--text-muted)">26 Aug</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;background:#2563EB;border-radius:3px 3px 0 0;height:20%" title="188M coupon"></div>
+          <div style="font-size:9px;color:var(--text-muted)">27 Aug</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;background:var(--surface-divider);border-radius:3px 3px 0 0;height:4%"></div>
+          <div style="font-size:9px;color:var(--text-muted)">28 Aug</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;background:var(--status-success);border-radius:3px 3px 0 0;height:63%" title="1.2B overnight repayment"></div>
+          <div style="font-size:9px;color:var(--text-muted)">29 Aug</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;background:var(--surface-divider);border-radius:3px 3px 0 0;height:4%"></div>
+          <div style="font-size:9px;color:var(--text-muted)">01 Sep</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;background:var(--brand-teal);border-radius:3px 3px 0 0;height:42%" title="400M FD maturity"></div>
+          <div style="font-size:9px;color:var(--text-muted)">02 Sep</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;background:var(--surface-divider);border-radius:3px 3px 0 0;height:4%"></div>
+          <div style="font-size:9px;color:var(--text-muted)">03 Sep</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;background:var(--surface-divider);border-radius:3px 3px 0 0;height:4%"></div>
+          <div style="font-size:9px;color:var(--text-muted)">04 Sep</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:100%;background:#7C3AED;border-radius:3px 3px 0 0;height:53%" title="500M FD"></div>
+          <div style="font-size:9px;color:var(--text-muted)">08 Sep</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;font-size:10px;color:var(--text-muted);margin-bottom:var(--space-4);padding:0 4px">
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--brand-primary);margin-right:4px"></span>Today (2 deals)</span>
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--status-warning);margin-right:4px"></span>Tomorrow</span>
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--status-success);margin-right:4px"></span>This week</span>
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--brand-teal);margin-right:4px"></span>Next week</span>
+      </div>
+    </div>
+    <div class="ladder-row hdr"><span>Date</span><span>Instrument / Counterparty</span><span style="text-align:right">Inflow (KES)</span><span style="text-align:right">Interest</span><span>Type</span></div>
+    <div class="ladder-row"><span class="mono" style="color:var(--status-danger);font-weight:700">25 Aug ★</span><span><strong>Fixed Deposit</strong> — StanChart Kenya (DEAL-00285)</span><span style="text-align:right" class="mono fw-700">259,060,274</span><span style="text-align:right" class="mono" style="color:var(--status-success)">+9,060,274</span><span><span class="badge badge-danger">TODAY</span></span></div>
+    <div class="ladder-row" style="background:var(--surface-bg)"><span class="mono" style="color:var(--status-danger);font-weight:700">25 Aug ★</span><span><strong>T-Bill 91D</strong> — CBK Direct (DEAL-00284)</span><span style="text-align:right" class="mono fw-700">500,000,000</span><span style="text-align:right" class="mono" style="color:var(--status-success)">+17,900,000</span><span><span class="badge badge-danger">TODAY</span></span></div>
+    <div class="ladder-row"><span class="mono" style="color:var(--status-warning);font-weight:700">26 Aug</span><span><strong>Repo (Repurchase)</strong> — DTBK (DEAL-00283)</span><span style="text-align:right" class="mono fw-700">800,290,411</span><span style="text-align:right" class="mono neg">−290,411</span><span><span class="badge badge-warning">TOMORROW</span></span></div>
+    <div class="ladder-row" style="background:var(--surface-bg)"><span class="mono" style="color:var(--status-warning);font-weight:700">26 Aug</span><span><strong>Overnight Repayment</strong> — Equity Bank (DEAL-00282)</span><span style="text-align:right" class="mono fw-700">1,200,427,397</span><span style="text-align:right" class="mono neg">−427,397</span><span><span class="badge badge-warning">TOMORROW</span></span></div>
+    <div class="ladder-row"><span class="mono">27 Aug</span><span><strong>T-Bond Coupon</strong> — CBK FXD1/2026/5Y (DEAL-00271)</span><span style="text-align:right" class="mono fw-700">0</span><span style="text-align:right" class="mono" style="color:var(--status-success)">+215,625,000</span><span><span class="badge badge-info">COUPON</span></span></div>
+    <div class="ladder-row" style="background:var(--surface-bg)"><span class="mono">31 Aug</span><span><strong>Commercial Paper</strong> — Safaricom PLC (DEAL-00265)</span><span style="text-align:right" class="mono fw-700">200,000,000</span><span style="text-align:right" class="mono" style="color:var(--status-success)">+7,824,658</span><span><span class="badge badge-neutral">6 DAYS</span></span></div>
+    <div class="ladder-row"><span class="mono">02 Sep</span><span><strong>Fixed Deposit</strong> — KCB Group (DEAL-00260)</span><span style="text-align:right" class="mono fw-700">400,000,000</span><span style="text-align:right" class="mono" style="color:var(--status-success)">+9,863,014</span><span><span class="badge badge-neutral">8 DAYS</span></span></div>
+    <div class="ladder-row" style="background:rgba(13,115,119,.04)"><span style="font-weight:700">7-Day Total</span><span><strong>Net cash inflow (proceeds − repayments)</strong></span><span style="text-align:right" class="mono fw-700">+959,760,274</span><span style="text-align:right" class="mono" style="color:var(--status-success)">+239,745,138</span><span></span></div>
+  </div>
+
+  <!-- ══ TAB 3: P&L & ACCRUALS ════════════════════════════════ -->
+  <div class="tab-panel card" id="tp-pnl" style="border-top:none;border-top-left-radius:0;border-top-right-radius:0">
+    <div class="card-header">
+      <div><div class="card-title">P&amp;L &amp; Accrual Attribution — August 2026 (MTD)</div><div class="card-subtitle">Interest income by instrument type · Day count basis · Booking confirmed by rules engine</div></div>
+      <span class="badge badge-success">+KES 187M MTD</span>
+    </div>
+    <div>
+      <div class="pnl-row sect"><span class="pk">Fixed Deposits</span><span></span></div>
+      <div class="pnl-row sub"><span class="pk">StanChart Kenya — 14.50% / 91d</span><span class="pv pos">+7,941,096</span></div>
+      <div class="pnl-row sub"><span class="pk">KCB Group — 14.25% / 182d</span><span class="pv pos">+6,221,918</span></div>
+      <div class="pnl-row sub"><span class="pk">Equity Bank — 14.00% / 91d</span><span class="pv pos">+4,920,548</span></div>
+      <div class="pnl-row sub"><span class="pk">Barclays Kenya — 14.75% / 60d</span><span class="pv pos">+3,287,671</span></div>
+      <div class="pnl-row sub"><span class="pk">DTB — 14.50% / 182d (USD)</span><span class="pv pos">+2,147,945</span></div>
+      <div class="pnl-row" style="background:#f8fafc"><span class="pk" style="font-weight:600;padding-left:14px">FD Subtotal</span><span class="pv pos">+24,519,178</span></div>
+
+      <div class="pnl-row sect"><span class="pk">T-Bills (Accretion of Discount)</span><span></span></div>
+      <div class="pnl-row sub"><span class="pk">T-Bill 91D — 14.87% · CBK · DEAL-00284</span><span class="pv pos">+5,704,384</span></div>
+      <div class="pnl-row sub"><span class="pk">T-Bill 182D — 15.23% · CBK · DEAL-00258</span><span class="pv pos">+4,231,233</span></div>
+      <div class="pnl-row sub"><span class="pk">T-Bill 364D — 16.10% · CBK · DEAL-00241</span><span class="pv pos">+5,918,904</span></div>
+      <div class="pnl-row" style="background:#f8fafc"><span class="pk" style="font-weight:600;padding-left:14px">T-Bills Subtotal</span><span class="pv pos">+15,854,521</span></div>
+
+      <div class="pnl-row sect"><span class="pk">T-Bonds (Semi-Annual Coupon Accruals)</span><span></span></div>
+      <div class="pnl-row sub"><span class="pk">FXD1/2026/5YR — 17.25% · 2.5B face · DEAL-00271</span><span class="pv pos">+35,482,192</span></div>
+      <div class="pnl-row sub"><span class="pk">IFB/2023/10YR — 16.00% · 1.2B face · DEAL-00155</span><span class="pv pos">+17,424,658</span></div>
+      <div class="pnl-row" style="background:#f8fafc"><span class="pk" style="font-weight:600;padding-left:14px">T-Bonds Subtotal</span><span class="pv pos">+52,906,850</span></div>
+
+      <div class="pnl-row sect"><span class="pk">Repos &amp; Reverse Repos (Net)</span><span></span></div>
+      <div class="pnl-row sub"><span class="pk">Repo liability interest expense (borrowing cost)</span><span class="pv neg">−8,712,329</span></div>
+      <div class="pnl-row sub"><span class="pk">Reverse repo income (lending yield)</span><span class="pv pos">+4,923,288</span></div>
+      <div class="pnl-row" style="background:#f8fafc"><span class="pk" style="font-weight:600;padding-left:14px">Repo Net Subtotal</span><span class="pv neg">−3,789,041</span></div>
+
+      <div class="pnl-row sect"><span class="pk">Overnight Placements &amp; Borrowings (Net)</span><span></span></div>
+      <div class="pnl-row sub"><span class="pk">Overnight placements income (avg 13.25%)</span><span class="pv pos">+6,123,288</span></div>
+      <div class="pnl-row sub"><span class="pk">Overnight borrowings interest expense</span><span class="pv neg">−5,287,671</span></div>
+      <div class="pnl-row" style="background:#f8fafc"><span class="pk" style="font-weight:600;padding-left:14px">O/N Net Subtotal</span><span class="pv pos">+835,617</span></div>
+
+      <div class="pnl-row sect"><span class="pk">Commercial Paper &amp; Other</span><span></span></div>
+      <div class="pnl-row sub"><span class="pk">Safaricom PLC CP — 15.50% · DEAL-00265</span><span class="pv pos">+6,986,301</span></div>
+
+      <div class="pnl-row total"><span class="pk">Total MTD Interest Income (Net)</span><span class="pv pos" style="font-size:14px">+97,313,426</span></div>
+      <div class="pnl-row sect"><span class="pk">FTP Charges (Internal Cost of Funds)</span><span></span></div>
+      <div class="pnl-row sub"><span class="pk">FTP charge on placement book (treasury funds cost)</span><span class="pv neg">−34,218,904</span></div>
+      <div class="pnl-row sub"><span class="pk">FTP credit on borrowing book</span><span class="pv pos">+18,630,137</span></div>
+      <div class="pnl-row total"><span class="pk">Net MM P&amp;L after FTP (MTD)</span><span class="pv pos" style="font-size:14px">+81,724,659</span></div>
+    </div>
+    <div class="card-footer"><span style="font-size:11px;color:var(--text-muted)">All entries auto-generated by the accounting rule engine. No manual MM journals permitted. Day count convention per instrument definition. FTP curves maintained by Middle Office.</span></div>
+  </div>
+
+  <!-- ══ TAB 4: ROLLOVER QUEUE ════════════════════════════════ -->
+  <div class="tab-panel card" id="tp-rollover" style="border-top:none;border-top-left-radius:0;border-top-right-radius:0">
+    <div class="card-header">
+      <div><div class="card-title">Rollover Queue — Decisions Required Today</div><div class="card-subtitle">Matured &amp; maturing-today instruments awaiting reinvestment decision from dealer</div></div>
+      <span class="badge badge-danger">3 Pending</span>
+    </div>
+    <!-- Matured FD -->
+    <div class="rq-row">
+      <div class="rq-dot" style="background:var(--status-danger)"></div>
+      <div class="rq-body">
+        <div class="rt">Fixed Deposit — StanChart Kenya &nbsp;<span class="badge badge-danger">MATURED</span></div>
+        <div class="rd">DEAL-00285 · Principal KES 250M · 14.50% · 91d · Matured 25 Aug 2026 · Idle since 08:00 EAT</div>
+        <div class="rd" style="margin-top:4px;color:var(--text-muted)">
+          Rollover options: <strong>Roll FD @ 14.50% 91d</strong> (StanChart confirmed rate) &nbsp;·&nbsp; Switch to 91D T-Bill @ 14.87% &nbsp;·&nbsp; Deploy overnight @ 13.25%
+        </div>
+      </div>
+      <div class="rq-right">
+        <div class="ra" style="color:var(--status-success)">259,060,274</div>
+        <div class="rb">Proceeds available</div>
+        <a href="03-deal-capture.html" class="btn btn-sm btn-primary" style="margin-top:6px;font-size:10px">Capture Rollover</a>
+      </div>
+    </div>
+    <!-- Matured T-Bill -->
+    <div class="rq-row" style="background:var(--surface-bg)">
+      <div class="rq-dot" style="background:var(--status-danger)"></div>
+      <div class="rq-body">
+        <div class="rt">T-Bill 91D — CBK Direct &nbsp;<span class="badge badge-danger">MATURED</span></div>
+        <div class="rd">DEAL-00284 · Face KES 500M · 14.87% · 91d · Matured 25 Aug 2026 · CBK awaiting rollover instruction</div>
+        <div class="rd" style="margin-top:4px">
+          Options: <strong>Re-tender 91D T-Bill</strong> (next auction 25 Aug) &nbsp;·&nbsp; Switch to 182D @ 15.23% &nbsp;·&nbsp; Switch to 364D @ 16.10% &nbsp;·&nbsp; Deploy in FD
+        </div>
+      </div>
+      <div class="rq-right">
+        <div class="ra" style="color:var(--status-success)">500,000,000</div>
+        <div class="rb">Face value redemption</div>
+        <a href="03-deal-capture.html" class="btn btn-sm btn-primary" style="margin-top:6px;font-size:10px">Capture Rollover</a>
+      </div>
+    </div>
+    <!-- Overnight maturing tomorrow -->
+    <div class="rq-row">
+      <div class="rq-dot" style="background:var(--status-warning)"></div>
+      <div class="rq-body">
+        <div class="rt">Overnight Borrowing — Equity Bank &nbsp;<span class="badge badge-warning">MATURING TOMORROW</span></div>
+        <div class="rd">DEAL-00282 · KES 1.2B · 13.00% · Repayment 26 Aug 2026 KES 1,200,427,397 · Renewal decision needed today</div>
+        <div class="rd" style="margin-top:4px">
+          Options: <strong>Renew overnight</strong> @ 13.00% &nbsp;·&nbsp; Extend to 1-week term @ 13.50% &nbsp;·&nbsp; Repay from FD proceeds
+        </div>
+      </div>
+      <div class="rq-right">
+        <div class="ra" style="color:var(--status-warning)">1,200,427,397</div>
+        <div class="rb">Repayment due tomorrow</div>
+        <a href="03-deal-capture.html" class="btn btn-sm btn-outline" style="margin-top:6px;font-size:10px">Plan Renewal</a>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="alert alert-info" style="margin:0;font-size:11px">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+        Rollover decision is a Front Office function. Back Office processes the new deal after four-eyes authorisation. Proceeds remain in the settlement account until a new deal is captured and authorised. System will alert if proceeds are idle for more than 2 business days.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB 5: CONFIGURABLES ════════════════════════════════ -->
+  <div class="tab-panel card" id="tp-config" style="border-top:none;border-top-left-radius:0;border-top-right-radius:0">
+    <div class="card-header">
+      <div><div class="card-title">MM &amp; Fixed Income — System Configurables</div><div class="card-subtitle">All parameters configurable from Configuration module · Dual authorisation required for changes · FR-23</div></div>
+    </div>
+    <div class="cfg-row hdr"><span>Parameter</span><span>Current Value</span><span>Last Changed</span><span>Who Can Change</span></div>
+    <div class="cfg-row"><span class="ck">Default day count (MM placements)</span><span class="cv">Actual/365 (Fixed)</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-neutral">Tenant Admin</span></span></div>
+    <div class="cfg-row" style="background:var(--surface-bg)"><span class="ck">Max FD tenor (single placement)</span><span class="cv">364 days</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-warning">ALCO + Treasurer</span></span></div>
+    <div class="cfg-row"><span class="ck">Min FD tenor</span><span class="cv">1 day (overnight)</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-neutral">Tenant Admin</span></span></div>
+    <div class="cfg-row" style="background:var(--surface-bg)"><span class="ck">Rollover alert — idle proceeds</span><span class="cv">2 business days</span><span class="mono" style="font-size:11px;color:var(--text-muted)">15 Mar 2026</span><span><span class="badge badge-neutral">Treasurer</span></span></div>
+    <div class="cfg-row"><span class="ck">Repo haircut — T-Bills</span><span class="cv">10%</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-warning">ALCO + Treasurer</span></span></div>
+    <div class="cfg-row" style="background:var(--surface-bg)"><span class="ck">Repo haircut — T-Bonds (5Y)</span><span class="cv">20%</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-warning">ALCO + Treasurer</span></span></div>
+    <div class="cfg-row"><span class="ck">Repo haircut — Corporate Bonds</span><span class="cv">30%</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-warning">ALCO + Treasurer</span></span></div>
+    <div class="cfg-row" style="background:var(--surface-bg)"><span class="ck">T-Bill book classification (default)</span><span class="cv">HTM</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-neutral">Tenant Admin</span></span></div>
+    <div class="cfg-row"><span class="ck">T-Bond book classification (default)</span><span class="cv">HTM</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-neutral">Tenant Admin</span></span></div>
+    <div class="cfg-row" style="background:var(--surface-bg)"><span class="ck">Accrual run time (daily)</span><span class="cv">EOD (day-end batch)</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-neutral">Platform Admin</span></span></div>
+    <div class="cfg-row"><span class="ck">Pre-maturity withdrawal penalty</span><span class="cv">Accrued interest forfeited</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-warning">Treasurer</span></span></div>
+    <div class="cfg-row" style="background:var(--surface-bg)"><span class="ck">Pre-maturity withdrawal — Treasurer approval</span><span class="cv">Required always</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-danger">System (locked)</span></span></div>
+    <div class="cfg-row"><span class="ck">Commercial Paper — min issuer rating</span><span class="cv">BBB- (equivalent)</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Mar 2026</span><span><span class="badge badge-warning">ALCO + Treasurer</span></span></div>
+    <div class="cfg-row" style="background:var(--surface-bg)"><span class="ck">Max overnight placement (single CP)</span><span class="cv">KES 2,000M</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-warning">ALCO + Treasurer</span></span></div>
+    <div class="cfg-row"><span class="ck">HTM transfer justification required</span><span class="cv">Yes (IFRS 9 — rare circumstances)</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-danger">System (locked)</span></span></div>
+    <div class="cfg-row" style="background:var(--surface-bg)"><span class="ck">Coupon payment tolerance (matching)</span><span class="cv">KES 100</span><span class="mono" style="font-size:11px;color:var(--text-muted)">15 Feb 2026</span><span><span class="badge badge-neutral">BO Manager</span></span></div>
+    <div class="cfg-row"><span class="ck">FD partial withdrawal — min residual</span><span class="cv">25% of original principal</span><span class="mono" style="font-size:11px;color:var(--text-muted)">01 Jan 2026</span><span><span class="badge badge-warning">Treasurer</span></span></div>
+    <div class="card-footer"><a href="14-configuration.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">Open full Configuration module →</a></div>
+  </div>
+</div><!-- /left column -->
+
+<!-- RIGHT COLUMN ────────────────────────────────────────────── -->
+<div style="display:flex;flex-direction:column;gap:var(--space-4)">
+
+  <!-- Portfolio Composition -->
+  <div class="card">
+    <div class="card-header"><div class="card-title">Portfolio Composition</div><div class="card-subtitle">By instrument type (KES B)</div></div>
+    <div class="card-body" style="padding:var(--space-4)">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>T-Bonds (HTM/AFS)</span><span class="mono fw-700">5.5B</span></div>
+          <div class="util-bar-track"><div class="util-bar-fill info" style="width:30%"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Fixed Deposits</span><span class="mono fw-700">5.2B</span></div>
+          <div class="util-bar-track"><div class="util-bar-fill" style="width:28%;background:var(--brand-teal)"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>T-Bills (91/182/364D)</span><span class="mono fw-700">4.2B</span></div>
+          <div class="util-bar-track"><div class="util-bar-fill info" style="width:23%"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Repos (net)</span><span class="mono fw-700">1.8B</span></div>
+          <div class="util-bar-track"><div class="util-bar-fill" style="width:10%;background:#7C3AED"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Overnight &amp; Call</span><span class="mono fw-700">1.5B</span></div>
+          <div class="util-bar-track"><div class="util-bar-fill warn" style="width:8%"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Commercial Paper</span><span class="mono fw-700">0.2B</span></div>
+          <div class="util-bar-track"><div class="util-bar-fill" style="width:1%;background:#0891B2"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--surface-divider);display:flex;justify-content:space-between;font-size:12px">
+        <span style="color:var(--text-muted)">Total</span>
+        <span class="mono fw-700">KES 18.4B</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Book Classification -->
+  <div class="card">
+    <div class="card-header"><div class="card-title">Book Classification</div><div class="card-subtitle">IFRS 9 accounting basis</div></div>
+    <div class="card-body" style="padding:var(--space-4)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius-md);padding:10px;text-align:center">
+          <div style="font-size:10px;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">HTM</div>
+          <div style="font-size:18px;font-weight:800;font-family:var(--font-mono);color:#1d4ed8">12.1B</div>
+          <div style="font-size:10px;color:#1d4ed8;margin-top:2px">Amortised Cost</div>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-md);padding:10px;text-align:center">
+          <div style="font-size:10px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">AFS</div>
+          <div style="font-size:18px;font-weight:800;font-family:var(--font-mono);color:#15803d">3.8B</div>
+          <div style="font-size:10px;color:#15803d;margin-top:2px">Fair Value → OCI</div>
+        </div>
+        <div style="background:rgba(200,16,46,.05);border:1px solid rgba(200,16,46,.2);border-radius:var(--radius-md);padding:10px;text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--brand-primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">HFT</div>
+          <div style="font-size:18px;font-weight:800;font-family:var(--font-mono);color:var(--brand-primary)">0.5B</div>
+          <div style="font-size:10px;color:var(--brand-primary);margin-top:2px">Fair Value → P&amp;L</div>
+        </div>
+        <div style="background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);padding:10px;text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">BANKING BOOK</div>
+          <div style="font-size:18px;font-weight:800;font-family:var(--font-mono);color:var(--text-secondary)">2.0B</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Accrual / IRRBB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Accrual Summary -->
+  <div class="card">
+    <div class="card-header"><div class="card-title">Today's Accrual Run</div><div class="card-subtitle">25 Aug 2026 · Status: Pending EOD</div></div>
+    <div>
+      <div style="display:flex;justify-content:space-between;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px"><span style="color:var(--text-muted)">Fixed Deposit accruals</span><span class="mono fw-700 pos" style="color:var(--status-success)">+1,189,726</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px"><span style="color:var(--text-muted)">T-Bill accretions</span><span class="mono fw-700" style="color:var(--status-success)">+580,959</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px"><span style="color:var(--text-muted)">T-Bond coupon accruals</span><span class="mono fw-700" style="color:var(--status-success)">+2,012,740</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px"><span style="color:var(--text-muted)">Repo interest expense</span><span class="mono fw-700" style="color:var(--status-danger)">−290,411</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px"><span style="color:var(--text-muted)">Overnight interest (net)</span><span class="mono fw-700" style="color:var(--status-danger)">−427,397</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px var(--space-4);background:rgba(13,115,119,.04);font-size:12px"><span style="font-weight:700">Net Daily Accrual</span><span class="mono fw-700" style="color:var(--status-success)">+3,065,617</span></div>
+    </div>
+    <div class="card-footer"><button class="btn btn-outline btn-sm w-full" onclick="alert('Running EOD accrual batch and posting to GL…')">Run &amp; Post Accruals</button></div>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="card">
+    <div class="card-header"><div class="card-title">Quick Links</div></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+      <a href="03-deal-capture.html" class="btn btn-primary" style="justify-content:center">+ New MM Deal</a>
+      <a href="31-corporate-actions.html" class="btn btn-outline" style="justify-content:center">Corporate Actions Queue</a>
+      <a href="09-deal-register.html" class="btn btn-outline" style="justify-content:center">Full Deal Register</a>
+      <a href="04-cash-position.html" class="btn btn-outline" style="justify-content:center">Cash Position Worksheet</a>
+      <a href="10-alm.html" class="btn btn-outline" style="justify-content:center">ALM / IRRBB Analytics</a>
+    </div>
+  </div>
+
+</div><!-- /right column -->
+</div><!-- /two-column grid -->
+</div><!-- /page-content -->
+</div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<script>
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.getElementById('tp-' + id).classList.add('active');
+  el.classList.add('active');
+}
+function tog(id) {
+  var row = document.getElementById('r' + id);
+  var exp = document.getElementById('e' + id);
+  var isOpen = exp.classList.contains('open');
+  // close all
+  document.querySelectorAll('.mm-exp').forEach(e => e.classList.remove('open'));
+  document.querySelectorAll('.mm-row').forEach(r => r.classList.remove('open'));
+  if (!isOpen) {
+    exp.classList.add('open');
+    row.classList.add('open');
+  }
+}
+function filterPT(type, el) {
+  document.querySelectorAll('.pt-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  // In a real implementation, filter by data-type. Here just show all for prototype.
+  document.querySelectorAll('.mm-row:not(.hdr)').forEach(r => r.style.display = 'grid');
+  document.querySelectorAll('.mm-exp').forEach(e => { e.classList.remove('open'); });
+  document.querySelectorAll('.mm-row:not(.hdr)').forEach(r => r.classList.remove('open'));
+}
+</script>
+</body>
+</html>

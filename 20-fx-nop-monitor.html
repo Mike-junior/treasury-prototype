@@ -1,472 +1,599 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>FX &amp; NOP Monitor — E&M TMS</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="treasury-design-system.css">
-  <style>
-    .nop-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-3);
-      margin-bottom: var(--space-4);
-    }
-
-    .nop-tile {
-      background: var(--surface-card);
-      border: 1px solid var(--surface-border);
-      border-radius: var(--radius-lg);
-      padding: var(--space-4);
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      transition: box-shadow .15s;
-    }
-
-    .nop-tile:hover,
-    .nop-tile.sel {
-      box-shadow: var(--shadow-md);
-      border-color: var(--brand-primary);
-    }
-
-    .nop-tile::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: var(--nt, var(--status-success));
-    }
-
-    .nop-ccy {
-      font-size: 16px;
-      font-weight: 900;
-      margin-bottom: 2px;
-    }
-
-    .nop-pos {
-      font-size: 20px;
-      font-weight: 800;
-      font-family: var(--font-mono);
-    }
-
-    .nop-lim {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .nop-bar-track {
-      height: 5px;
-      background: var(--surface-divider);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-top: 6px;
-    }
-
-    .nop-bar-fill {
-      height: 100%;
-      border-radius: 3px;
-    }
-
-    .nop-bar-lbl {
-      display: flex;
-      justify-content: space-between;
-      font-size: 9px;
-      margin-top: 2px;
-    }
-
-    .src-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px var(--space-4);
-      border-bottom: 1px solid var(--surface-divider);
-      font-size: 12px;
-    }
-
-    .src-row:last-child {
-      border-bottom: none;
-    }
-
-    .src-row .sk {
-      color: var(--text-muted);
-    }
-
-    .src-row .sv {
-      font-weight: 700;
-      font-family: var(--font-mono);
-    }
-
-    .hist-bar {
-      display: flex;
-      align-items: flex-end;
-      gap: 3px;
-      height: 80px;
-    }
-
-    .hist-col {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .hist-col .hbar {
-      width: 100%;
-      border-radius: 2px 2px 0 0;
-    }
-
-    .hist-col .hlbl {
-      font-size: 9px;
-      color: var(--text-muted);
-      margin-top: 3px;
-    }
-
-    .snap-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 7px var(--space-4);
-      border-bottom: 1px solid var(--surface-divider);
-      font-size: 12px;
-    }
-
-    .snap-row:last-child {
-      border-bottom: none;
-    }
-
-    .snap-row .sk {
-      color: var(--text-muted);
-    }
-
-    .snap-row .sv {
-      font-weight: 700;
-      font-family: var(--font-mono);
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FX &amp; NOP Monitor — E&M TMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="treasury-design-system.css"/>
+<style>
+/* ─── NOP tiles ─────────────────────────────────────────── */
+.nop-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-bottom:var(--space-4); }
+.nop-tile {
+  background:var(--surface-card); border:1px solid var(--surface-border);
+  border-radius:var(--radius-lg); padding:14px 14px 10px;
+  position:relative; overflow:hidden; cursor:pointer;
+  transition:box-shadow .15s, border-color .15s;
+}
+.nop-tile:hover, .nop-tile.sel { box-shadow:var(--shadow-md); border-color:var(--brand-primary); }
+.nop-tile::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--nt, var(--status-success)); }
+.nop-ccy  { font-size:13px; font-weight:900; letter-spacing:.4px; }
+.nop-pos  { font-size:18px; font-weight:800; font-family:var(--font-mono); line-height:1.1; margin:3px 0 2px; }
+.nop-lim  { font-size:9px; color:var(--text-muted); }
+.nop-bar-track { height:5px; background:var(--surface-divider); border-radius:3px; overflow:hidden; margin-top:6px; }
+.nop-bar-fill  { height:100%; border-radius:3px; }
+.nop-bar-lbl   { display:flex; justify-content:space-between; font-size:9px; margin-top:2px; color:var(--text-muted); }
+.nop-src { font-size:9px; color:var(--text-muted); margin-top:4px; }
+/* ─── Source breakdown rows ─────────────────────────────── */
+.src-row { display:flex; justify-content:space-between; align-items:center; padding:9px var(--space-4); border-bottom:1px solid var(--surface-divider); font-size:12px; }
+.src-row:last-child { border-bottom:none; }
+.src-row .sk { color:var(--text-muted); }
+.src-row .sv { font-weight:700; font-family:var(--font-mono); }
+.src-row.total-row { background:rgba(13,115,119,.04); }
+.src-row.total-row .sk { font-weight:700; color:var(--text-primary); }
+/* ─── Mini bar chart (5-day history) ────────────────────── */
+.hist-wrap { display:flex; align-items:flex-end; gap:4px; height:72px; padding:0 4px; }
+.hist-col  { flex:1; display:flex; flex-direction:column; align-items:center; }
+.hist-col .hbar { width:100%; border-radius:3px 3px 0 0; }
+.hist-col .hlbl { font-size:9px; color:var(--text-muted); margin-top:3px; white-space:nowrap; }
+/* ─── Fwd points calculator panel ───────────────────────── */
+.calc-band { background:var(--surface-bg); border:1px solid var(--surface-border); border-radius:var(--radius-md); padding:14px 16px; font-size:12px; }
+.calc-band .cb-row { display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid var(--surface-divider); }
+.calc-band .cb-row:last-child { border-bottom:none; }
+.calc-band .ck { color:var(--text-muted); }
+.calc-band .cv { font-weight:700; font-family:var(--font-mono); }
+/* ─── Breach timeline ────────────────────────────────────── */
+.breach-step { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--surface-divider); align-items:flex-start; }
+.breach-step:last-child { border-bottom:none; }
+.bst-dot { width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; margin-top:2px; }
+.bst-body .bt { font-size:12px; font-weight:600; }
+.bst-body .bd { font-size:11px; color:var(--text-muted); margin-top:2px; }
+.bst-body .bs { font-size:10px; color:var(--text-muted); margin-top:1px; }
+/* ─── Regulatory return preview ─────────────────────────── */
+.reg-row { display:flex; justify-content:space-between; align-items:center; padding:8px var(--space-4); border-bottom:1px solid var(--surface-divider); font-size:12px; }
+.reg-row:last-child { border-bottom:none; }
+.reg-row .rk { color:var(--text-muted); width:90px; flex-shrink:0; }
+.reg-row .rv { font-family:var(--font-mono); font-weight:700; }
+.reg-row .rl { width:80px; }
+.reg-row .rp { width:60px; text-align:right; font-family:var(--font-mono); font-weight:700; }
+.reg-row .rs { width:90px; text-align:right; }
+/* ─── P&L attribution ────────────────────────────────────── */
+.pnl-row { display:flex; justify-content:space-between; align-items:center; padding:8px var(--space-4); border-bottom:1px solid var(--surface-divider); font-size:12px; }
+.pnl-row:last-child { border-bottom:none; }
+.pnl-row .pk { color:var(--text-muted); }
+.pnl-row .pv { font-family:var(--font-mono); font-weight:700; }
+.pnl-row.sub .pk { padding-left:12px; font-size:11px; }
+.pnl-row.total { background:rgba(13,115,119,.04); }
+.pnl-row.total .pk { font-weight:700; color:var(--text-primary); }
+/* ─── Tabs ───────────────────────────────────────────────── */
+.panel { display:none; } .panel.active { display:block; }
+/* ─── Rate table ─────────────────────────────────────────── */
+.rate-pair { display:flex; justify-content:space-between; align-items:center; padding:8px var(--space-4); border-bottom:1px solid var(--surface-divider); font-size:12px; }
+.rate-pair:last-child { border-bottom:none; }
+.rate-pair .rp-c { font-weight:700; font-family:var(--font-mono); width:56px; }
+.rate-pair .rp-b { font-family:var(--font-mono); font-size:11px; color:var(--status-danger); }
+.rate-pair .rp-m { font-family:var(--font-mono); font-size:12px; font-weight:700; }
+.rate-pair .rp-a { font-family:var(--font-mono); font-size:11px; color:var(--status-success); }
+.rate-pair .rp-d { font-size:10px; width:56px; text-align:right; }
+.rate-pair .rp-d.up   { color:var(--status-success); }
+.rate-pair .rp-d.down { color:var(--status-danger); }
+/* ─── Swap cost table ────────────────────────────────────── */
+.swap-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr; gap:4px; padding:8px var(--space-4); border-bottom:1px solid var(--surface-divider); font-size:11px; align-items:center; }
+.swap-row.hdr { background:var(--surface-bg); font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; }
+.swap-row:last-child { border-bottom:none; }
+</style>
 </head>
-
 <body>
-  <div class="app-shell">
-    <div id="sidebar-root"></div>
-    <script src="sidebar-include.js"></script>
+<div class="app-shell">
+<div id="sidebar-root"></div>
+<script src="sidebar-include.js"></script>
 
-    <div class="main-content">
-      <div class="fx-ticker-bar">
-        <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span
-            class="delta up">▲+0.23</span></div>
-        <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span
-            class="delta down">▼−0.41</span></div>
-        <div class="fx-tick"><span class="pair">GBP/KES</span><span class="rate">163.78</span><span
-            class="delta up">▲+0.67</span></div>
-        <div class="fx-tick"><span class="pair">ZAR/KES</span><span class="rate">7.023</span><span
-            class="delta down">▼−0.051</span></div>
-        <div class="fx-tick"><span class="pair">CBR</span><span class="rate">13.00%</span><span class="delta"
-            style="color:#94A3B8">unch</span></div>
-        <div class="fx-tick"><span class="pair">Aggregate NOP</span><span class="rate">KES 725M</span><span
-            class="delta" style="color:var(--status-warning)">72% ⚠</span></div>
+<div class="main-content">
+<!-- ─── FX TICKER ─────────────────────────────────────────── -->
+<div class="fx-ticker-bar">
+  <div class="fx-tick"><span class="pair">USD/KES</span><span class="rate">129.45</span><span class="delta up">▲+0.23</span></div>
+  <div class="fx-tick"><span class="pair">EUR/KES</span><span class="rate">140.12</span><span class="delta down">▼−0.41</span></div>
+  <div class="fx-tick"><span class="pair">GBP/KES</span><span class="rate">163.78</span><span class="delta up">▲+0.67</span></div>
+  <div class="fx-tick"><span class="pair">ZAR/KES</span><span class="rate">7.023</span><span class="delta down">▼−0.051</span></div>
+  <div class="fx-tick"><span class="pair">TZS/KES</span><span class="rate">0.0507</span><span class="delta down">▼−0.0002</span></div>
+  <div class="fx-tick"><span class="pair">UGX/KES</span><span class="rate">0.0344</span><span class="delta up">▲+0.0001</span></div>
+  <div class="fx-tick"><span class="pair">CBR</span><span class="rate">13.00%</span><span class="delta" style="color:#94A3B8">unch</span></div>
+  <div class="fx-tick"><span class="pair">Agg. NOP</span><span class="rate">KES 725M</span><span class="delta" style="color:var(--status-warning)">72% ⚠</span></div>
+  <div class="fx-tick"><span class="pair">USD NOP</span><span class="rate">+128.4M</span><span class="delta up">64%</span></div>
+  <div class="fx-tick"><span class="pair">ZAR NOP</span><span class="rate">+24.7M</span><span class="delta" style="color:var(--status-danger)">99% !</span></div>
+</div>
+
+<!-- ─── TOPBAR ──────────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span class="sep"> / </span><span class="current">FX &amp; NOP Monitor</span></div>
+  <div class="topbar-spacer"></div>
+  <div class="live-badge">Live</div>
+  <span style="font-size:11px;color:var(--text-muted);margin-left:8px">Last calc: 10:42:33 EAT</span>
+  <div class="topbar-actions">
+    <button class="btn btn-outline btn-sm" onclick="alert('Recalculating NOP from all sources…')">Recalculate</button>
+    <button class="btn btn-outline btn-sm" onclick="alert('Generating EOD NOP Snapshot…')">EOD Snapshot</button>
+    <button class="btn btn-primary btn-sm" onclick="alert('Opening CBK NOP Daily Return (FR-11.4)…')">Generate NOP Return</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
+    <div style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">MA</div>
+    <div><div style="font-size:12px;font-weight:600">Mike Agola</div><div style="font-size:10px;color:var(--text-muted)">Treasurer · 25 Aug 2026</div></div>
+  </div>
+</div>
+
+<div class="page-content">
+<!-- ─── PAGE HEADER ─────────────────────────────────────────── -->
+<div class="page-header">
+  <div>
+    <h1 class="page-title">FX &amp; Net Open Position Monitor</h1>
+    <p class="page-subtitle">Real-time NOP aggregated from ALL exposure sources per FR-11.1 (BR-27) — FX Deals · Nostro Balances · FCY Investments · Forward Legs · Accrued FCY Income</p>
+  </div>
+  <div class="page-actions">
+    <button class="btn btn-outline btn-sm" onclick="alert('NOP History viewer — last 247 business days')">NOP History</button>
+    <a href="03-deal-capture.html" class="btn btn-primary btn-sm">+ New FX Deal</a>
+  </div>
+</div>
+
+<!-- ─── KPI ROW ─────────────────────────────────────────────── -->
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
+  <div class="kpi-card" style="--kpi-accent:var(--status-warning)">
+    <div class="kpi-label">Aggregate NOP (KES)</div>
+    <div class="kpi-value mono" style="color:var(--status-warning)">725M</div>
+    <div class="kpi-meta"><span style="color:var(--status-warning);font-weight:600">72%</span>&nbsp;of KES 1,000M limit</div>
+  </div>
+  <div class="kpi-card" style="--kpi-accent:var(--status-danger)">
+    <div class="kpi-label">Currencies Near / At Limit</div>
+    <div class="kpi-value" style="color:var(--status-danger)">2</div>
+    <div class="kpi-meta">ZAR 99% · EUR 84%</div>
+  </div>
+  <div class="kpi-card" style="--kpi-accent:#2563EB">
+    <div class="kpi-label">Open FX Deals Today</div>
+    <div class="kpi-value">14</div>
+    <div class="kpi-meta">Spot 6 · Fwd 5 · Swap 3</div>
+  </div>
+  <div class="kpi-card" style="--kpi-accent:var(--status-success)">
+    <div class="kpi-label">FX Revaluation P&amp;L (MTD)</div>
+    <div class="kpi-value mono" style="color:var(--status-success)">+1.82M</div>
+    <div class="kpi-meta">KES equivalent · FR-11.3</div>
+  </div>
+  <div class="kpi-card" style="--kpi-accent:var(--brand-teal)">
+    <div class="kpi-label">EOD Snapshots Retained</div>
+    <div class="kpi-value">247</div>
+    <div class="kpi-meta">Days · FR-11.4 · Immutable</div>
+  </div>
+</div>
+
+<!-- ─── ALERTS ──────────────────────────────────────────────── -->
+<div class="alert alert-danger" style="margin-bottom:var(--space-2)">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+  <div><strong>ZAR NOP at 99% of overnight limit</strong> — KES 24.7M vs KES 25.0M hard limit. Next ZAR deal will be <strong>blocked (HTTP 422)</strong> by the pre-deal limit check. Immediate position reduction required. <a href="05-limits-exposure.html" style="color:var(--status-danger);font-weight:700;margin-left:8px">View Breach →</a></div>
+</div>
+<div class="alert alert-warning" style="margin-bottom:var(--space-4)">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+  <div><strong>EUR NOP at 84% — Warning threshold (80%) exceeded</strong> — KES 42.1M vs KES 50.0M limit. Middle Office notified at 10:38 EAT. Acknowledgement pending. <a href="05-limits-exposure.html" style="color:var(--status-warning);font-weight:700;margin-left:8px">Manage →</a></div>
+</div>
+
+<!-- ─── SECTION LABEL ───────────────────────────────────────── -->
+<div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">
+  Per-Currency NOP — All Sources Aggregated (FR-11.1 · BR-27) · Click a tile to expand the source breakdown below
+</div>
+
+<!-- ─── NOP TILES ──────────────────────────────────────────── -->
+<div class="nop-grid">
+  <!-- USD -->
+  <div class="nop-tile sel" style="--nt:var(--status-success)" onclick="showCcy('USD')">
+    <div class="nop-ccy">USD</div>
+    <div class="nop-pos" style="color:var(--status-success)">+128.4M</div>
+    <div class="nop-lim">O/N limit: 200M · Intraday: 300M</div>
+    <div class="nop-bar-track"><div class="nop-bar-fill" style="width:64%;background:var(--status-success)"></div></div>
+    <div class="nop-bar-lbl"><span>0</span><span style="color:var(--status-success);font-weight:700">64%</span><span>200M</span></div>
+    <div class="nop-src">LONG · 5 sources</div>
+  </div>
+  <!-- EUR -->
+  <div class="nop-tile" style="--nt:var(--status-warning)" onclick="showCcy('EUR')">
+    <div class="nop-ccy">EUR</div>
+    <div class="nop-pos" style="color:var(--status-warning)">+42.1M</div>
+    <div class="nop-lim">O/N limit: 50M · Intraday: 75M</div>
+    <div class="nop-bar-track"><div class="nop-bar-fill" style="width:84%;background:var(--status-warning)"></div></div>
+    <div class="nop-bar-lbl"><span>0</span><span style="color:var(--status-warning);font-weight:700">84% ⚠</span><span>50M</span></div>
+    <div class="nop-src" style="color:var(--status-warning);font-weight:600">WARNING · 4 sources</div>
+  </div>
+  <!-- GBP -->
+  <div class="nop-tile" style="--nt:#2563EB" onclick="showCcy('GBP')">
+    <div class="nop-ccy">GBP</div>
+    <div class="nop-pos" style="color:#2563EB">−8.3M</div>
+    <div class="nop-lim">O/N limit: 30M · Intraday: 45M</div>
+    <div class="nop-bar-track"><div class="nop-bar-fill" style="width:28%;background:#2563EB"></div></div>
+    <div class="nop-bar-lbl"><span>0</span><span style="color:#2563EB;font-weight:700">28%</span><span>30M</span></div>
+    <div class="nop-src">SHORT · 3 sources</div>
+  </div>
+  <!-- ZAR -->
+  <div class="nop-tile" style="--nt:var(--status-danger)" onclick="showCcy('ZAR')">
+    <div class="nop-ccy">ZAR</div>
+    <div class="nop-pos" style="color:var(--status-danger)">+24.7M</div>
+    <div class="nop-lim">O/N limit: 25M · NEAR HARD LIMIT</div>
+    <div class="nop-bar-track"><div class="nop-bar-fill" style="width:99%;background:var(--status-danger)"></div></div>
+    <div class="nop-bar-lbl"><span>0</span><span style="color:var(--status-danger);font-weight:700">99% !</span><span>25M</span></div>
+    <div class="nop-src" style="color:var(--status-danger);font-weight:700">⚑ HARD LIMIT · deals BLOCKED</div>
+  </div>
+  <!-- TZS -->
+  <div class="nop-tile" style="--nt:#0891B2" onclick="showCcy('TZS')">
+    <div class="nop-ccy">TZS</div>
+    <div class="nop-pos" style="color:#0891B2">+15.0M</div>
+    <div class="nop-lim">O/N limit: 40M · Intraday: 60M</div>
+    <div class="nop-bar-track"><div class="nop-bar-fill" style="width:38%;background:#0891B2"></div></div>
+    <div class="nop-bar-lbl"><span>0</span><span style="color:#0891B2;font-weight:700">38%</span><span>40M</span></div>
+    <div class="nop-src">LONG · 3 sources</div>
+  </div>
+  <!-- UGX -->
+  <div class="nop-tile" style="--nt:#7C3AED" onclick="showCcy('UGX')">
+    <div class="nop-ccy">UGX</div>
+    <div class="nop-pos" style="color:#7C3AED">+6.2M</div>
+    <div class="nop-lim">O/N limit: 20M · Intraday: 30M</div>
+    <div class="nop-bar-track"><div class="nop-bar-fill" style="width:31%;background:#7C3AED"></div></div>
+    <div class="nop-bar-lbl"><span>0</span><span style="color:#7C3AED;font-weight:700">31%</span><span>20M</span></div>
+    <div class="nop-src">LONG · 2 sources</div>
+  </div>
+</div>
+
+<!-- ─── MAIN GRID: SOURCE DETAIL + RIGHT PANEL ───────────────── -->
+<div style="display:grid;grid-template-columns:1fr 360px;gap:var(--space-4);align-items:start">
+
+  <!-- LEFT: tabbed detail panel -->
+  <div>
+    <!-- Sub-tabs -->
+    <div class="tabs" style="margin-bottom:0;border-bottom:2px solid var(--surface-border)">
+      <div class="tab-item active" onclick="switchTab('src',this)">Source Breakdown</div>
+      <div class="tab-item" onclick="switchTab('fwd',this)">Forward Points</div>
+      <div class="tab-item" onclick="switchTab('swap',this)">Swap Costs</div>
+      <div class="tab-item" onclick="switchTab('pnl',this)">Revaluation P&amp;L</div>
+      <div class="tab-item" onclick="switchTab('breach',this)">Breach Log</div>
+      <div class="tab-item" onclick="switchTab('reg',this)">NOP Return Preview</div>
+    </div>
+
+    <!-- ── TAB 1: Source Breakdown ────────────────────────────── -->
+    <div class="panel active card" id="tab-src" style="border-top-left-radius:0;border-top-right-radius:0;border-top:none">
+      <div class="card-header">
+        <div><div class="card-title" id="srcTitle">USD — Net Open Position Source Breakdown</div>
+          <div class="card-subtitle">All 5 exposure sources aggregated per FR-11.1 · BR-27</div></div>
+        <span class="badge badge-success" id="srcBadge">+128.4M LONG</span>
       </div>
-      <div class="topbar">
-        <div class="topbar-breadcrumb"><a href="02-dashboard.html" style="color:var(--text-muted)">E&amp;M TMS</a><span
-            class="sep"> / </span><span class="current">FX &amp; NOP Monitor</span></div>
-        <div class="topbar-spacer"></div>
-        <div class="live-badge">Live</div>
-        <div class="topbar-actions">
-          <button class="btn btn-outline btn-sm">EOD Snapshot</button>
-          <button class="btn btn-primary btn-sm"><a href="11-regulatory-reports.html"
-              style="color:#fff;text-decoration:none">Generate NOP Return</a></button>
-        </div>
-        <div
-          style="display:flex;align-items:center;gap:10px;padding-left:12px;border-left:1px solid var(--surface-border)">
-          <div
-            style="width:32px;height:32px;border-radius:50%;background:var(--brand-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">
-            JM</div>
-          <div>
-            <div style="font-size:12px;font-weight:600">Mike Agola</div>
-            <div style="font-size:10px;color:var(--text-muted)">Treasurer · 25 Aug 2026</div>
-          </div>
-        </div>
+      <div id="srcBody">
+        <div class="src-row"><span class="sk">① FX Spot Deals (settled + authorised, open)</span><span class="sv" style="color:var(--status-success)">+78,500,000</span></div>
+        <div class="src-row"><span class="sk">② FX Forward Far Legs (outstanding, not yet settled)</span><span class="sv" style="color:var(--status-success)">+32,000,000</span></div>
+        <div class="src-row"><span class="sk">③ FX Swap Far Legs (linked to open near legs)</span><span class="sv" style="color:var(--status-success)">+8,250,000</span></div>
+        <div class="src-row"><span class="sk">④ USD Nostro Balances (Citi N.A. NY + JPMorgan NY)</span><span class="sv" style="color:var(--status-success)">+12,847,500</span></div>
+        <div class="src-row"><span class="sk">⑤ FCY Bond Positions (USD-denominated, HTM + AFS)</span><span class="sv" style="color:var(--status-success)">+8,200,000</span></div>
+        <div class="src-row"><span class="sk">⑥ Accrued Income Receivable (USD coupons + interest)</span><span class="sv" style="color:var(--status-success)">+852,500</span></div>
+        <div class="src-row"><span class="sk">⑦ FCY Liabilities (USD borrowings + FCY deposits)</span><span class="sv" style="color:var(--status-danger)">−11,250,000</span></div>
+        <div class="src-row total-row"><span class="sk" style="font-weight:700">Net USD NOP</span><span class="sv" style="color:var(--status-success);font-size:14px">+128,400,000</span></div>
+        <div class="src-row"><span class="sk">Overnight limit (CBK assigned)</span><span class="sv">200,000,000</span></div>
+        <div class="src-row"><span class="sk">Intraday limit</span><span class="sv">300,000,000</span></div>
+        <div class="src-row"><span class="sk">Utilisation (overnight)</span><span class="sv" style="color:var(--status-success)">64.2% ✓</span></div>
+        <div class="src-row"><span class="sk">Headroom</span><span class="sv" style="color:var(--status-success)">71,600,000</span></div>
       </div>
-
-      <div class="page-content">
-        <div class="page-header">
-          <div>
-            <h1 class="page-title">FX &amp; Net Open Position Monitor</h1>
-            <p class="page-subtitle">Real-time NOP aggregated from ALL exposure sources — FR-11.1 · Includes FX deals,
-              nostro balances, FCY investments, forward legs &amp; accrued income</p>
-          </div>
-          <div class="page-actions">
-            <span style="font-size:12px;color:var(--text-muted)">Last calc: 10:42:15 EAT</span>
-            <button class="btn btn-outline btn-sm">Recalculate</button>
-            <button class="btn btn-outline btn-sm">NOP History</button>
-          </div>
-        </div>
-
-        <!-- Summary KPIs -->
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);margin-bottom:var(--space-4)">
-          <div class="kpi-card" style="--kpi-accent:var(--status-warning)">
-            <div class="kpi-label">Aggregate NOP (KES equiv.)</div>
-            <div class="kpi-value mono" style="color:var(--status-warning)">725M</div>
-            <div class="kpi-meta"><span class="kpi-delta warn">72% of 1,000M limit</span></div>
-          </div>
-          <div class="kpi-card" style="--kpi-accent:var(--status-danger)">
-            <div class="kpi-label">Currencies Near Limit</div>
-            <div class="kpi-value" style="color:var(--status-danger)">2</div>
-            <div class="kpi-meta">EUR 84% · ZAR 99%</div>
-          </div>
-          <div class="kpi-card" style="--kpi-accent:#2563EB">
-            <div class="kpi-label">Open FX Deals (Today)</div>
-            <div class="kpi-value">14</div>
-            <div class="kpi-meta">Spot · Fwd · Swap</div>
-          </div>
-          <div class="kpi-card" style="--kpi-accent:#0D7377">
-            <div class="kpi-label">EOD NOP Snapshots</div>
-            <div class="kpi-value">247</div>
-            <div class="kpi-meta">Days retained · FR-11.4</div>
-          </div>
-        </div>
-
-        <!-- Alerts -->
-        <div class="alert alert-danger" style="margin-bottom:var(--space-3)">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-            <line x1="12" y1="9" x2="12" y2="13" />
-          </svg>
-          <div><strong>ZAR NOP at 99%</strong> — KES 24.7M vs 25.0M overnight limit. Next FX deal in ZAR will be
-            blocked. Immediate remediation required.</div>
-        </div>
-        <div class="alert alert-warning" style="margin-bottom:var(--space-4)">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-          </svg>
-          <div><strong>EUR NOP at 84%</strong> — KES 42.1M vs 50.0M overnight limit. Warning threshold (80%) exceeded.
-            Notified to Middle Office.</div>
-        </div>
-
-        <!-- Currency NOP tiles -->
-        <div
-          style="margin-bottom:var(--space-2);font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px">
-          Per-Currency NOP — All Sources Combined (FR-11.1)</div>
-        <div class="nop-grid">
-          <!-- USD -->
-          <div class="nop-tile sel" style="--nt:var(--status-success)" onclick="showSource('USD')">
-            <div class="nop-ccy">USD</div>
-            <div class="nop-pos" style="color:var(--status-success)">+128.4M</div>
-            <div class="nop-lim">Overnight limit: 200.0M · Intraday: 300.0M</div>
-            <div class="nop-bar-track">
-              <div class="nop-bar-fill" style="width:64%;background:var(--status-success)"></div>
-            </div>
-            <div class="nop-bar-lbl"><span>0</span><span
-                style="color:var(--status-success);font-weight:700">64%</span><span>200M</span></div>
-            <div style="margin-top:6px;font-size:10px;color:var(--text-muted)">LONG · 4 sources</div>
-          </div>
-          <!-- EUR -->
-          <div class="nop-tile" style="--nt:var(--status-warning)" onclick="showSource('EUR')">
-            <div class="nop-ccy">EUR</div>
-            <div class="nop-pos" style="color:var(--status-warning)">+42.1M</div>
-            <div class="nop-lim">Overnight limit: 50.0M · Intraday: 75.0M</div>
-            <div class="nop-bar-track">
-              <div class="nop-bar-fill" style="width:84%;background:var(--status-warning)"></div>
-            </div>
-            <div class="nop-bar-lbl"><span>0</span><span style="color:var(--status-warning);font-weight:700">84%
-                ⚠</span><span>50M</span></div>
-            <div style="margin-top:6px;font-size:10px;color:var(--status-warning);font-weight:600">WARNING — threshold
-              breached</div>
-          </div>
-          <!-- GBP -->
-          <div class="nop-tile" style="--nt:#2563EB" onclick="showSource('GBP')">
-            <div class="nop-ccy">GBP</div>
-            <div class="nop-pos" style="color:#2563EB">−8.3M</div>
-            <div class="nop-lim">Overnight limit: 30.0M · Intraday: 45.0M</div>
-            <div class="nop-bar-track">
-              <div class="nop-bar-fill" style="width:28%;background:#2563EB"></div>
-            </div>
-            <div class="nop-bar-lbl"><span>0</span><span
-                style="color:#2563EB;font-weight:700">28%</span><span>30M</span></div>
-            <div style="margin-top:6px;font-size:10px;color:var(--text-muted)">SHORT · 2 sources</div>
-          </div>
-          <!-- ZAR -->
-          <div class="nop-tile" style="--nt:var(--status-danger)" onclick="showSource('ZAR')">
-            <div class="nop-ccy">ZAR</div>
-            <div class="nop-pos" style="color:var(--status-danger)">+24.7M</div>
-            <div class="nop-lim">Overnight limit: 25.0M · NEAR HARD LIMIT</div>
-            <div class="nop-bar-track">
-              <div class="nop-bar-fill" style="width:99%;background:var(--status-danger)"></div>
-            </div>
-            <div class="nop-bar-lbl"><span>0</span><span style="color:var(--status-danger);font-weight:700">99%
-                !</span><span>25M</span></div>
-            <div style="margin-top:6px;font-size:10px;color:var(--status-danger);font-weight:700">⚑ HARD LIMIT — new
-              deals blocked</div>
-          </div>
-          <!-- TZS -->
-          <div class="nop-tile" style="--nt:#0891B2" onclick="showSource('TZS')">
-            <div class="nop-ccy">TZS</div>
-            <div class="nop-pos" style="color:#0891B2">+15.0M</div>
-            <div class="nop-lim">Overnight limit: 40.0M</div>
-            <div class="nop-bar-track">
-              <div class="nop-bar-fill" style="width:38%;background:#0891B2"></div>
-            </div>
-            <div class="nop-bar-lbl"><span>0</span><span
-                style="color:#0891B2;font-weight:700">38%</span><span>40M</span></div>
-            <div style="margin-top:6px;font-size:10px;color:var(--text-muted)">LONG · 3 sources</div>
-          </div>
-          <!-- UGX -->
-          <div class="nop-tile" style="--nt:#7C3AED" onclick="showSource('UGX')">
-            <div class="nop-ccy">UGX</div>
-            <div class="nop-pos" style="color:#7C3AED">+6.2M</div>
-            <div class="nop-lim">Overnight limit: 20.0M</div>
-            <div class="nop-bar-track">
-              <div class="nop-bar-fill" style="width:31%;background:#7C3AED"></div>
-            </div>
-            <div class="nop-bar-lbl"><span>0</span><span
-                style="color:#7C3AED;font-weight:700">31%</span><span>20M</span></div>
-            <div style="margin-top:6px;font-size:10px;color:var(--text-muted)">LONG · 2 sources</div>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 380px;gap:var(--space-4);align-items:start">
-
-          <!-- Source breakdown -->
-          <div class="card">
-            <div class="card-header">
-              <div>
-                <div class="card-title">USD NOP — Exposure Source Breakdown</div>
-                <div class="card-subtitle">All 4 sources aggregated per FR-11.1 · Click a currency tile above to switch
-                </div>
-              </div>
-              <span class="badge badge-success">+128.4M LONG</span>
-            </div>
-            <div>
-              <div class="src-row"><span class="sk">FX Spot Deals (settled + pending auth)</span><span class="sv"
-                  style="color:var(--status-success)">+78,500,000</span></div>
-              <div class="src-row"><span class="sk">FX Forward Deals (far legs outstanding)</span><span class="sv"
-                  style="color:var(--status-success)">+32,000,000</span></div>
-              <div class="src-row"><span class="sk">USD Nostro Balances (Citi + JPMorgan)</span><span class="sv"
-                  style="color:var(--status-success)">+12,847,500</span></div>
-              <div class="src-row"><span class="sk">FCY Bond Positions (USD denominated)</span><span class="sv"
-                  style="color:var(--status-success)">+8,200,000</span></div>
-              <div class="src-row"><span class="sk">Accrued Income (USD)</span><span class="sv"
-                  style="color:var(--status-success)">+852,500</span></div>
-              <div class="src-row" style="background:rgba(13,115,119,.04)"><span style="font-weight:700">Net USD
-                  Position</span><span class="sv" style="color:var(--status-success);font-size:14px">+128,400,000</span>
-              </div>
-              <div class="src-row"><span class="sk">Overnight limit</span><span class="sv">200,000,000</span></div>
-              <div class="src-row"><span class="sk">Utilisation</span><span class="sv"
-                  style="color:var(--status-success)">64.2% ✓</span></div>
-              <div class="src-row"><span class="sk">Headroom</span><span class="sv"
-                  style="color:var(--status-success)">71,600,000</span></div>
-            </div>
-            <div class="card-footer">
-              <div class="alert alert-info" style="margin:0;font-size:11px">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                </svg>
-                NOP is recalculated in real-time on every deal event, nostro update and market data refresh. FR-11.1: FX
-                dealing book alone is not sufficient — all sources are included.
-              </div>
-            </div>
-          </div>
-
-          <!-- Right: 5-day history + revaluation -->
-          <div style="display:flex;flex-direction:column;gap:var(--space-4)">
-
-            <!-- 5-day intraday history -->
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">USD NOP — 5-Day History</div>
-                <div class="card-subtitle">End-of-day snapshots · FR-11.4</div>
-              </div>
-              <div class="card-body">
-                <div class="hist-bar">
-                  <div class="hist-col">
-                    <div class="hbar" style="height:58%;background:#0D7377"></div>
-                    <div class="hlbl">21 Aug</div>
-                    <div style="font-size:9px;color:var(--text-muted);font-family:var(--font-mono)">115M</div>
-                  </div>
-                  <div class="hist-col">
-                    <div class="hbar" style="height:66%;background:#0D7377"></div>
-                    <div class="hlbl">22 Aug</div>
-                    <div style="font-size:9px;color:var(--text-muted);font-family:var(--font-mono)">132M</div>
-                  </div>
-                  <div class="hist-col">
-                    <div class="hbar" style="height:55%;background:#0D7377"></div>
-                    <div class="hlbl">23 Aug</div>
-                    <div style="font-size:9px;color:var(--text-muted);font-family:var(--font-mono)">110M</div>
-                  </div>
-                  <div class="hist-col">
-                    <div class="hbar" style="height:62%;background:#0D7377"></div>
-                    <div class="hlbl">24 Aug</div>
-                    <div style="font-size:9px;color:var(--text-muted);font-family:var(--font-mono)">124M</div>
-                  </div>
-                  <div class="hist-col">
-                    <div class="hbar" style="height:64%;background:var(--brand-primary)"></div>
-                    <div class="hlbl" style="color:var(--brand-primary);font-weight:700">25 Aug★</div>
-                    <div style="font-size:9px;color:var(--brand-primary);font-family:var(--font-mono);font-weight:700">
-                      128M</div>
-                  </div>
-                </div>
-                <div
-                  style="margin-top:var(--space-3);padding-top:var(--space-2);border-top:1px solid var(--surface-divider);font-size:11px;color:var(--text-muted)">
-                  Dashed line = overnight limit (200M)</div>
-              </div>
-            </div>
-
-            <!-- EOD FX Revaluation summary -->
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">FX Revaluation (FR-11.3)</div>
-                <div class="card-subtitle">Day-end P&amp;L on FCY positions at closing rates</div>
-              </div>
-              <div>
-                <div class="snap-row"><span class="sk">USD positions MTM</span><span class="sv"
-                    style="color:var(--status-success)">+KES 2,847,000</span></div>
-                <div class="snap-row"><span class="sk">EUR positions MTM</span><span class="sv"
-                    style="color:var(--status-danger)">−KES 1,240,000</span></div>
-                <div class="snap-row"><span class="sk">GBP positions MTM</span><span class="sv"
-                    style="color:var(--status-success)">+KES 312,000</span></div>
-                <div class="snap-row"><span class="sk">ZAR positions MTM</span><span class="sv"
-                    style="color:var(--status-danger)">−KES 98,000</span></div>
-                <div class="snap-row" style="background:rgba(13,115,119,.04)"><span style="font-weight:700">Net FX MTM
-                    P&amp;L (today)</span><span class="sv" style="color:var(--status-success);font-size:13px">+KES
-                    1,821,000</span></div>
-                <div class="snap-row"><span class="sk">Translation entries</span><span class="sv">Auto-posted to
-                    GL</span></div>
-              </div>
-              <div class="card-footer"><a href="26-accounting-gl.html"
-                  style="font-size:11px;font-weight:600;color:var(--brand-primary)">View GL posting entries →</a></div>
-            </div>
-
-            <!-- FX rates snapshot -->
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Live FX Rates</div>
-                <div class="card-subtitle">Source: Reuters · Last update: 10:42</div>
-              </div>
-              <div>
-                <div class="snap-row"><span class="sk">USD/KES (Mid)</span><span class="sv">129.4500</span></div>
-                <div class="snap-row"><span class="sk">EUR/KES (Mid)</span><span class="sv">140.1200</span></div>
-                <div class="snap-row"><span class="sk">GBP/KES (Mid)</span><span class="sv">163.7800</span></div>
-                <div class="snap-row"><span class="sk">ZAR/KES (Mid)</span><span class="sv">7.0230</span></div>
-                <div class="snap-row"><span class="sk">TZS/KES (Mid)</span><span class="sv">0.0507</span></div>
-                <div class="snap-row"><span class="sk">UGX/KES (Mid)</span><span class="sv">0.0344</span></div>
-              </div>
-              <div class="card-footer"><a href="24-market-data.html"
-                  style="font-size:11px;font-weight:600;color:var(--brand-primary)">Manage market data sources →</a>
-              </div>
-            </div>
-          </div>
+      <div class="card-footer">
+        <div class="alert alert-info" style="margin:0;font-size:11px">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+          NOP is computed in real time across all 7 exposure sources. A deal in PENDING_AUTH does not update the NOP — only AUTHORISED deals affect the live position. Position updates within 2 seconds of authorisation.
         </div>
       </div>
     </div>
-  </div>
-  <script>function showSource(ccy) { document.querySelector('.nop-tile.sel') && document.querySelector('.nop-tile.sel').classList.remove('sel'); event.currentTarget.classList.add('sel'); }</script>
-</body>
 
+    <!-- ── TAB 2: Forward Points ──────────────────────────────── -->
+    <div class="panel card" id="tab-fwd" style="border-top-left-radius:0;border-top-right-radius:0;border-top:none">
+      <div class="card-header">
+        <div><div class="card-title">Forward Point Derivation — Interest Rate Parity</div>
+          <div class="card-subtitle">System-derived from configured yield curves (Middle Office) · FR-11.5</div></div>
+        <span class="badge badge-info">Live Calc</span>
+      </div>
+      <div class="card-body" style="padding-bottom:0">
+        <div class="alert alert-info" style="margin-bottom:var(--space-4);font-size:12px">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+          <div><strong>Formula:</strong> Forward Points = Spot Rate × (r_base − r_quote) / 100 × (days / 360) &nbsp;·&nbsp; <strong>Far Rate</strong> = Spot + Forward Points. Derived from the KES and FCY yield curves maintained by Middle Office. Dealers cannot override without a recorded justification.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:4px;padding:8px var(--space-4);background:var(--surface-bg);border-radius:var(--radius-md);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">
+          <span>Pair</span><span>Spot</span><span>r_KES</span><span>r_FCY</span><span>Tenor</span><span>Fwd Pts</span><span>Far Rate</span>
+        </div>
+      </div>
+      <div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center">
+          <span style="font-weight:700">USD/KES</span><span class="mono">129.42</span><span class="mono">12.75%</span><span class="mono">5.34%</span><span>30d</span><span class="mono" style="color:var(--status-success)">+1.09</span><span class="mono" style="font-weight:700">130.51</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center">
+          <span style="font-weight:700">USD/KES</span><span class="mono">129.42</span><span class="mono">12.75%</span><span class="mono">5.34%</span><span>90d</span><span class="mono" style="color:var(--status-success)">+2.42</span><span class="mono" style="font-weight:700">131.84</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center">
+          <span style="font-weight:700">USD/KES</span><span class="mono">129.42</span><span class="mono">12.75%</span><span class="mono">5.34%</span><span>180d</span><span class="mono" style="color:var(--status-success)">+4.79</span><span class="mono" style="font-weight:700">134.21</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center">
+          <span style="font-weight:700">EUR/KES</span><span class="mono">140.12</span><span class="mono">12.75%</span><span class="mono">3.45%</span><span>90d</span><span class="mono" style="color:var(--status-success)">+3.28</span><span class="mono" style="font-weight:700">143.40</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center">
+          <span style="font-weight:700">EUR/KES</span><span class="mono">140.12</span><span class="mono">12.75%</span><span class="mono">3.45%</span><span>180d</span><span class="mono" style="color:var(--status-success)">+6.49</span><span class="mono" style="font-weight:700">146.61</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:4px;padding:9px var(--space-4);font-size:12px;align-items:center">
+          <span style="font-weight:700">GBP/KES</span><span class="mono">163.78</span><span class="mono">12.75%</span><span class="mono">5.20%</span><span>90d</span><span class="mono" style="color:var(--status-success)">+3.10</span><span class="mono" style="font-weight:700">166.88</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div style="font-size:11px;color:var(--text-muted)">Formula: Fwd Pts = Spot × (r_KES − r_FCY) / 100 × (days / 360). Positive points = KES trades at a forward premium. Source: KES CBR-based yield curve · USD SOFR · EUR €STR · Maintained by Middle Office.</div>
+      </div>
+    </div>
+
+    <!-- ── TAB 3: Swap Costs ──────────────────────────────────── -->
+    <div class="panel card" id="tab-swap" style="border-top-left-radius:0;border-top-right-radius:0;border-top:none">
+      <div class="card-header">
+        <div><div class="card-title">FX Swap — Near &amp; Far Leg Summary + Implied Carry</div>
+          <div class="card-subtitle">Active FX swap positions · Swap cost = far settlement − near settlement (KES)</div></div>
+        <span class="badge badge-neutral">3 Active Swaps</span>
+      </div>
+      <div>
+        <div class="swap-row hdr"><span>Deal</span><span>Pair</span><span>Near Rate / Dt</span><span>Far Rate / Dt</span><span>Swap Pts</span><span>Implied Cost (KES)</span></div>
+        <div class="swap-row">
+          <span class="mono" style="font-weight:700">DEAL-00281</span>
+          <span>USD/KES</span>
+          <span><span class="mono">129.42</span><br/><span style="font-size:10px;color:var(--text-muted)">27 Aug</span></span>
+          <span><span class="mono">131.84</span><br/><span style="font-size:10px;color:var(--text-muted)">25 Nov</span></span>
+          <span class="mono" style="color:var(--status-success)">+242 pips</span>
+          <span class="mono" style="color:var(--status-success);font-weight:700">+6,050,000</span>
+        </div>
+        <div class="swap-row" style="background:var(--surface-bg)">
+          <span class="mono" style="font-weight:700">DEAL-00274</span>
+          <span>EUR/KES</span>
+          <span><span class="mono">140.12</span><br/><span style="font-size:10px;color:var(--text-muted)">27 Aug</span></span>
+          <span><span class="mono">143.40</span><br/><span style="font-size:10px;color:var(--text-muted)">25 Nov</span></span>
+          <span class="mono" style="color:var(--status-success)">+328 pips</span>
+          <span class="mono" style="color:var(--status-success);font-weight:700">+3,280,000</span>
+        </div>
+        <div class="swap-row">
+          <span class="mono" style="font-weight:700">DEAL-00269</span>
+          <span>GBP/KES</span>
+          <span><span class="mono">163.78</span><br/><span style="font-size:10px;color:var(--text-muted)">27 Aug</span></span>
+          <span><span class="mono">166.88</span><br/><span style="font-size:10px;color:var(--text-muted)">25 Nov</span></span>
+          <span class="mono" style="color:var(--status-success)">+310 pips</span>
+          <span class="mono" style="color:var(--status-success);font-weight:700">+1,550,000</span>
+        </div>
+      </div>
+      <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--text-muted)">KES rates above USD/EUR/GBP → positive swap points → KES costs more in the forward market → bank earns carry on all three swaps</span>
+        <span style="font-size:12px;font-weight:700;color:var(--status-success);font-family:var(--font-mono)">Total implied carry: +KES 10,880,000</span>
+      </div>
+    </div>
+
+    <!-- ── TAB 4: Revaluation P&L ─────────────────────────────── -->
+    <div class="panel card" id="tab-pnl" style="border-top-left-radius:0;border-top-right-radius:0;border-top:none">
+      <div class="card-header">
+        <div><div class="card-title">EOD FX Revaluation P&amp;L — 25 Aug 2026</div>
+          <div class="card-subtitle">All FCY positions restated at CBK closing mid-rates · FR-11.3 · Auto-posted to GL</div></div>
+        <span class="badge badge-success">+KES 1,821,500 Net</span>
+      </div>
+      <div>
+        <div class="pnl-row" style="background:var(--surface-bg)"><span class="pk" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px">USD Positions</span><span></span></div>
+        <div class="pnl-row sub"><span class="pk">FX Spot (long USD 2.5M)</span><span class="pv" style="color:var(--status-success)">+323,500</span></div>
+        <div class="pnl-row sub"><span class="pk">FX Forward far legs (USD 32M)</span><span class="pv" style="color:var(--status-success)">+2,144,000</span></div>
+        <div class="pnl-row sub"><span class="pk">USD Nostro balances (+USD 12.85M)</span><span class="pv" style="color:var(--status-success)">+297,500</span></div>
+        <div class="pnl-row sub"><span class="pk">USD Bond positions (+USD 8.2M)</span><span class="pv" style="color:var(--status-success)">+82,000</span></div>
+        <div class="pnl-row" style="background:var(--surface-bg)"><span class="pk" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px">EUR Positions</span><span></span></div>
+        <div class="pnl-row sub"><span class="pk">FX Forward far legs (EUR 1.0M)</span><span class="pv" style="color:var(--status-danger)">−57,500</span></div>
+        <div class="pnl-row sub"><span class="pk">EUR Nostro balances (EUR 300K)</span><span class="pv" style="color:var(--status-danger)">−17,250</span></div>
+        <div class="pnl-row" style="background:var(--surface-bg)"><span class="pk" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px">GBP / ZAR / Other</span><span></span></div>
+        <div class="pnl-row sub"><span class="pk">GBP positions (short, net gain)</span><span class="pv" style="color:var(--status-success)">+109,750</span></div>
+        <div class="pnl-row sub"><span class="pk">ZAR positions</span><span class="pv" style="color:var(--status-danger)">−98,000</span></div>
+        <div class="pnl-row sub"><span class="pk">TZS + UGX positions</span><span class="pv" style="color:var(--status-success)">+37,500</span></div>
+        <div class="pnl-row total"><span class="pk">Net Revaluation P&amp;L</span><span class="pv" style="color:var(--status-success);font-size:14px">+1,821,500</span></div>
+      </div>
+      <div class="card-footer">
+        <div style="font-size:11px;color:var(--text-muted)">Accounting entries auto-generated by rules engine · Dr/Cr Revaluation Account per cross-currency maintenance config · Batch posted to CBS GL. HFT positions → P&amp;L · AFS/Banking book → OCI (per IFRS 9).</div>
+      </div>
+    </div>
+
+    <!-- ── TAB 5: Breach Log ──────────────────────────────────── -->
+    <div class="panel card" id="tab-breach" style="border-top-left-radius:0;border-top-right-radius:0;border-top:none">
+      <div class="card-header">
+        <div><div class="card-title">NOP Breach Lifecycle — Active &amp; Recent</div>
+          <div class="card-subtitle">Full breach trail retained for 7 years (immutable) · FR-06 · FR-22</div></div>
+        <span class="badge badge-danger">2 Active</span>
+      </div>
+      <div style="padding:var(--space-4)">
+        <!-- ZAR Breach -->
+        <div style="background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-3)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:700;color:var(--status-danger)">ZAR — ACTIVE BREACH (Passive) · Limit 99%</span>
+            <span class="badge badge-danger">NOTIFIED</span>
+          </div>
+          <div class="breach-step"><div class="bst-dot" style="background:var(--status-success)">✓</div><div class="bst-body"><div class="bt">DETECTED — 10:38:22 EAT</div><div class="bd">ZAR NOP reached 99% (24.7M / 25.0M limit) during FX revaluation run. Market rate move: ZAR/KES rose +0.051.</div><div class="bs">Type: PASSIVE · Rate movement · Not caused by a new deal</div></div></div>
+          <div class="breach-step"><div class="bst-dot" style="background:var(--status-success)">✓</div><div class="bst-body"><div class="bt">NOTIFIED — 10:38:27 EAT</div><div class="bd">Middle Office (Kevin Omondi) and Treasurer (Mike Agola) notified. Dashboard badge incremented. NOP daily return flagged.</div></div></div>
+          <div class="breach-step"><div class="bst-dot" style="background:var(--status-warning)">⋯</div><div class="bst-body"><div class="bt" style="color:var(--status-warning)">AWAITING ACKNOWLEDGEMENT — 4h SLA (expires 14:38 EAT)</div><div class="bd">Middle Office must acknowledge with written justification before SLA. Unacknowledged breaches auto-escalate to Treasurer.</div></div></div>
+        </div>
+        <!-- EUR Warning -->
+        <div style="background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:700;color:var(--status-warning)">EUR — WARNING (Active) · Limit 84%</span>
+            <span class="badge badge-warning">ACKNOWLEDGED</span>
+          </div>
+          <div class="breach-step"><div class="bst-dot" style="background:var(--status-success)">✓</div><div class="bst-body"><div class="bt">DETECTED — 09:22:10 EAT</div><div class="bd">EUR NOP crossed 80% warning threshold after DEAL-00286 (FX Fwd EUR 1M) was authorised.</div><div class="bs">Type: ACTIVE · Triggered by DEAL-00286</div></div></div>
+          <div class="breach-step"><div class="bst-dot" style="background:var(--status-success)">✓</div><div class="bst-body"><div class="bt">ACKNOWLEDGED — 09:26:45 EAT</div><div class="bd">Kevin Omondi (MO): "Passive approach to limit — EUR position required for client hedging mandate. Monitoring continuously." Approved by Treasurer 09:31.</div></div></div>
+          <div class="breach-step"><div class="bst-dot" style="background:var(--status-warning)">⋯</div><div class="bst-body"><div class="bt" style="color:var(--status-warning)">REMEDIATION IN PROGRESS</div><div class="bd">Target: reduce EUR NOP to &lt;80% by EOD. Dealer mandate to avoid new EUR-long positions until resolved.</div></div></div>
+        </div>
+      </div>
+      <div class="card-footer"><a href="05-limits-exposure.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">View full breach register &amp; limit utilisation dashboard →</a></div>
+    </div>
+
+    <!-- ── TAB 6: NOP Return Preview ──────────────────────────── -->
+    <div class="panel card" id="tab-reg" style="border-top-left-radius:0;border-top-right-radius:0;border-top:none">
+      <div class="card-header">
+        <div><div class="card-title">CBK NOP Daily Return — 25 Aug 2026 (Preview)</div>
+          <div class="card-subtitle">Auto-populated from locked EOD NOP snapshot · FR-11.4 · Due 17:00 EAT · Submitted by Treasurer</div></div>
+        <span class="badge badge-warning">Pending EOD Lock</span>
+      </div>
+      <div>
+        <div style="display:grid;grid-template-columns:80px 1fr 80px 80px 80px 80px;gap:4px;padding:8px var(--space-4);background:var(--surface-bg);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">
+          <span>CCY</span><span>Gross Long (KES)</span><span>Gross Short</span><span>Net NOP</span><span>% Limit</span><span>Status</span>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 80px 80px 80px 80px;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center">
+          <span style="font-weight:700">USD</span><span class="mono">139,650,000</span><span class="mono">11,250,000</span><span class="mono" style="color:var(--status-success);font-weight:700">+128.4M</span><span class="mono">64.2%</span><span><span class="badge badge-success">OK</span></span>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 80px 80px 80px 80px;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center;background:var(--warning-bg)">
+          <span style="font-weight:700">EUR</span><span class="mono">42,100,000</span><span class="mono">—</span><span class="mono" style="color:var(--status-warning);font-weight:700">+42.1M</span><span class="mono" style="color:var(--status-warning);font-weight:700">84.2%</span><span><span class="badge badge-warning">WARN</span></span>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 80px 80px 80px 80px;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center">
+          <span style="font-weight:700">GBP</span><span class="mono">—</span><span class="mono">8,300,000</span><span class="mono" style="color:#2563EB;font-weight:700">−8.3M</span><span class="mono">27.7%</span><span><span class="badge badge-success">OK</span></span>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 80px 80px 80px 80px;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center;background:var(--danger-bg)">
+          <span style="font-weight:700">ZAR</span><span class="mono">24,700,000</span><span class="mono">—</span><span class="mono" style="color:var(--status-danger);font-weight:700">+24.7M</span><span class="mono" style="color:var(--status-danger);font-weight:700">98.8%</span><span><span class="badge badge-danger">NEAR</span></span>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 80px 80px 80px 80px;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center">
+          <span style="font-weight:700">TZS</span><span class="mono">15,000,000</span><span class="mono">—</span><span class="mono" style="color:#0891B2;font-weight:700">+15.0M</span><span class="mono">37.5%</span><span><span class="badge badge-success">OK</span></span>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 80px 80px 80px 80px;gap:4px;padding:9px var(--space-4);border-bottom:1px solid var(--surface-divider);font-size:12px;align-items:center">
+          <span style="font-weight:700">UGX</span><span class="mono">6,200,000</span><span class="mono">—</span><span class="mono" style="color:#7C3AED;font-weight:700">+6.2M</span><span class="mono">31.0%</span><span><span class="badge badge-success">OK</span></span>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 80px 80px 80px 80px;gap:4px;padding:9px var(--space-4);background:rgba(13,115,119,.04);font-size:12px;align-items:center">
+          <span style="font-weight:700">AGGREGATE</span><span class="mono" style="font-weight:700">All currencies</span><span></span><span class="mono" style="color:var(--status-warning);font-weight:700">725M</span><span class="mono" style="color:var(--status-warning);font-weight:700">72.5%</span><span><span class="badge badge-warning">WARN</span></span>
+        </div>
+      </div>
+      <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--text-muted)">Return will be locked after EOD NOP snapshot. Once locked, the snapshot is immutable. Submission deadline: 17:00 EAT.</span>
+        <button class="btn btn-primary btn-sm" onclick="alert('Opening CBK NOP Return submission workflow (FR-11.4)…')">Submit to CBK</button>
+      </div>
+    </div>
+  </div><!-- /left column -->
+
+  <!-- RIGHT COLUMN ─────────────────────────────────────────── -->
+  <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+
+    <!-- 5-day NOP History -->
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">5-Day USD NOP History</div><div class="card-subtitle">EOD locked snapshots (immutable)</div></div></div>
+      <div class="card-body" style="padding-bottom:var(--space-2)">
+        <div class="hist-wrap">
+          <div class="hist-col"><div class="hbar" style="height:58%;background:#2563EB;opacity:.6"></div><div class="hlbl">21 Aug<br/><span style="font-weight:700">+118M</span></div></div>
+          <div class="hist-col"><div class="hbar" style="height:62%;background:#2563EB;opacity:.7"></div><div class="hlbl">22 Aug<br/><span style="font-weight:700">+122M</span></div></div>
+          <div class="hist-col"><div class="hbar" style="height:55%;background:#2563EB;opacity:.7"></div><div class="hlbl">23 Aug<br/><span style="font-weight:700">+115M</span></div></div>
+          <div class="hist-col"><div class="hbar" style="height:60%;background:var(--status-success);opacity:.8"></div><div class="hlbl">24 Aug<br/><span style="font-weight:700">+121M</span></div></div>
+          <div class="hist-col"><div class="hbar" style="height:64%;background:var(--brand-primary)"></div><div class="hlbl" style="color:var(--brand-primary);font-weight:700">Today★<br/>+128M</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--surface-divider)">
+          <span>O/N Limit</span><span style="font-weight:700;font-family:var(--font-mono)">200M KES</span>
+        </div>
+        <div class="util-bar-track" style="margin-top:4px"><div class="util-bar-fill" style="width:64%"></div></div>
+      </div>
+    </div>
+
+    <!-- Live FX Rates -->
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Live Mid Rates</div><div class="card-subtitle">Source: Reuters · 10:42 EAT</div></div>
+        <span class="badge badge-success">Live</span>
+      </div>
+      <div>
+        <div style="display:grid;grid-template-columns:56px 1fr 1fr 1fr 60px;gap:4px;padding:7px var(--space-4);background:var(--surface-bg);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">
+          <span>Pair</span><span>Bid</span><span>Mid</span><span>Ask</span><span>Δ</span>
+        </div>
+        <div class="rate-pair"><span class="rp-c">USD/KES</span><span class="rp-b">129.38</span><span class="rp-m">129.45</span><span class="rp-a">129.52</span><span class="rp-d up">▲+0.23</span></div>
+        <div class="rate-pair"><span class="rp-c">EUR/KES</span><span class="rp-b">139.95</span><span class="rp-m">140.12</span><span class="rp-a">140.29</span><span class="rp-d down">▼−0.41</span></div>
+        <div class="rate-pair"><span class="rp-c">GBP/KES</span><span class="rp-b">163.58</span><span class="rp-m">163.78</span><span class="rp-a">163.98</span><span class="rp-d up">▲+0.67</span></div>
+        <div class="rate-pair"><span class="rp-c">ZAR/KES</span><span class="rp-b">6.998</span><span class="rp-m">7.023</span><span class="rp-a">7.048</span><span class="rp-d down">▼−0.051</span></div>
+        <div class="rate-pair"><span class="rp-c">TZS/KES</span><span class="rp-b">0.0505</span><span class="rp-m">0.0507</span><span class="rp-a">0.0509</span><span class="rp-d down">▼−0.0002</span></div>
+        <div class="rate-pair"><span class="rp-c">UGX/KES</span><span class="rp-b">0.0342</span><span class="rp-m">0.0344</span><span class="rp-a">0.0346</span><span class="rp-d up">▲+0.0001</span></div>
+      </div>
+      <div class="card-footer"><a href="24-market-data.html" style="font-size:11px;font-weight:600;color:var(--brand-primary)">Open Market Data screen →</a></div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+      <div class="card-header"><div class="card-title">Quick Actions</div></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+        <a href="03-deal-capture.html" class="btn btn-primary" style="justify-content:center">+ Capture New FX Deal</a>
+        <a href="21-treasury-sales.html" class="btn btn-outline" style="justify-content:center">Treasury Sales Quote</a>
+        <a href="05-limits-exposure.html" class="btn btn-outline" style="justify-content:center">Limits &amp; Exposure</a>
+        <a href="23-middle-office.html" class="btn btn-outline" style="justify-content:center">Run Revaluation (MO)</a>
+        <button class="btn btn-outline" onclick="alert('What-if NOP simulator — entering a USD 5M BUY would take NOP to 66.7%, within limits.')" style="justify-content:center">What-If NOP Simulator</button>
+      </div>
+    </div>
+  </div><!-- /right column -->
+</div><!-- /main grid -->
+</div><!-- /page-content -->
+</div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<script>
+function switchTab(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+var ccyData = {
+  USD: { title:'USD — Net Open Position Source Breakdown', badge:'+128.4M LONG', badgeCls:'badge-success', rows:[
+    ['① FX Spot Deals (settled + authorised, open)','+78,500,000','success'],
+    ['② FX Forward Far Legs (outstanding)','+ 32,000,000','success'],
+    ['③ FX Swap Far Legs (linked to open near legs)','+8,250,000','success'],
+    ['④ USD Nostro Balances (Citi N.A. NY + JPMorgan NY)','+12,847,500','success'],
+    ['⑤ FCY Bond Positions (USD-denominated)','+8,200,000','success'],
+    ['⑥ Accrued Income Receivable (USD)','+852,500','success'],
+    ['⑦ FCY Liabilities (USD borrowings)','-11,250,000','danger'],
+    ['Net USD NOP','+128,400,000','total'],
+    ['Overnight limit','200,000,000',''],['Utilisation','64.2% ✓','success'],['Headroom','71,600,000','success']
+  ]},
+  EUR: { title:'EUR — Net Open Position Source Breakdown', badge:'⚠ +42.1M LONG (84%)', badgeCls:'badge-warning', rows:[
+    ['① FX Forward Far Legs (EUR 1M outstanding)','+30,000,000','success'],
+    ['② EUR Nostro Balances (Deutsche Bank Frankfurt)','+8,200,000','success'],
+    ['③ FX Spot Deals (open)','+4,350,000','success'],
+    ['④ Accrued Income Receivable (EUR)','-450,000','danger'],
+    ['Net EUR NOP','+42,100,000','total'],
+    ['Overnight limit','50,000,000',''],['Utilisation','84.2% ⚠','warning'],['Headroom','7,900,000','warning']
+  ]},
+  GBP: { title:'GBP — Net Open Position Source Breakdown', badge:'-8.3M SHORT (28%)', badgeCls:'badge-info', rows:[
+    ['① GBP Borrowings (FCY liability)','-12,500,000','danger'],
+    ['② GBP Nostro Balances (Barclays London)','+2,800,000','success'],
+    ['③ FCY Bond (GBP-denominated)','+1,400,000','success'],
+    ['Net GBP NOP','-8,300,000','total'],
+    ['Overnight limit','30,000,000',''],['Utilisation','27.7% ✓','success'],['Headroom (short side)','21,700,000','success']
+  ]},
+  ZAR: { title:'ZAR — Net Open Position ⚑ NEAR HARD LIMIT', badge:'⚑ +24.7M (99%)', badgeCls:'badge-danger', rows:[
+    ['① ZAR Nostro Balances (ABSA ZA)','+21,500,000','danger'],
+    ['② FX Spot Deals (open)','+2,800,000','danger'],
+    ['③ FCY Bond Positions (ZAR)','+400,000','danger'],
+    ['Net ZAR NOP','+24,700,000','total'],
+    ['Overnight limit (HARD)','25,000,000',''],['Utilisation','98.8% ⚑','danger'],['Headroom to limit','300,000','danger']
+  ]},
+  TZS: { title:'TZS — Net Open Position Source Breakdown', badge:'+15.0M LONG (38%)', badgeCls:'badge-success', rows:[
+    ['① TZS Nostro (CRDB Bank Dar)','+9,800,000','success'],
+    ['② FX Spot Deals (open)','+3,900,000','success'],
+    ['③ Accrued Income (TZS)','+1,300,000','success'],
+    ['Net TZS NOP','+15,000,000','total'],
+    ['Overnight limit','40,000,000',''],['Utilisation','37.5% ✓','success'],['Headroom','25,000,000','success']
+  ]},
+  UGX: { title:'UGX — Net Open Position Source Breakdown', badge:'+6.2M LONG (31%)', badgeCls:'badge-success', rows:[
+    ['① UGX Nostro (Stanbic UG Kampala)','+5,100,000','success'],
+    ['② FX Spot Deals (open)','+1,100,000','success'],
+    ['Net UGX NOP','+6,200,000','total'],
+    ['Overnight limit','20,000,000',''],['Utilisation','31.0% ✓','success'],['Headroom','13,800,000','success']
+  ]}
+};
+function showCcy(c) {
+  document.querySelectorAll('.nop-tile').forEach(t => t.classList.remove('sel'));
+  event.currentTarget.classList.add('sel');
+  // switch to src tab
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-src').classList.add('active');
+  document.querySelector('.tab-item').classList.add('active');
+  var d = ccyData[c];
+  document.getElementById('srcTitle').textContent = d.title;
+  var badge = document.getElementById('srcBadge');
+  badge.textContent = d.badge;
+  badge.className = 'badge ' + d.badgeCls;
+  var clr = {'success':'var(--status-success)','danger':'var(--status-danger)','warning':'var(--status-warning)','total':'inherit','':`var(--text-primary)`};
+  var html = '';
+  d.rows.forEach(function(r) {
+    var totalCls = r[2]==='total' ? ' total-row' : '';
+    html += '<div class="src-row'+totalCls+'"><span class="sk'+(r[2]==='total'?'" style="font-weight:700;color:var(--text-primary)':'')+'">'
+      + r[0] + '</span><span class="sv" style="color:'+clr[r[2]]+'">'+r[1]+'</span></div>';
+  });
+  document.getElementById('srcBody').innerHTML = html;
+}
+</script>
+</body>
 </html>

@@ -14,6 +14,7 @@
         { href: '03-deal-capture.html',   icon: 'plus',        label: 'Deal Capture',       badge: '3' },
         { href: '04-cash-position.html',  icon: 'activity',    label: 'Cash Position' },
         { href: '20-fx-nop-monitor.html', icon: 'globe',       label: 'FX / NOP Monitor' },
+        { href: '32-money-market.html',   icon: 'briefcase',   label: 'Money Market & FI',  badge: '3', badgeWarn: true },
         { href: '05-limits-exposure.html',icon: 'shield',      label: 'Limits & Exposure',  badge: '2', badgeWarn: true },
       ]
     },
@@ -101,7 +102,8 @@
     'shield-check': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>',
     'monitor':      '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
     'settings':     '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>',
-    'layout':       '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>'
+    'layout':       '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+    'briefcase':    '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>'
   };
 
   function svgIcon(name) {

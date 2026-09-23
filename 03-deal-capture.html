@@ -461,118 +461,84 @@
 
                 <!-- FX Forward -->
                 <div id="td-fwd" style="display:none">
+                  <div class="prod-info"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg><span><strong>FX Forward</strong> — Pre-agreed exchange rate for future settlement (3 days to 1 year). Forward rate = Spot + Forward Points. Forward points are <strong>system-derived</strong> from the KES/FCY yield curve differential (FR-11.5). Enters NOP immediately as a forward exposure. Pre-delivery and rollover available post-capture.</span></div>
                   <div class="form-grid-3">
                     <div class="sect-lbl">Currency &amp; Direction</div>
-                    <div class="form-group"><label class="form-label">Buy Currency <span
-                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
-                        <option>KES</option>
-                        <option>USD</option>
-                        <option>EUR</option>
-                      </select></div>
-                    <div class="form-group"><label class="form-label">Sell Currency <span
-                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
-                        <option>EUR</option>
-                        <option>USD</option>
-                        <option>KES</option>
-                      </select></div>
-                    <div class="form-group"><label class="form-label">Direction <span
-                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
-                        <option>BUY</option>
-                        <option>SELL</option>
-                      </select></div>
+                    <div class="form-group"><label class="form-label">Buy Currency <span style="color:var(--brand-primary)">*</span></label><select class="form-control"><option>KES</option><option>USD</option><option>EUR</option></select></div>
+                    <div class="form-group"><label class="form-label">Sell Currency <span style="color:var(--brand-primary)">*</span></label><select class="form-control"><option>EUR</option><option>USD</option><option>KES</option></select></div>
+                    <div class="form-group"><label class="form-label">Direction <span style="color:var(--brand-primary)">*</span></label><select class="form-control"><option>BUY</option><option>SELL</option></select></div>
                     <div class="sect-lbl">Amounts, Tenor &amp; Dates</div>
-                    <div class="form-group"><label class="form-label">Notional <span
-                          style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control"
-                        value="1,000,000"></div>
-                    <div class="form-group"><label class="form-label">Trade Date <span
-                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
-                        value="2026-08-25"></div>
-                    <div class="form-group"><label class="form-label">Value Date <span
-                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
-                        value="2026-11-25"><span class="form-hint">Max 1-year forward</span></div>
-                    <div class="form-group"><label class="form-label">Tenor (days)</label><input type="text"
-                        class="form-control" value="92" readonly style="background:#F8FAFC"></div>
+                    <div class="form-group"><label class="form-label">Notional (base CCY) <span style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control" value="1,000,000" oninput="recalcFwd()"></div>
+                    <div class="form-group"><label class="form-label">Trade Date <span style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control" value="2026-08-25"></div>
+                    <div class="form-group"><label class="form-label">Value Date <span style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control" id="fwdValueDate" value="2026-11-25" onchange="recalcFwd()"><span class="form-hint">Max 1-year forward · Joint holiday calendars</span></div>
+                    <div class="form-group"><label class="form-label">Tenor (auto-calculated)</label><input type="text" class="form-control" id="fwdTenor" value="92 days" readonly style="background:#F8FAFC;font-weight:600"></div>
+                    <div class="sect-lbl">Forward Points (System-Derived — FR-11.5)</div>
+                    <div class="form-group"><label class="form-label">Spot Rate (live market)</label><input type="text" class="form-control" id="fwdSpot" value="140.12" readonly style="background:#F8FAFC"><span class="form-hint">EUR/KES mid-rate · Reuters 10:42 EAT</span></div>
+                    <div class="form-group"><label class="form-label">KES Interest Rate (r_base)</label><input type="text" class="form-control" value="12.75%" readonly style="background:#F8FAFC"><span class="form-hint">CBR-based yield curve · MO maintained</span></div>
+                    <div class="form-group"><label class="form-label">EUR Interest Rate (r_quote)</label><input type="text" class="form-control" value="3.45%" readonly style="background:#F8FAFC"><span class="form-hint">€STR-based · MO yield curve</span></div>
+                    <div class="form-group"><label class="form-label">Forward Points (system)</label><input type="text" class="form-control" id="fwdPoints" value="+302 pips" readonly style="background:#F8FAFC;color:var(--status-success);font-weight:700"><span class="form-hint">= 140.12 × (12.75−3.45)/100 × (92/360)</span></div>
+                    <div class="form-group"><label class="form-label">All-In Forward Rate</label><input type="text" class="form-control" id="fwdAllIn" value="143.14" readonly style="background:#F8FAFC;font-weight:800;color:var(--brand-teal);font-size:15px"><span class="form-hint">Spot + Forward Points · Locked at capture</span></div>
+                    <div class="form-group"><label class="form-label">Settlement Amount (KES)</label><input type="text" class="form-control" id="fwdSettlement" value="143,140,000" readonly style="background:#F8FAFC;font-weight:700;color:var(--brand-primary)"><span class="form-hint">Notional × Forward Rate</span></div>
+                    <div class="sect-lbl">Premium (Optional — for option-enhanced forwards)</div>
+                    <div class="form-group"><label class="form-label">Premium Amount</label><input type="text" class="form-control" placeholder="Leave blank if not applicable"></div>
+                    <div class="form-group"><label class="form-label">Premium Account</label><select class="form-control"><option>— None —</option><option>OFFICE-PREM-001 · KES Premium Account</option></select></div>
                   </div>
                 </div>
 
                 <!-- FX Swap -->
                 <div id="td-swap" style="display:none">
+                  <div class="prod-info"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg><span><strong>FX Swap</strong> — Two linked legs (Near = Spot + Far = Forward) captured as ONE deal with a shared <code>swap_group_id</code>. Both legs are independently settled, confirmed and reconciled. Swap points = implied interest differential. Near leg settles T+2; far leg settles at maturity. Net NOP impact = forward leg only (near and far offset).</span></div>
                   <div class="form-grid-3">
                     <div class="sect-lbl">Swap Structure</div>
-                    <div class="form-group"><label class="form-label">Currency Pair <span
-                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
-                        <option>GBP/KES</option>
-                        <option>USD/KES</option>
-                        <option>EUR/KES</option>
-                      </select></div>
+                    <div class="form-group"><label class="form-label">Currency Pair <span style="color:var(--brand-primary)">*</span></label><select class="form-control" id="swapPair" onchange="recalcSwap()"><option>GBP/KES</option><option>USD/KES</option><option>EUR/KES</option></select></div>
+                    <div class="form-group"><label class="form-label">Base Direction (Near) <span style="color:var(--brand-primary)">*</span></label><select class="form-control" id="swapDir" onchange="recalcSwap()"><option>BUY near / SELL far</option><option>SELL near / BUY far</option></select></div>
+                    <div class="form-group"><label class="form-label">Notional (same both legs)</label><input type="text" class="form-control" id="swapNotional" value="500,000" oninput="recalcSwap()"></div>
                   </div>
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-top:var(--space-3)">
-                    <div>
-                      <div class="sect-lbl" style="border:none;margin-bottom:8px">Near Leg (Spot / Buy)</div>
-                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Notional
-                          <span style="color:var(--brand-primary)">*</span></label><input type="text"
-                          class="form-control" value="500,000"></div>
-                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Value Date
-                          <span style="color:var(--brand-primary)">*</span></label><input type="date"
-                          class="form-control" value="2026-08-27"></div>
+                    <div style="background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md);padding:12px 14px">
+                      <div style="font-size:10px;font-weight:800;color:var(--status-success);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Near Leg — Spot Settlement (T+2)</div>
+                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Notional</label><input type="text" class="form-control" id="nearNotional" value="500,000" readonly style="background:#fff"></div>
+                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Spot Rate (live)</label><input type="text" class="form-control" id="nearRate" value="163.78" readonly style="background:#fff;font-weight:700;color:var(--brand-teal)"></div>
+                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Settlement (KES)</label><input type="text" class="form-control" id="nearKES" value="81,890,000" readonly style="background:#fff;font-weight:700"></div>
+                      <div class="form-group" style="margin-bottom:0"><label class="form-label">Value Date</label><input type="date" class="form-control" value="2026-08-27"></div>
                     </div>
-                    <div>
-                      <div class="sect-lbl" style="border:none;margin-bottom:8px">Far Leg (Forward / Sell)</div>
-                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Notional
-                          <span style="color:var(--brand-primary)">*</span></label><input type="text"
-                          class="form-control" value="500,000"></div>
-                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Value Date
-                          <span style="color:var(--brand-primary)">*</span></label><input type="date"
-                          class="form-control" value="2026-11-27"></div>
+                    <div style="background:var(--info-bg);border:1px solid var(--info-border);border-radius:var(--radius-md);padding:12px 14px">
+                      <div style="font-size:10px;font-weight:800;color:var(--status-info);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Far Leg — Forward Settlement (Maturity)</div>
+                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Notional (same as near)</label><input type="text" class="form-control" id="farNotional" value="500,000" readonly style="background:#fff"></div>
+                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Far Rate (spot + swap points)</label><input type="text" class="form-control" id="farRate" value="166.88" readonly style="background:#fff;font-weight:700;color:var(--brand-teal)"></div>
+                      <div class="form-group" style="margin-bottom:var(--space-2)"><label class="form-label">Settlement (KES)</label><input type="text" class="form-control" id="farKES" value="83,440,000" readonly style="background:#fff;font-weight:700"></div>
+                      <div class="form-group" style="margin-bottom:0"><label class="form-label">Far Leg Value Date</label><input type="date" class="form-control" id="farDate" value="2026-11-27"></div>
                     </div>
                   </div>
-                  <div class="alert alert-info" style="margin-top:var(--space-3)"><svg fill="none" stroke="currentColor"
-                      stroke-width="2" viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="8" x2="12" y2="12" />
-                    </svg>An FX Swap creates two linked but independently limit-checked legs. Both must pass all limit
-                    checks before the deal can be authorised.</div>
+                  <div style="background:var(--surface-bg);border:1px solid var(--surface-border);border-radius:var(--radius-md);padding:12px 14px;margin-top:var(--space-3);display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3)">
+                    <div><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Duration</div><input type="text" class="form-control" id="swapDuration" style="margin-top:4px;font-weight:700" value="92 days" oninput="recalcSwap()"></div>
+                    <div><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">r_KES (base)</div><input type="text" class="form-control" style="margin-top:4px;font-weight:700;color:var(--brand-teal)" value="12.75%" readonly style="background:#F8FAFC"></div>
+                    <div><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">r_GBP (quote)</div><input type="text" class="form-control" style="margin-top:4px;font-weight:700;color:var(--brand-teal)" value="5.20%" readonly style="background:#F8FAFC"></div>
+                    <div><div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Swap Points</div><input type="text" class="form-control" id="swapPts" style="margin-top:4px;font-weight:800;color:var(--status-success)" value="+310 pips" readonly></div>
+                  </div>
+                  <div class="alert alert-info" style="margin-top:var(--space-3)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>Formula: Swap Points = Spot × (r_KES − r_GBP)/100 × (days/360) = 163.78 × (12.75−5.20)/100 × (92/360) = <strong>+310 pips</strong>. Far Rate = 163.78 + 3.10 = <strong>166.88</strong>. Both legs require independent limit checks &amp; four-eyes authorisation.</div>
                 </div>
 
                 <!-- Fixed Deposit -->
                 <div id="td-fd" style="display:none">
+                  <div class="prod-info"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg><span><strong>Fixed Deposit</strong> — PLACEMENT = bank lends funds to counterparty. DEPOSIT = bank borrows from counterparty. Interest = Principal × Rate / 365 × Tenor. Daily accrual posted at EOD. Pre-maturity withdrawal requires Treasurer approval; break cost = accrued interest forfeited. Rollover at maturity is a dealer decision.</span></div>
                   <div class="form-grid-3">
                     <div class="sect-lbl">Principal &amp; Direction</div>
-                    <div class="form-group"><label class="form-label">Direction <span
-                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
-                        <option>PLACEMENT (Lend)</option>
-                        <option>DEPOSIT (Borrow)</option>
-                      </select></div>
-                    <div class="form-group"><label class="form-label">Currency <span
-                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
-                        <option>KES</option>
-                        <option>USD</option>
-                      </select></div>
-                    <div class="form-group"><label class="form-label">Principal Amount <span
-                          style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control"
-                        value="50,000,000"></div>
+                    <div class="form-group"><label class="form-label">Direction <span style="color:var(--brand-primary)">*</span></label><select class="form-control"><option>PLACEMENT (Lend to counterparty)</option><option>DEPOSIT (Borrow from counterparty)</option></select></div>
+                    <div class="form-group"><label class="form-label">Currency <span style="color:var(--brand-primary)">*</span></label><select class="form-control"><option>KES</option><option>USD</option><option>EUR</option></select></div>
+                    <div class="form-group"><label class="form-label">Principal Amount <span style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control" id="fdPrincipal" value="50,000,000" oninput="recalcFD()"></div>
                     <div class="sect-lbl">Tenor &amp; Dates</div>
-                    <div class="form-group"><label class="form-label">Trade Date <span
-                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
-                        value="2026-08-25"></div>
-                    <div class="form-group"><label class="form-label">Tenor</label><select class="form-control">
-                        <option>ON (1 day)</option>
-                        <option>1W</option>
-                        <option>1M</option>
-                        <option selected>91 days</option>
-                        <option>182 days</option>
-                        <option>364 days</option>
-                        <option>Custom</option>
-                      </select></div>
-                    <div class="form-group"><label class="form-label">Maturity Date</label><input type="date"
-                        class="form-control" value="2026-11-24" readonly style="background:#F8FAFC;font-weight:700">
-                    </div>
-                    <div class="form-group"><label class="form-label">Day Count</label><select class="form-control">
-                        <option>Actual/365 (Fixed)</option>
-                        <option>Actual/360</option>
-                        <option>30/360</option>
-                      </select></div>
+                    <div class="form-group"><label class="form-label">Trade Date <span style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control" value="2026-08-25"></div>
+                    <div class="form-group"><label class="form-label">Tenor <span style="color:var(--brand-primary)">*</span></label><select class="form-control" id="fdTenor" onchange="recalcFD()"><option value="1">ON (1 day)</option><option value="7">1W (7 days)</option><option value="30">1M (30 days)</option><option value="91" selected>91 days</option><option value="182">182 days</option><option value="364">364 days</option><option value="custom">Custom</option></select></div>
+                    <div class="form-group"><label class="form-label">Maturity Date (auto-derived)</label><input type="date" class="form-control" id="fdMaturity" value="2026-11-24" readonly style="background:#F8FAFC;font-weight:700"></div>
+                    <div class="sect-lbl">Day Count &amp; Calculations</div>
+                    <div class="form-group"><label class="form-label">Day Count Convention</label><select class="form-control" id="fdDayCount" onchange="recalcFD()"><option value="365">Actual/365 (Fixed) — East Africa standard</option><option value="360">Actual/360 — Money market</option><option value="30360">30/360</option></select><span class="form-hint">Actual/365 is the KES market standard</span></div>
+                    <div class="form-group"><label class="form-label">Daily Accrual (system preview)</label><input type="text" class="form-control" id="fdDailyAccrual" value="KES 19,863 / day" readonly style="background:#F8FAFC;color:var(--brand-teal);font-weight:700"><span class="form-hint">Auto-posted to GL at each EOD batch</span></div>
+                    <div class="form-group"><label class="form-label">Total Interest (at maturity)</label><input type="text" class="form-control" id="fdInterest" value="KES 1,808,219" readonly style="background:#F8FAFC;color:var(--status-success);font-weight:700"></div>
+                    <div class="form-group"><label class="form-label">Total Settlement Amount</label><input type="text" class="form-control" id="fdTotal" value="KES 51,808,219" readonly style="background:#F8FAFC;font-weight:800;color:var(--brand-primary);font-size:14px"></div>
+                    <div class="sect-lbl">Pre-Maturity &amp; Rollover Rules</div>
                   </div>
+                  <div class="alert alert-warning" style="margin-top:0"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><div><strong>Pre-Maturity Withdrawal:</strong> Requires Treasurer approval (system enforced). Break cost = accrued interest to date forfeited. Minimum residual = 25% of original principal.<br/><strong>Partial Withdrawal:</strong> Permitted subject to min residual rule. Remaining balance continues to accrue at original rate.<br/><strong>Rollover:</strong> Dealer decision at maturity — system alerts when proceeds are idle for 2+ business days.</div></div>
                 </div>
 
                 <!-- Repo -->
@@ -609,31 +575,23 @@
 
                 <!-- T-Bill -->
                 <div id="td-tbill" style="display:none">
+                  <div class="prod-info"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg><span><strong>T-Bills</strong> trade at a <em>discount</em> — you pay less than face value and receive the face value at maturity. The difference is your interest (no periodic coupon). <strong>T-Bonds</strong> pay semi-annual coupons. Book classification determines accounting: <strong>HTM</strong> = Amortised Cost (no MTM), <strong>AFS</strong> = Fair Value → OCI, <strong>HFT</strong> = Fair Value → P&L. Transferring out of HTM before maturity requires IFRS 9 justification and is highly restricted.</span></div>
                   <div class="form-grid-3">
                     <div class="sect-lbl">Instrument Details</div>
-                    <div class="form-group"><label class="form-label">Instrument Type <span
-                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
-                        <option>T-Bill 91-Day</option>
-                        <option>T-Bill 182-Day</option>
-                        <option>T-Bill 364-Day</option>
-                        <option>T-Bond (specify)</option>
-                      </select></div>
-                    <div class="form-group"><label class="form-label">Book Classification <span
-                          style="color:var(--brand-primary)">*</span></label><select class="form-control">
-                        <option>HTM (Hold-to-Maturity)</option>
-                        <option>AFS (Available-for-Sale)</option>
-                        <option>HFT (Trading)</option>
-                      </select></div>
+                    <div class="form-group"><label class="form-label">Instrument Type <span style="color:var(--brand-primary)">*</span></label><select class="form-control" id="tbType" onchange="recalcTBill()"><option value="91">T-Bill 91-Day (discount)</option><option value="182">T-Bill 182-Day (discount)</option><option value="364">T-Bill 364-Day (discount)</option><option value="bond5">T-Bond 5-Year (semi-annual coupon)</option><option value="bond10">T-Bond 10-Year (semi-annual coupon)</option></select></div>
+                    <div class="form-group"><label class="form-label">Book Classification <span style="color:var(--brand-primary)">*</span></label><select class="form-control" id="tbBook"><option>HTM — Hold-to-Maturity (Amortised Cost)</option><option>AFS — Available-for-Sale (FV → OCI)</option><option>HFT — Held-for-Trading (FV → P&L)</option></select><span class="form-hint">HTM = no MTM. AFS/HFT = price changes affect OCI/P&L</span></div>
+                    <div class="form-group"><label class="form-label">Market (primary/secondary)</label><select class="form-control"><option>Primary Market (CBK Auction)</option><option>Secondary Market (NSE / OTC)</option></select></div>
                     <div class="sect-lbl">Amounts &amp; Dates</div>
-                    <div class="form-group"><label class="form-label">Face Value <span
-                          style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control"
-                        value="500,000,000"></div>
-                    <div class="form-group"><label class="form-label">Issue / Auction Date <span
-                          style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control"
-                        value="2026-08-25"></div>
-                    <div class="form-group"><label class="form-label">Maturity Date</label><input type="date"
-                        class="form-control" value="2026-11-24" readonly style="background:#F8FAFC;font-weight:700">
-                    </div>
+                    <div class="form-group"><label class="form-label">Face Value <span style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control" id="tbFace" value="500,000,000" oninput="recalcTBill()"></div>
+                    <div class="form-group"><label class="form-label">Purchase Yield (p.a.) <span style="color:var(--brand-primary)">*</span></label><input type="text" class="form-control" id="tbYield" value="14.87" oninput="recalcTBill()"><span class="form-hint" id="tbYieldHint">Current 91-Day auction: 14.87%</span></div>
+                    <div class="form-group"><label class="form-label">Issue / Auction Date <span style="color:var(--brand-primary)">*</span></label><input type="date" class="form-control" value="2026-08-25"></div>
+                    <div class="form-group"><label class="form-label">Maturity Date (auto-derived)</label><input type="date" class="form-control" id="tbMaturity" value="2026-11-24" readonly style="background:#F8FAFC;font-weight:700"></div>
+                    <div class="sect-lbl">Purchase Price &amp; Economics (System-Derived)</div>
+                    <div class="form-group"><label class="form-label">Purchase Price (%)</label><input type="text" class="form-control" id="tbPrice" value="96.42%" readonly style="background:#F8FAFC;font-weight:700;color:var(--brand-teal)"><span class="form-hint" id="tbPriceHint">= 1 − (14.87% × 91/365). Below face = discount.</span></div>
+                    <div class="form-group"><label class="form-label">Purchase Amount (KES)</label><input type="text" class="form-control" id="tbPurchase" value="482,100,000" readonly style="background:#F8FAFC;font-weight:700"></div>
+                    <div class="form-group"><label class="form-label">Discount / Interest Earned</label><input type="text" class="form-control" id="tbDiscount" value="KES 17,900,000" readonly style="background:#F8FAFC;font-weight:700;color:var(--status-success)"><span class="form-hint">Daily accretion: KES 196,703 / day</span></div>
+                    <div class="form-group"><label class="form-label">Redemption (Face Value)</label><input type="text" class="form-control" id="tbRedemption" value="KES 500,000,000" readonly style="background:#F8FAFC;font-weight:800;color:var(--brand-primary)"></div>
+                    <div class="form-group"><label class="form-label">CBK IPS Reference</label><input type="text" class="form-control" placeholder="e.g. IPS/2026/0825/91"></div>
                   </div>
                 </div>
 
@@ -744,30 +702,49 @@
                       <span class="form-hint" id="mmHint">Market reference: 91-TB 14.87%</span>
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Day Count</label>
-                      <select class="form-control">
-                        <option>Actual/365 (Fixed)</option>
-                        <option>Actual/360</option>
+                      <label class="form-label">Day Count Convention</label>
+                      <select class="form-control" id="mmDayCount" onchange="recalcMM()">
+                        <option value="365">Actual/365 (Fixed) — KES standard</option>
+                        <option value="360">Actual/360 — USD money market</option>
+                        <option value="30360">30/360</option>
                       </select>
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Interest Amount</label>
-                      <input type="text" class="form-control" id="mmInterest" value="1,162,500" readonly
+                      <label class="form-label">Daily Accrual (preview)</label>
+                      <input type="text" class="form-control" id="mmDailyAcc" value="KES 19,863 / day" readonly
+                        style="background:#F8FAFC;color:var(--brand-teal);font-weight:700">
+                      <span class="form-hint">Auto-posted to GL at EOD · FR-16</span>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Total Interest</label>
+                      <input type="text" class="form-control" id="mmInterest" value="KES 1,808,219" readonly
                         style="background:#F8FAFC;font-weight:700;color:var(--status-success)">
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Total Settlement</label>
-                      <input type="text" class="form-control" id="mmTotal" value="51,162,500" readonly
-                        style="background:#F8FAFC;font-weight:700;color:var(--brand-primary)">
+                      <label class="form-label">Total Settlement Amount</label>
+                      <input type="text" class="form-control" id="mmTotal" value="KES 51,808,219" readonly
+                        style="background:#F8FAFC;font-weight:800;color:var(--brand-primary);font-size:14px">
                     </div>
                     <div class="sect-lbl">Settlement</div>
                     <div class="form-group">
                       <label class="form-label">Settlement Account</label>
                       <select class="form-control">
-                        <option>CBK RTGS Account</option>
+                        <option>CBK RTGS Account (KES)</option>
                         <option>KES Nostro — Internal</option>
+                        <option>USD Nostro — Citi N.A. NY</option>
                       </select>
                     </div>
+                    <div class="form-group">
+                      <label class="form-label">Interest Settlement Account</label>
+                      <select class="form-control">
+                        <option>Same as principal account</option>
+                        <option>Separate interest account</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style="background:var(--info-bg);border:1px solid var(--info-border);border-radius:var(--radius-md);padding:10px 14px;font-size:11px;color:var(--status-info);margin-top:var(--space-3);display:flex;gap:8px">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+                    <div><strong>Accrual formula:</strong> Daily Interest = Principal × Rate / Day Count Denominator. At EOD, the system posts: Dr Interest Receivable / Cr Interest Income. At maturity: Dr Settlement Account / Cr Principal + Interest Receivable. No manual journal permitted — all entries from the configured accounting rule engine (FR-16).</div>
                   </div>
                 </div>
 
@@ -1122,11 +1099,110 @@
 
     // ─── MM recalc ────────────────────────────────────────────────────────────
     function recalcMM() {
-      // simple illustrative recalc for FD: principal 50M × rate/100 × 91/365
       var rate = parseFloat(document.getElementById('mmRate').value) || 0;
-      var interest = Math.round(50000000 * (rate / 100) * (91 / 365));
-      document.getElementById('mmInterest').value = Number(interest).toLocaleString();
-      document.getElementById('mmTotal').value = Number(50000000 + interest).toLocaleString();
+      var dc = parseInt(document.getElementById('mmDayCount') ? document.getElementById('mmDayCount').value : '365') || 365;
+      var principal = 50000000;
+      var tenor = 91;
+      var daily = Math.round(principal * (rate / 100) / dc);
+      var interest = Math.round(principal * (rate / 100) * (tenor / dc));
+      if(document.getElementById('mmDailyAcc')) document.getElementById('mmDailyAcc').value = 'KES ' + daily.toLocaleString() + ' / day';
+      if(document.getElementById('mmInterest')) document.getElementById('mmInterest').value = 'KES ' + interest.toLocaleString();
+      if(document.getElementById('mmTotal'))    document.getElementById('mmTotal').value    = 'KES ' + (principal + interest).toLocaleString();
+    }
+
+    // ─── FD recalc ────────────────────────────────────────────────────────────
+    function recalcFD() {
+      var principal = parseFloat((document.getElementById('fdPrincipal') ? document.getElementById('fdPrincipal').value : '50000000').replace(/,/g,'')) || 50000000;
+      var tenor = parseInt(document.getElementById('fdTenor') ? document.getElementById('fdTenor').value : '91') || 91;
+      if (isNaN(tenor)) tenor = 91;
+      var rate = 14.50;
+      var dc = parseInt(document.getElementById('fdDayCount') ? document.getElementById('fdDayCount').value : '365') || 365;
+      var daily = Math.round(principal * (rate / 100) / dc);
+      var interest = Math.round(principal * (rate / 100) * (tenor / dc));
+      if(document.getElementById('fdDailyAccrual')) document.getElementById('fdDailyAccrual').value = 'KES ' + daily.toLocaleString() + ' / day';
+      if(document.getElementById('fdInterest')) document.getElementById('fdInterest').value = 'KES ' + interest.toLocaleString();
+      if(document.getElementById('fdTotal')) document.getElementById('fdTotal').value = 'KES ' + (principal + interest).toLocaleString();
+      // update maturity
+      var tradeDate = new Date('2026-08-25');
+      tradeDate.setDate(tradeDate.getDate() + tenor);
+      var mat = tradeDate.toISOString().split('T')[0];
+      if(document.getElementById('fdMaturity')) document.getElementById('fdMaturity').value = mat;
+    }
+
+    // ─── Forward recalc ───────────────────────────────────────────────────────
+    function recalcFwd() {
+      var spot = 140.12; var rBase = 12.75; var rQuote = 3.45;
+      var vdEl = document.getElementById('fwdValueDate');
+      var tenor = 92;
+      if (vdEl) {
+        var vd = new Date(vdEl.value); var td = new Date('2026-08-25');
+        tenor = Math.round((vd - td) / (1000*60*60*24));
+        if (isNaN(tenor) || tenor < 1) tenor = 92;
+        if(document.getElementById('fwdTenor')) document.getElementById('fwdTenor').value = tenor + ' days';
+      }
+      var fwdPts = spot * (rBase - rQuote) / 100 * (tenor / 360);
+      var allIn = spot + fwdPts;
+      var notional = 1000000;
+      if(document.getElementById('fwdPoints'))     document.getElementById('fwdPoints').value = '+' + Math.round(fwdPts * 100) / 100 + ' pips';
+      if(document.getElementById('fwdAllIn'))      document.getElementById('fwdAllIn').value = allIn.toFixed(2);
+      if(document.getElementById('fwdSettlement')) document.getElementById('fwdSettlement').value = Math.round(notional * allIn).toLocaleString();
+    }
+
+    // ─── T-Bill recalc ────────────────────────────────────────────────────────
+    function recalcTBill() {
+      var face = parseFloat((document.getElementById('tbFace') ? document.getElementById('tbFace').value : '500000000').replace(/,/g,'')) || 500000000;
+      var yield_ = parseFloat(document.getElementById('tbYield') ? document.getElementById('tbYield').value : '14.87') || 14.87;
+      var typeEl = document.getElementById('tbType');
+      var tenor = 91;
+      if (typeEl) {
+        var v = typeEl.value;
+        if (v==='182') tenor=182; else if(v==='364') tenor=364; else if(v==='bond5'||v==='bond10') tenor=v==='bond5'?1825:3650; else tenor=91;
+      }
+      var price, discount, daily;
+      if (tenor <= 364) {
+        price = 1 - (yield_ / 100 * tenor / 365);
+        discount = Math.round(face * (1 - price));
+        daily = Math.round(discount / tenor);
+        if(document.getElementById('tbPrice'))    document.getElementById('tbPrice').value = (price*100).toFixed(2) + '%';
+        if(document.getElementById('tbPurchase')) document.getElementById('tbPurchase').value = Math.round(face * price).toLocaleString();
+        if(document.getElementById('tbDiscount')) document.getElementById('tbDiscount').value = 'KES ' + discount.toLocaleString();
+        if(document.getElementById('tbRedemption')) document.getElementById('tbRedemption').value = 'KES ' + face.toLocaleString();
+        var hint = 'Daily accretion: KES ' + daily.toLocaleString() + ' / day';
+        if(document.getElementById('tbDiscount').nextElementSibling) document.getElementById('tbDiscount').nextElementSibling.textContent = hint;
+      } else {
+        var semiAnnualCoupon = Math.round(face * (yield_ / 100) / 2);
+        if(document.getElementById('tbPrice'))    document.getElementById('tbPrice').value = '100.00% (par)';
+        if(document.getElementById('tbPurchase')) document.getElementById('tbPurchase').value = face.toLocaleString();
+        if(document.getElementById('tbDiscount')) document.getElementById('tbDiscount').value = 'KES ' + semiAnnualCoupon.toLocaleString() + ' per coupon';
+        if(document.getElementById('tbRedemption')) document.getElementById('tbRedemption').value = 'KES ' + face.toLocaleString() + ' + final coupon';
+        var dailyBond = Math.round(face * (yield_/100) / 365);
+        if(document.getElementById('tbDiscount').nextElementSibling) document.getElementById('tbDiscount').nextElementSibling.textContent = 'Daily accrual: KES ' + dailyBond.toLocaleString() + ' / day';
+      }
+      // maturity
+      var td = new Date('2026-08-25'); td.setDate(td.getDate() + tenor);
+      if(document.getElementById('tbMaturity')) document.getElementById('tbMaturity').value = td.toISOString().split('T')[0];
+      // yield hint
+      var hints = {'91':'Current 91-Day auction: 14.87%','182':'Current 182-Day auction: 15.23%','364':'Current 364-Day auction: 16.10%','bond5':'Current 5Y T-Bond yield: 17.25%','bond10':'Current 10Y T-Bond yield: 17.90%'};
+      if(document.getElementById('tbYieldHint') && typeEl) document.getElementById('tbYieldHint').textContent = hints[typeEl.value] || '';
+    }
+
+    // ─── Swap recalc ──────────────────────────────────────────────────────────
+    function recalcSwap() {
+      var rates = {'GBP/KES':{spot:163.78,rq:5.20},'USD/KES':{spot:129.45,rq:5.34},'EUR/KES':{spot:140.12,rq:3.45}};
+      var pairEl = document.getElementById('swapPair');
+      var pair = pairEl ? pairEl.value : 'GBP/KES';
+      var r = rates[pair] || rates['GBP/KES'];
+      var tenor = 92; var rKES = 12.75;
+      var swapPts = r.spot * (rKES - r.rq) / 100 * (tenor / 360);
+      var farRate = r.spot + swapPts;
+      var notional = parseFloat((document.getElementById('swapNotional') ? document.getElementById('swapNotional').value : '500000').replace(/,/g,'')) || 500000;
+      if(document.getElementById('nearRate'))    document.getElementById('nearRate').value    = r.spot.toFixed(2);
+      if(document.getElementById('farRate'))     document.getElementById('farRate').value     = farRate.toFixed(2);
+      if(document.getElementById('nearNotional'))document.getElementById('nearNotional').value = notional.toLocaleString();
+      if(document.getElementById('farNotional')) document.getElementById('farNotional').value  = notional.toLocaleString();
+      if(document.getElementById('nearKES'))     document.getElementById('nearKES').value     = Math.round(notional * r.spot).toLocaleString();
+      if(document.getElementById('farKES'))      document.getElementById('farKES').value      = Math.round(notional * farRate).toLocaleString();
+      if(document.getElementById('swapPts'))     document.getElementById('swapPts').value     = '+' + Math.round(swapPts * 100) + ' pips';
     }
 
     // ─── Limit check ─────────────────────────────────────────────────────────
